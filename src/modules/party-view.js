@@ -1,0 +1,421 @@
+/**
+ * What the party night draws, from its game state (split out of party.js; half-one review: "split ... the drawing
+ * view out"). The hall is drawn by party-draw.js from one description of what is on screen (a "view"); this file
+ * builds that view for every scene, and draws the party's things over the home room (the music notes at the door,
+ * the flyer on the floor, his outfit, the guard who follows him home, Mops out of breath).
+ */
+import { spanFor } from "./music-picks.js";
+import { highlightBox } from "./outline.js";
+import { micNow } from "./party-stage-walks.js";
+import { partyOnNow, bandTrackNow } from "./party-band-order.js";
+import { HALL, CAST, CAMERA_AIM, BAND_AIM, HALL_SPEAKER, FLYER, P4_SWEEP, sweepAngle } from "./party-hall.js";
+import { drawCones } from "./party-watch.js";
+import { guardLook, guardMark, torchShift } from "./party-guard-look.js";
+import { drawHall, flyerInPaw } from "./party-draw.js";
+import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, drawMark, cameraLens, BODY_SPOTS, drawGapGlow } from "./party-art.js";
+import { homeGuardCone } from "./party-alarm.js";
+import { questions } from "./party-question.js";
+import { ventTufts } from "./party-vent.js";
+import { wornNow, flyingNow, furShows, anyWorn } from "./party-outfit.js";
+import { drawPyramid, drawSnackCloseUp } from "./party-snacks-art.js";
+import { drawSnackPaw } from "./party-snacks-paw.js";
+import { walkArms } from "./party-shirt-art.js";
+import { SONG_LIGHTS } from "./party-dance.js";
+import { drawCountdown, drawFlash, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawLoosePiece, drawHeartCone, liftAt, liftTo, setDownAt, drawPat, drawTv, drawMopsHearts } from "./party-free-art.js";
+import { TV } from "./party-after-alarm.js";
+import { PHOTO_ROW, tripodOut, bandPosing, photoOpen } from "./party-photo.js";
+import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
+import { OCT } from "./party-octopus.js";
+import { nightPicture } from "./night-look.js";
+import { drawCleanFloor, drawCleanTufts, drawCleanOutline, cleanExtras, drawCleanOver, drawCleanHome } from "./party-cleanup-draw.js";
+import { cleanPatches } from "./party-cleanup.js";
+const CLEAN_PATCHES = cleanPatches();
+
+// How far above his feet Mops's head top is at home, in Squatch's home scale (party-free-art.js drawMopsHearts).
+const MOPS_HEAD_UP = 46;
+const LATE = new Set(["P6", "P7", "P8a", "P8b", "P8c", "P9", "P9b"]);
+/** Beats since the band's song began (its bpm, music-picks.js), or null when it has none. */
+export const bandBeat = (p) => {
+  const sp = spanFor("band", bandTrackNow(p));
+  return sp && sp.bpm ? ((p.bandT || 0) * sp.bpm) / 60 : null;
+};
+/** True while the party goes on next door (party-band-order.js): at home its notes drift in under his door. */
+export const bandNextDoor = (p) => partyOnNow(p);
+// A "?" or "!" is at least as tall as Squatch's head however big the hall draws people: its size and how far over
+// a head its middle sits, as shares of a grown-up's height (42 and 18 when a grown-up was 66 tall).
+const MARK = Object.freeze({ size: 0.635, over: 0.27 });
+// A guest's "?" is small (Brian 2026-11-25: "The big question marks are a bit confusing - it's over his top hat?"):
+// this share of a grown-up's height, and it keeps at least `clear` game pixels from Squatch, his hat included
+// (`top`, his tallest in his own units: the top hat, party-dance.js DANCE_TOP). PLACEHOLDERS.
+export const QUESTION = Object.freeze({ size: 0.42, clear: 14, top: 76 });
+
+/**
+ * `h`: { E, P, sq, picture, guests (the approved art), cones (p), glancePhase (p), personAt (p, id), spots (),
+ * goalId (p, room), homeRoom, pace }.
+ */
+export function createView(h) {
+  const E = () => h.E();
+  // How tall a person is drawn in the hall (game pixels): a guest's approved picture, a guard, anyone else a grown-up.
+  const tallOf = (id, adult) => (CAST.guests.some((g) => g.id === id) ? h.guests.height(id, adult) : id === "guard" ? adult * 1.02 : id === "isfred" ? adult * 1.18 : adult);
+
+  function view(p, t) {
+    const s = h.sq(),
+      e = E(),
+      late = LATE.has(p.scene),
+      gone = (p.close && p.close.gone) || {},
+      dancing = p.mode === "pairs",
+      fl = flyerNow(p, t);
+    const guests = CAST.guests
+      .filter((g) => !gone[g.id])
+      .map((g) => {
+        const at = p.alarm && p.alarm.w.id === g.id ? p.alarm.w : p.people[g.id],
+          to = g.pair ? p.people[g.pair] : null;
+        // P3 and P4: partners dance; the camera tourist and the glancer, with no partner, watch the band. From P6 on,
+        // each guest dances when stopped and walks when going somewhere (party-free.js).
+        const dance = p.alarm ? 0 : late ? (at.dance ? 1 : 0) : dancing && to ? 1 : 0;
+        // the octopus with his arms out: a chase, a hug, or his arms dropping as he gets bored (P6 only)
+        const o = g.id === "octopus-guest" && p.scene === "P6" && p.oct && p.oct.arms > 0.02 ? p.oct : null,
+          arms = o ? { k: o.arms, toward: Math.sign(s.x - at.x) || 1, hug: o.mode === "hug", hugK: o.mode === "hug" ? Math.min(1, o.ht / OCT.squeeze) : 0, bored: o.mode === "bored" } : null;
+        // P4: a sweeper leans the way he looks as he turns (his cone sweeps with him: party-hall.js P4_SWEEP)
+        const look = p.scene === "P4" && P4_SWEEP[g.id] ? Math.sign(Math.cos(sweepAngle(g.id, p.sweepT || 0))) : 0;
+        return { id: g.id, x: at.x, y: at.y, dance: arms ? 0 : look ? 1 : dance, lean: look || (to ? Math.sign(to.x - at.x) : 0), arms };
+      });
+    const marks = [];
+    // Marks sit over a person's head, however tall the hall draws them (head height comes from the hall's sizes).
+    const adult = e.hallSizes().adult,
+      size = Math.round(adult * MARK.size),
+      qSize = Math.round(adult * QUESTION.size),
+      over = (id) => tallOf(id, adult) + adult * MARK.over;
+    // Each "?" (whoever has noticed him, the glancer's warning, the octopus about to grab): small and pale, filling in
+    // while he stays in sight, fading once he is out of it (party-question.js)
+    for (const q of p.scene === "P8b" ? [] : questions(p)) {
+      const w = q.id === "glance" ? p.people.backpack : h.personAt(p, q.id);
+      w && marks.push({ x: w.x, y: w.y - over(q.id === "glance" ? "backpack" : q.id), mark: "?", size: qSize, guest: w, q });
+    }
+    const a = p.alarm;
+    const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5)) ? { x: a.w.x, y: a.w.y - over(a.w.id) - 12 } : null;
+    a && a.phase === "shout" && marks.push({ x: a.w.x + 40, y: a.w.y - over(a.w.id) + 14, mark: "!", size });
+    // Guards show "!" at once when they see him (party plan, Sight).
+    a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - over("guard"), mark: "!", size }));
+    // No mark and no "FUR!" burst sits on or near Squatch, hat included (a guest just below him would put it on his
+    // head): it moves beside that guest's head, on the side away from him first. A guest's "?" never goes over
+    // Squatch: it stays by its own guest's head, beside it and clear of Squatch's box (QUESTION.clear and more, Brian
+    // 2026-11-25); of the places tried it takes the first that is clear, else the one furthest from him.
+    if (p.pose === "stand") {
+      const k = e.hallSizes().squatch,
+        m = QUESTION.clear,
+        sq = { x0: s.x - 22 * k - m, x1: s.x + 22 * k + m, y0: s.y - QUESTION.top * k - m, y1: s.y + 2 + m },
+        on = (x, y, rx, ry) => x - rx < sq.x1 && x + rx > sq.x0 && y - ry < sq.y1 && y + ry > sq.y0,
+        gap = (x, y, rx, ry) => Math.hypot(Math.max(0, sq.x0 - (x + rx), x - rx - sq.x1), Math.max(0, sq.y0 - (y + ry), y - ry - sq.y1)),
+        clear = (o, rx, ry, guest) => {
+          if (!on(o.x, o.y, rx, ry)) return;
+          const away = Math.sign(o.x - s.x) || 1,
+            // beside, on side `d`: a step out from the guest's head, and at least clear of Squatch's box
+            side = (d) => (d > 0 ? Math.max(o.x + rx + 24, guest ? sq.x1 + rx + 2 : -1e9) : Math.min(o.x - rx - 24, guest ? sq.x0 - rx - 2 : 1e9)),
+            tries = guest
+              ? [[side(away), o.y], [side(-away), o.y], [side(away), o.y + 34], [side(-away), o.y + 34]]
+              : [[o.x + away * (rx + 24), o.y + 34], [o.x - away * (rx + 24), o.y + 34], [o.x, sq.y0 - ry - 6]];
+          const ok = tries.find(([x, y]) => !on(x, y, rx, ry)) || tries.slice().sort((a, b) => gap(b[0], b[1], rx, ry) - gap(a[0], a[1], rx, ry))[0];
+          ((o.x = ok[0]), (o.y = ok[1]));
+        };
+      // (a mark's white oval is 0.46 by 0.56 of its size each side of its middle, with its outline)
+      for (const mk of marks) clear(mk, mk.size * 0.5, mk.size * 0.6, mk.mark === "?" ? mk.guest : null);
+      shout && clear(shout, 54, 36);
+    }
+    for (const mk of marks) delete mk.guest;
+    const outlineHidden = p.pose === "hidden" || p.pose === "bed";
+    const eyes = p.pose === "hidden" ? eyesAt(p, t) : null;
+    // The camera's tripod is out of sight until the group photo: the camera tourist carries it over then (beside
+    // him as he walks), and it stands where he set it up from then on (Brian 2026-11-25, showing-5 notes 1 and 5).
+    const cam = p.people.camera,
+      tripodAt = late && tripodOut(p) ? { x: cam.x - 28, y: cam.y + 6 } : null;
+    const outfit = late ? wornNow(p) : null,
+      shake = Math.max((p.vent && p.vent.shake) || 0, p.shake || 0);
+    const bartender = a && a.w.id === "bartender" ? { x: a.w.x, y: a.w.y, f: Math.sign(a.w.x - a.w.hx) || -1 } : gone.bartender ? null : { x: (p.bartenderAt || CAST.bartender).x, y: (p.bartenderAt || CAST.bartender).y, f: p.bartenderAt && p.bartenderAt.walk ? 1 : -1 };
+    const m = p.mops;
+    return {
+      t,
+      // the party is at night: the hall's night look (night-look.js), its window onto space and FUR alarm kept bright
+      picture: nightPicture("hall", h.picture),
+      banner: { glow: p.glow || 0 },
+      // the dance spot's outline, while DANCE · circle is on offer (hidden while he dances: Brian 2026-11-25)
+      danceRing: LATE.has(p.scene) && !p.dance && h.spots().some((q) => q.id === "dance"),
+      lights: p.lights ? { dim: p.lightK == null ? 1 : p.lightK, color: SONG_LIGHTS[(p.song || 0) % 3] } : null,
+      isfred: gone.isfred ? null : p.isfred,
+      // (before the band line the stage is Isfred's alone: Brian 2026-11-25)
+      // the mic stand: carried by Isfred to the singer, then standing in front of him (party-stage-walks.js)
+      mic: p.bandOff || gone.band1 ? null : micNow(p),
+      band: p.bandOff ? null : { playing: p.band, pose: bandPosing(p) || (!!p.close && p.close.phase === "cheer"), spots: p.bandAt || CAST.band, gone: ["band0", "band1", "band2"].map((id) => !!gone[id]), beat: bandBeat(p) },
+      guests,
+      bartender,
+      guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
+      // the camera points at the stage, and at the row while the group photo is on
+      tripod: gone.camera || !tripodAt ? null : { ...tripodAt, aim: aimNow(p) },
+      // closing time: nobody is watching for him any more (they are leaving), so no cones (rule 8: a cone always reacts)
+      cones: p.scene === "P8b" ? [] : h.cones(p).filter((c) => !gone[c.id]),
+      // the peek teaches cones, and the flyer sneak is planned by looking: both draw every cone whole
+      allCones: p.scene === "P1" || p.scene === "P4",
+      noteCone: (c) => e.noteCone(c),
+      // While a line is up or a scripted walk runs, nobody sees him, so no cone fills yellow (drawn equals sight).
+      unseen: !(e.get("ctrl") && !e.current()) || p.scene === "P8b",
+      // In a whole disguise nobody knows him: a cone that holds him stays dashed (only the "?" shows).
+      fooled: late && !furShows(p),
+      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "paw", shake, outfit, hop: bounceHop(p), hatTip: hatTip(p) },
+      eyes,
+      marks,
+      shout,
+      alarm: !!a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm",
+      tufts: ventTufts(p),
+      // (the fur sign only when fur would go in: in costume the vent tugs a piece, and no fur is named before it shows)
+      warning: p.vent && p.vent.t > 0 && p.pose === "stand" && !(LATE.has(p.scene) && anyWorn(p)) ? { k: Math.min(1, p.vent.t * 4) } : null,
+      floor: (ctx) => floor(ctx, p, t),
+      extra: [
+        ...(m ? [{ y: m.y, f: () => e.drawMopsOn(ctx0, m.x, m.y, e.hallSizes().squatch * 1.15, { f: m.f, walk: m.walk ? t * 8 : 0, headDown: !!m.walk, sweep: m.walk ? Math.sin(t * 6) * 4 : 0 }) }] : []),
+        ...(fl ? [{ y: fl.depth, f: () => drawFlyerLit(ctx0, fl) }] : []),
+      ],
+    };
+  }
+  /**
+   * P9, the cleanup (party-cleanup.js): the empty hall, nobody watching, no Squatch (he is home); the floor's mess
+   * under everyone; Mops (the player) and his bucket.
+   */
+  function cleanView(p, t, v) {
+    return {
+      ...v,
+      cones: [],
+      marks: [],
+      shout: null,
+      squatch: null,
+      eyes: null,
+      warning: null,
+      tufts: [],
+      unseen: true,
+      floor: (ctx) => (floor(ctx, p, t), drawCleanFloor(ctx, p, t, CLEAN_PATCHES), drawCleanTufts(ctx, p)),
+      extra: cleanExtras(ctx0, E(), p, t),
+    };
+  }
+  // Where the camera points: the row during the photo moment (until everyone walks back), else the stage.
+  // (the stage's middle while Isfred speaks; the Croc Boys once they play)
+  const aimNow = (p) => (p.shot && ["camera", "gather", "join", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
+  let ctx0 = null;
+  // The flyer, outlined (the one highlight) while Squatch thinks about it.
+  function drawFlyerLit(ctx, fl) {
+    drawFlyer(ctx, fl.x, fl.y, fl.size, fl.rot);
+    // while it matters: the one highlight round it (outline.js), no glow (Brian 2026-11-26)
+    if (fl.glow) {
+      const r = fl.size * 0.62 * (1 + Math.abs(Math.sin(fl.rot || 0)) * 0.3);
+      highlightBox(ctx, { x0: fl.x - r, y0: fl.y - r * 1.2, x1: fl.x + r, y1: fl.y + r * 1.2 }, E().time(), 3);
+    }
+  }
+  // On the floor, under everyone: pieces that fell, Mops's wet streak and his heart cone.
+  function floor(ctx, p, t) {
+    for (const f of p.fallen || []) f.to === "floor" && drawLoosePiece(ctx, f.id, f.x, f.y, 22, f.rot);
+    const m = p.mops;
+    if (!m) return;
+    for (const w of m.wet) {
+      ctx.fillStyle = "rgba(140,190,230,.35)";
+      ctx.beginPath();
+      ctx.ellipse(w.x, w.y, 16, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    const c = E().coneSize();
+    if (m.heart > 0) {
+      const a = m.a == null ? Math.PI : m.a;
+      // (his hearts once, as he first sees him: mops-hearts.js)
+      m.heartAt == null && (m.heartAt = t);
+      drawHeartCone(ctx, m.x, m.y - 30, a, c.half, c.len, t, m.heart, t - m.heartAt);
+      E().noteCone({ ox: m.x, oy: m.y - 30, a, half: c.half, len: c.len, heart: true });
+    }
+  }
+  // His eyes in the plant he hides in; in P3 and P4 they move from pair to pair.
+  function eyesAt(p, t) {
+    const pl = HALL.plants.find((q) => q.id === (p.hideAt || "middle"));
+    const look = p.follow || p.scene === "P4" ? Math.round(Math.sin(t * 0.9)) * 3 : 0;
+    return { x: pl.eyes.x + look, y: pl.eyes.y };
+  }
+  // The one flyer in the hall (P3 and P4), wherever it is unless it is in Squatch's paw (he is drawn with it):
+  // in Isfred's hand through his lines, going down onto the stage's right end as he bends, lying there, and going
+  // up into Squatch's paw at GRAB · flyer. Returns { x, y, size, rot, glow, depth } or null.
+  function flyerNow(p, t) {
+    if (LATE.has(p.scene) || !["P3", "P4"].includes(p.scene)) return null;
+    const lie = { x: FLYER.x, y: FLYER.y, size: FLYER.size, rot: 0.2 },
+      mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k - Math.sin(k * Math.PI) * 10, size: a.size + (b.size - a.size) * k, rot: a.rot + (b.rot - a.rot) * k });
+    if (!p.flyer) {
+      // still Isfred's: in his raised hand, then down to the stage as he bends
+      const f = p.isfred,
+        hand = { x: f.x + FLYER.hand.dx, y: f.y + FLYER.hand.dy, size: FLYER.hand.size, rot: -0.15 };
+      return { ...(f.bend ? mix(hand, lie, f.bend) : hand), glow: p.flyerGlow ? 0.75 + 0.25 * Math.sin(t * 6) : 0, depth: f.y + 1 };
+    }
+    if (p.flyer !== "stage") return null;
+    if (p.grab != null) {
+      const s = h.sq();
+      return { ...mix(lie, flyerInPaw(s.x, s.y, s.f || -1, E().hallSizes().squatch), p.grab), depth: Math.max(FLYER.y, s.y) + 1 };
+    }
+    return { ...lie, glow: p.flyerGlow ? 0.75 + 0.25 * Math.sin(t * 6) : 0, depth: FLYER.y };
+  }
+  // The flyer at home: in his paw as he comes in, then SAVE · flyer: up onto the top of his bed, the same size all the
+  // way (Brian 2026-11-26: "He should lay it on top of the bed. It shouldn't shrink and go on the floor"; #42), where
+  // it lies until the talk.
+  function flyerAtHome(p) {
+    const sk = E().squatchScale(),
+      size = flyerInPaw(0, 0, 1, sk).size,
+      to = { x: h.homeRoom.flyer.x, y: h.homeRoom.flyer.y, size, rot: h.homeRoom.flyer.rot };
+    if (p.flyer === "bed") return to;
+    if (p.flyer !== "paw" && p.flyer !== "down" && p.flyer !== "take") return null;
+    // (held up to show Mops in the talk, party-talk.js: `flyerUp` 0 to 1)
+    const s = h.sq(),
+      inPaw = flyerInPaw(s.x, s.y, s.f || -1, sk),
+      up = p.flyerUp != null ? p.flyerUp : 0,
+      paw = { ...inPaw, y: inPaw.y - up * 14 * sk, rot: inPaw.rot * (1 - up) },
+      ease = (q) => Math.min(1, Math.max(0, q || 0)) ** 2 * (3 - 2 * Math.min(1, Math.max(0, q || 0))),
+      // down: from his paw up onto the bed (a little arc); take: the same way back
+      k = ease(p.flyer === "down" ? p.put : p.flyer === "take" ? 1 - (p.take || 0) : 0);
+    return { x: paw.x + (to.x - paw.x) * k, y: paw.y + (to.y - paw.y) * k - Math.sin(k * Math.PI) * 18, size, rot: paw.rot + (to.rot - paw.rot) * k };
+  }
+  /** Tests: where the flyer is drawn now ({ x, y, size }), in the hall or at home, or null when there is none. */
+  function flyerAt(p) {
+    const e = E();
+    if (e.room() === "closet") return flyerAtHome(p);
+    if (e.room() !== "hall") return null;
+    if (p.flyer === "paw") {
+      const s = h.sq();
+      return flyerInPaw(s.x, s.y, s.f || 1, e.hallSizes().squatch);
+    }
+    return flyerNow(p, e.time());
+  }
+  // Over the hall from P6 on: the pyramid, the music, the camera, the pieces in the air.
+  function drawLate(ctx, p, t) {
+    const e = E(),
+      s = h.sq(),
+      scale = e.hallSizes().squatch,
+      gone = (p.close && p.close.gone) || {};
+    drawPyramid(ctx, p, s, t);
+    for (const f of p.fallen || []) f.to === "plant" && drawLoosePiece(ctx, f.id, f.x, f.y, 22, f.rot);
+    drawBump(ctx, bumpMark(p, scale));
+    const cam = p.people.camera;
+    // the gap left for him in the front row glows while he can still join (Brian 2026-11-25)
+    photoOpen(p) && drawGapGlow(ctx, PHOTO_ROW.squatch.x, PHOTO_ROW.squatch.y, 24 * scale, t);
+    // the camera's three red lights, only during the group photo's count
+    p.shot && p.shot.phase === "count" && !gone.camera && drawCountdown(ctx, cam.x - 28, cam.y + 6, p.shot.n, t);
+    const adult = e.hallSizes().adult;
+    p.clap > 0 && Object.entries(p.people).forEach(([id, g]) => id !== "camera" && drawClap(ctx, g.x, g.y - tallOf(id, adult) - 14, t));
+    const oc = p.people["octopus-guest"];
+    p.oct && ["chase", "hug", "lunge", "ready"].includes(p.oct.mode) && drawHiccups(ctx, oc.x, oc.y - tallOf("octopus-guest", adult), t);
+    // the band's notes float out to the sides and toward the crowd, never up onto the banner
+    p.band && drawBandNotes(ctx, p.bandAt || CAST.band, t, p.song || 0, adult * 0.98);
+    for (const f of flyingNow(p)) drawLoosePiece(ctx, f.id, f.x, f.y, f.w, f.rot);
+    // the wall speaker's sound-wave arcs whenever it talks (the PA's closing line: Brian 2026-11-26, "it should be
+    // clearly coming out of there with sound waves"); it only talks once the band has stopped playing
+    p.speakerOn && drawSpeakerRing(ctx, HALL_SPEAKER, t);
+    // the flash: a small burst at the camera's lens (never the whole room)
+    gone.camera || drawFlash(ctx, p.flash, cameraLens({ x: cam.x - 28, y: cam.y + 6 }, aimNow(p)));
+  }
+
+  /** The hall (the party owns its drawing). Returns true when drawn. */
+  function drawRoom(ctx, p) {
+    const e = E(),
+      t = e.time();
+    ctx0 = ctx;
+    const v = view(p, t);
+    drawHall(ctx, e, h.guests, p.scene === "P9" ? cleanView(p, t, v) : v);
+    LATE.has(p.scene) && drawLate(ctx, p, t);
+    // P3 and P4: the band's notes rise from them as soon as they play (Brian 2026-11-26, showing 7 at 0:18)
+    !LATE.has(p.scene) && p.band && drawBandNotes(ctx, p.bandAt || CAST.band, t, p.song || 0, e.hallSizes().adult * 0.98);
+    outline(p, "hall");
+    p.scene === "P9" && h.cleanLit && drawCleanOutline(ctx, h.cleanLit(p), t);
+    return true;
+  }
+  function outline(p, room) {
+    const id = h.goalId(p, room);
+    if (!id) return;
+    const s = h.spots().find((q) => q.id === id) || { id, verb: "", cap: "" };
+    E().markGoal(s);
+  }
+  /** Drawn after the room: the snack close-up over the hall; over the home room, the party's things there. */
+  function draw(ctx, p) {
+    const e = E(),
+      t = e.time();
+    if (e.room() === "hall" && p.scene === "P9") return void drawCleanOver(ctx, e, p, t, h.guests);
+    if (e.room() === "hall") return void (snackDrawn = p.snack ? drawSnackCloseUp(ctx, p, t, drawSnackPaw) : null);
+    if (e.room() !== "closet") return;
+    p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, h.homeDoor, t);
+    // the band playing next door: a few faint notes drift in under his door (Brian 2026-11-26, showing 7 at 0:46)
+    bandNextDoor(p) && drawDoorNotes(ctx, h.homeDoor, t, { faint: true });
+    // (it glows when he goes to fetch it, and while Mops looks at him: party-talk.js)
+    const homeGlow = p.flyerGlow ? 0.75 + 0.25 * Math.sin(t * 6) : 0;
+    p.flyer === "bed" && drawFlyerLit(ctx, { ...flyerAtHome(p), glow: homeGlow });
+    const s = h.sq();
+    const sk = e.squatchScale();
+    // coming home with the flyer: in his paw, then put down on the floor by the door (where it lies from then on)
+    const fh = flyerAtHome(p);
+    fh && p.flyer !== "bed" && drawFlyerLit(ctx, { ...fh, glow: homeGlow });
+    const
+      standing = p.pose === "stand" && e.get("sqPose") === "stand";
+    let wear = p.scene === "P5" ? p.outfit : LATE.has(p.scene) ? wornNow(p) : null;
+    // Mops lifting the piece off his head: it is drawn in the air, not on him.
+    const lifted = p.lift && p.lift.id ? p.lift : null;
+    lifted && (wear = { ...wear, head: "" });
+    if (wear && standing) {
+      ctx.save();
+      drawOutfit(ctx, s.x, s.y, sk, wear, s.f || 1, { arms: walkArms(e.walkPhase()) });
+      ctx.restore();
+    }
+    if (p.lift && standing) {
+      const m = e.pos("mops"),
+        hs = BODY_SPOTS.head,
+        from = { x: s.x, y: s.y + hs.y * sk - 8 * sk },
+        to = liftTo(m, s, sk);
+      if (lifted) {
+        // (lifted off him, then set down on the floor between them, where it stays)
+        const at = p.lift.set != null ? setDownAt(p.lift.held, p.lift.rest, p.lift.set) : liftAt(from, to, p.lift.k);
+        drawLoosePiece(ctx, lifted.id, at.x, at.y, hs.w * sk, at.rot);
+      } else drawPat(ctx, s.x, s.y - 50 * sk, p.lift.k, 26 * sk * 0.5);
+    }
+    // the TV's button, for the horn press (the TV itself is the room's)
+    p.tv && drawTv(ctx, TV, t, p.tv.lit == null ? null : p.tv.lit);
+    const g = p.alarm && p.alarm.homeGuard;
+    if (g) {
+      // As tall next to Squatch as in the hall (Squatch is 80% of a grown-up): the home room draws him bigger. He
+      // carries a flashlight, and his search cone is drawn as its beam, from the flashlight in his hand (Brian
+      // 2026-11-24); sight itself is unchanged (party-watch.js seenPointDrawn).
+      const tall = homeGuardHeight(),
+        f = Math.cos(g.a) < 0 ? -1 : 1,
+        c = { ...homeGuardCone(p.alarm, e.coneSize(), torchShift(g, tall, f)), beam: true };
+      // His flashlight is on only while he searches (Brian 2026-11-26, #27): off once he stops to talk to Mops, and as
+      // he leaves (the alarm is over then)
+      const searching = !p.alarm.over && !g.held && !g.leaving;
+      searching && drawCones(ctx, [c], s, p.pose === "bed", true, (k) => e.noteCone(k));
+      // The cone lies under everyone, as in the hall (nothing is drawn over Squatch): standing in the room he is
+      // drawn again on top of it, with what he wears, behind the guard or in front of him by where his feet are.
+      const again = () => standing && (e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, walk: e.walkPhase() }), wear && drawOutfit(ctx, s.x, s.y, sk, wear, s.f || 1, { arms: walkArms(e.walkPhase()) }));
+      s.y <= g.y && again();
+      // (sent off by Mops, the alarm is over: his flashlight is put away as he leaves)
+      drawPerson(ctx, g.x, g.y, tall, { ...guardLook(g), torch: searching }, f, t);
+      s.y > g.y && again();
+      // "?" while he searches, "!" once he sees him
+      const mk = guardMark(g, tall, f);
+      mk && drawMark(ctx, mk.x, mk.y, mk.mark, mk.size, t);
+    }
+    // Mops has turned to him and sees him: hearts float up from his head (party-talk.js)
+    const hk = p.mopsHeartsAt != null ? e.time() - p.mopsHeartsAt : -1;
+    if (hk >= 0 && hk < 2) {
+      const m = e.pos("mops");
+      drawMopsHearts(ctx, m.x - 10 * sk, m.y - MOPS_HEAD_UP * sk, 12 * sk, hk);
+    }
+    // after the cleanup: what Mops found, held up; the Polaroid by Squatch's bed; one heart after a fib
+    p.scene === "P9b" && drawCleanHome(ctx, e, p, t);
+    outline(p, "closet");
+  }
+  // How tall the guard is drawn in the home room.
+  function homeGuardHeight() {
+    return (50 * E().squatchScale()) / 0.8;
+  }
+  // The octopus's first hug tips his hat over (it rights itself as he is let go): radians.
+  function hatTip(p) {
+    const o = p.oct;
+    return o && o.mode === "hug" && o.hugs === 1 ? -0.45 * Math.sin(Math.min(1, o.ht / 0.25) * Math.PI * 0.5) : 0;
+  }
+  // what the snack close-up drew last (tests: where his sleeve ran, which view of the bartender)
+  let snackDrawn = null;
+  return { view, eyesAt, drawRoom, draw, furShows, homeGuardHeight, flyerAt, snackDrawn: () => snackDrawn };
+}

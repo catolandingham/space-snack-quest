@@ -7,7 +7,7 @@
  *   g.known("name", stillHappens, detail) for a known problem: printed as KNOWN, never a failure.
  */
 import http from "node:http";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -30,7 +30,14 @@ export function readLines({ where = false } = {}) {
 // "HIDE · crate (note)" -> "HIDE · crate"
 export const actionOf = (cell) => (cell.match(/^([A-Z][A-Z ]* \u00b7 [^(]+?)\s*(\(|$)/) || [])[1] || "";
 
-export async function startGame({ port, name }) {
+/**
+ * Every test server's port is moved up by SSQ_PORT_OFFSET (default 0), so two worktrees can run npm test at the same
+ * time without one suite's page loading the other worktree's game (2026-11-26: two builders' runs shared ports).
+ */
+export const PORT_OFFSET = Number(process.env.SSQ_PORT_OFFSET || 0);
+
+export async function startGame({ port: asked, name }) {
+  const port = asked + PORT_OFFSET;
   let puppeteer;
   try {
     puppeteer = (await import("puppeteer-core")).default;
@@ -44,8 +51,8 @@ export async function startGame({ port, name }) {
     process.exit(1);
   }
   const html = await readFile(join(root, "index.html"));
-  // The music files the game may load: Joe's theme, and Brian's Floating in Space (not wired yet).
-  const MUSIC = ["music/main-theme-from-brian.mp3", "music/floating-in-space.mp3"];
+  // The music files the game may load: every mp3 in music/ (src/modules/music-picks.js says which plays where).
+  const MUSIC = readdirSync(join(root, "music")).filter((f) => f.endsWith(".mp3")).map((f) => "music/" + f);
   const musicBufs = new Map();
   const server = http.createServer((req, res) => {
     let pathname = "/";
@@ -93,6 +100,18 @@ export async function startGame({ port, name }) {
       }
       res.writeHead(200, { "content-type": "audio/mpeg", "content-length": musicBuf.length, "accept-ranges": "bytes" });
       res.end(musicBuf);
+      return;
+    }
+    // The party's recorded sounds (sounds/*.mp3, Kenney CC0: sounds/CREDITS.txt).
+    if (pathname.startsWith("/sounds/") && pathname.endsWith(".mp3")) {
+      const file = join(root, decodeURIComponent(pathname.slice(1)));
+      if (!file.startsWith(join(root, "sounds")) || !existsSync(file)) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+      res.writeHead(200, { "content-type": "audio/mpeg" });
+      res.end(readFileSync(file));
       return;
     }
     res.writeHead(200, { "content-type": "text/html" });

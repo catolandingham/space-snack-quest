@@ -1,10 +1,18 @@
 /**
- * Adult heads are about 85% of the locked party-hall door, and Squatch is about 80% of an adult.
- * The current guest scale (1.8) is far too tall for that door, so this fails on those numbers.
+ * One scale per room (src/modules/room-scale.js ROOM_SCALE, Brian 2026-11-27 on PR #103: "Yes, turn it on"): a
+ * grown-up in a listed room is the table's Squatch scale / 0.8 x 45, and Squatch is about 80% of a grown-up. It
+ * retired the pins adult-door-share (85% of the room's door) and hall-bigger (1.4); a room the table does not list
+ * still measures 85% of the hall's doorway.
  *   node tests/people-scale.mjs
  */
 import { readFileSync } from "node:fs";
-import { startGame } from "./game-page.mjs";
+import { join } from "node:path";
+import { startGame, root } from "./game-page.mjs";
+
+// The party's cast and where Squatch stands at the party (src/modules/party-hall.js), in game positions.
+const hall = await import(join(root, "src", "modules", "party-hall.js"));
+const { ROOM_SCALE } = await import(join(root, "src", "modules", "room-scale.js"));
+const tableAdult = (room) => (ROOM_SCALE[room] * 45) / 0.8;
 
 const src = ["12-ch1-redesign.js", "14-ch1-day1.js", "10-ch1.js", "50-story-frame.js"]
   .map((f) => readFileSync(new URL("../src/game/" + f, import.meta.url), "utf8"))
@@ -55,7 +63,6 @@ const measured = await page.evaluate(async () => {
     alien: ss.ALIEN_ADULT,
     qt: ss.QT_ADULT,
     sq: ss.SQ_ADULT,
-    guests: ss.CH1_GUESTS,
     office: ox,
     threshold,
     doorLeft,
@@ -68,8 +75,8 @@ const measured = await page.evaluate(async () => {
 const headOfDoor = measured.adult / measured.door;
 const sqOfGuest = (measured.sq * 45) / measured.adult;
 g.check(
-  "guest heads are about 85% of the locked hall door",
-  measured.doorSrc > 90 && measured.doorSrc < 120 && headOfDoor > 0.82 && headOfDoor < 0.88,
+  "in the hall, a grown-up is the room table's 1.30 (about 73 px, 94% of the locked hall door; Brian 2026-11-27)",
+  measured.doorSrc > 90 && measured.doorSrc < 120 && Math.abs(measured.adult - tableAdult("hall")) < 0.1 && headOfDoor > 0.9 && headOfDoor < 0.98,
   { ...measured, headOfDoor },
 );
 g.check(
@@ -82,16 +89,19 @@ g.check(
   Math.abs(measured.alien * 84 - measured.adult) < 0.05 && Math.abs(measured.qt * 50 - measured.adult) < 0.05,
   measured,
 );
-const feet = measured.guests || [];
+// The party guests where they stand from the sneak to the dress-up (P2 to P5), and the places Squatch stands
+// among them (his doorway and the middle plant).
+const feet = hall.CAST.guests.map((q) => [q.x, q.y]);
+const sqAt = [hall.SPOTS.doorway, hall.SPOTS.plantMiddle];
 let closest = 999;
 let closestSq = 999;
 for (let i = 0; i < feet.length; i++) {
-  closestSq = Math.min(closestSq, Math.hypot(feet[i][0] - 400, feet[i][1] - 530));
+  for (const s of sqAt) closestSq = Math.min(closestSq, Math.hypot(feet[i][0] - s.x, feet[i][1] - s.y));
   for (let j = i + 1; j < feet.length; j++) closest = Math.min(closest, Math.hypot(feet[i][0] - feet[j][0], feet[i][1] - feet[j][1]));
 }
 const counter = 600 * (640 / 830);
 const backHeads = feet.filter((p) => p[1] <= 480).every((p) => p[1] - measured.adult < counter - 20);
-g.check("party guests do not overlap Squatch or each other, and back-row heads clear the snack counter", closest > 70 && closestSq > 70 && backHeads, {
+g.check("party guests do not overlap Squatch or each other, and back-row heads clear the snack counter", feet.length === 6 && closest > 70 && closestSq > 70 && backHeads, {
   closest,
   closestSq,
   counter,
@@ -149,9 +159,10 @@ const rooms = await page.evaluate(async () => {
     } else run = 0;
   }
   const rows = {};
+  const gameRoom = { hall: "hall", office: "office", hallway: "passage", delivery: "hangar", home: "closet" };
   for (const id of Object.keys(doorPx)) {
-    const adult = ss.adultPxFor(id);
-    rows[id] = { door: doorPx[id], adult, share: adult / doorPx[id] };
+    const adult = ss.adultPxFor(gameRoom[id]);
+    rows[id] = { room: gameRoom[id], door: doorPx[id], adult, share: adult / doorPx[id] };
   }
   return {
     rows,
@@ -162,111 +173,89 @@ const rooms = await page.evaluate(async () => {
     officeQt: ss.qtScale("office") * 50,
     duct: ss.adultPxFor("duct"),
     hall: ss.adultPxFor("hall"),
+    unlisted: ss.adultPxFor("no-such-room"),
   };
 });
-for (const [name, row] of Object.entries(rooms.rows)) {
-  g.check(name + " adult head is 82-88% of that room's door", row.share > 0.82 && row.share < 0.88, row);
-}
+for (const [name, row] of Object.entries(rooms.rows))
+  g.check(name + " grown-up is the room table's size (" + ROOM_SCALE[row.room] + " for Squatch)", Math.abs(row.adult - tableAdult(row.room)) < 0.1, row);
 g.check("the office picture's door is about the 160px slab", rooms.officeSrc > 140 && rooms.officeSrc < 175, rooms);
 g.check(
   "office Isfred and Qt scales use the office door",
   Math.abs(rooms.officeAlien - rooms.officeAdult) < 0.05 && Math.abs(rooms.officeQt - rooms.officeAdult) < 0.05,
   rooms,
 );
-g.check("a room with no door keeps the hall adult height", Math.abs(rooms.duct - rooms.hall) < 0.05, rooms);
+g.check(
+  "the vent room is the table's 3.65, and a room the table does not list still measures 85% of the hall's doorway",
+  Math.abs(rooms.duct - tableAdult("duct")) < 0.1 && Math.abs(rooms.unlisted - rooms.rows.hall.door * 0.85) < 0.05,
+  rooms,
+);
 
-const security = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  const tap = () => {
-    if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
-  };
-  const arm = (x, y) => {
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1Party = true;
-    n.ch1D = false;
-    n.ch1Office = false;
-    n.ch1Disguise = true;
-    n.ch1Flyer = true;
-    n.ch1PartyOver = false;
-    n.ch1PartyDid = {};
-    n.ch1Raid = null;
-    n.ch1Search = false;
-    n.guard = null;
-    n.ctrl = true;
-    n.q = [];
-    n.cur = null;
-    n.log = [];
-    n.walkTo = null;
-    n.sqPose = "stand";
-    n.sq.x = x;
-    n.sq.y = y;
-    ss.hall.camX = 0;
-  };
-  arm(400, 540);
-  const snag = ss.spotsNow().find((s) => s && s.verb === "SNAG");
-  if (!snag) return { error: "no snag" };
-  snag.f();
-  let armed = -1;
-  let opened = -1;
-  let entered = -1;
-  let caught = false;
-  for (let i = 0; i < 500; i++) {
-    tap();
-    const r = n.ch1Raid;
-    const lead = r && r.guards && r.guards[0];
-    const near =
-      lead &&
-      Math.hypot(lead.x - ss.CH1_HOME_DOOR.x, lead.y - ss.CH1_HOME_DOOR.y) < 28 &&
-      Math.hypot(n.sq.x - ss.CH1_HOME_DOOR.x, n.sq.y - ss.CH1_HOME_DOOR.y) < 48;
-    if (near && armed < 0) armed = i;
-    ss.tick(0.05);
-    if (n.cur && n.cur.id === "jail") caught = true;
-    if (armed >= 0 && !n.ch1Raid && opened < 0) opened = i;
-    if (n.room === "closet" && n.ch1Search) {
-      entered = i;
-      break;
+// The FUR alarm at the party (P7, src/modules/party.js and party-alarm.js): he runs home through his doorway, and a
+// guard follows him in half a second later (pinned: home-search-delay); a guard who reaches him in the hall shows
+// the one LOCKUP card, naming who saw him and where.
+const security = await page.evaluate(
+  ([door]) => {
+    const ss = window.__ss;
+    const n = ss.op;
+    const b = window.SSQ.beat("ch1-party");
+    const tap = () => {
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
+    };
+    const arm = () => {
+      n.q = [];
+      n.cur = null;
+      b.jump("P7");
+      for (let i = 0; i < 40 && n.ch1PartyNow.alarm.guards.length < 2; i++) ss.tick(0.05);
+    };
+    arm();
+    // At his doorway: he walks through it, home.
+    n.sq.x = door.x;
+    n.sq.y = door.y;
+    let doorAt = -1;
+    let guardAt = -1;
+    let caught = false;
+    for (let i = 0; i < 400; i++) {
+      tap();
+      ss.tick(0.05);
+      if (n.cur && n.cur.id === "jail") caught = true;
+      if (doorAt < 0 && n.room === "closet") doorAt = i;
+      const a = n.ch1PartyNow && n.ch1PartyNow.alarm;
+      if (doorAt >= 0 && a && a.homeGuard) {
+        guardAt = i;
+        break;
+      }
     }
-  }
-  const home = {
-    armed,
-    opened,
-    entered,
-    delay: armed < 0 || opened < 0 ? -1 : (opened - armed) * 0.05,
-    caught,
-    room: n.room,
-    search: !!n.ch1Search,
-  };
-  arm(400, 540);
-  ss.spotsNow().find((s) => s && s.verb === "SNAG").f();
-  let cause = "";
-  let sawGuard = false;
-  for (let i = 0; i < 400 && !cause; i++) {
-    tap();
-    const r = n.ch1Raid;
-    const g = r && r.guards && r.guards[0];
-    if (g) {
-      sawGuard = true;
-      n.sqPose = "stand";
-      n.sq.x = g.x + 24;
-      n.sq.y = g.y + 16;
-      n.walkTo = { x: g.x, y: g.y, room: "hall", lx: n.sq.x, ly: n.sq.y, lt: n.T, at: n.T };
+    const home = { doorAt, guardAt, delay: doorAt < 0 || guardAt < 0 ? -1 : (guardAt - doorAt) * 0.05, caught, room: n.room };
+    // Standing in the hall in front of a guard: he walks over and catches him.
+    arm();
+    let cause = "";
+    let sawGuard = false;
+    for (let i = 0; i < 400 && !cause; i++) {
+      tap();
+      const a = n.ch1PartyNow && n.ch1PartyNow.alarm;
+      const g = a && a.guards && a.guards[0];
+      if (g && g.room === "hall") {
+        sawGuard = true;
+        n.sq.x = g.x - 24;
+        n.sq.y = g.y + 16;
+      }
+      ss.tick(0.05);
+      const card = (n.cur && n.cur.id === "jail" && n.cur) || n.q.find((q) => q.id === "jail");
+      if (card) cause = card.cause || "";
     }
-    ss.tick(0.05);
-    if (n.cur && n.cur.id === "jail") cause = n.cur.cause || "";
-  }
-  return { home, cause, sawGuard };
-});
+    return { home, cause, sawGuard };
+  },
+  [{ x: hall.SPOTS.doorway.x, y: hall.SPOTS.doorway.y + 4 }],
+);
 
 g.check(
-  "getting home skips the 9-second countdown and the guard enters about half a second after the door",
-  security.home && !security.home.caught && security.home.search && security.home.delay > 0.35 && security.home.delay < 1.2,
+  "getting home through his doorway, the guard comes in about half a second after him",
+  security.home && !security.home.caught && security.home.room === "closet" && security.home.delay > 0.35 && security.home.delay < 1.2,
   security.home,
 );
 g.check(
-  "a guard's sight uses the existing hall lockup",
-  security.cause === "A tourist saw Squatch in the hall. Security caught him." && security.sawGuard,
+  "a guard's catch uses the one LOCKUP card (who saw him and where)",
+  security.cause === "A tourist saw Squatch on the dance floor. Security caught him." && security.sawGuard,
   { cause: security.cause, sawGuard: security.sawGuard },
 );
 g.check("no page errors", errors.length === 0, errors);

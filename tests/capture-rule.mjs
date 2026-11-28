@@ -39,7 +39,6 @@ const SITES = [
   ["11-ch1-hall.js", /shoo\(Js, kh\(\)\)/, "Chapter 1 S11 shoo (Mops)"],
   ["40-ch4.js", /capture\(FV\.why === "vent" \? "hallvent" : "hallbot"\)/, "Chapter 1 hall alarm"],
   ["12-ch1-redesign.js", /ch1CallSecurity\("delivery"\)/, "Chapter 1 night delivery robot (calls security, sSec)"],
-  ["14-ch1-day2.js", /ch1CallSecurity\("s6"\)/, "Chapter 1 Day 2 lunch guests (call security, sSec)"],
   ["20-ch2.js", /function ch1CallSecurity\(by\) \{\s*sSec\(by,/, "Chapter 1 security goes through sSec"],
   ["20-ch2.js", /d < 48 && capture\(/, "Chapter 2 security (pump, diner, Blorp, sink, Rusty)"],
   ["20-ch2.js", /capture\("lure"\)/, "Chapter 2 lure"],
@@ -54,6 +53,10 @@ const SITES = [
   ["40-ch4.js", /sSec\("gate4"\)/, "Chapter 4 port bot"],
 ];
 for (const [file, re, label] of SITES) g.check(`catch site goes through the rule: ${label}`, re.test(src.find(([f]) => f === file)[1]));
+// The Day 2 lunch sneak (src/modules/lunch-sneak.js) uses the party's own capture rule (party-alarm.js: the witness runs
+// to the FUR alarm, guards search, "They lost you.", or catchSquatch, which is capture() and its LOCKUP card).
+const lunchSrc = readFileSync(join(root, "src", "modules", "lunch-sneak.js"), "utf8");
+g.check("catch site goes through the rule: Chapter 1 Day 2 lunch guests (party-alarm.js, catchSquatch)", /startAlarm\(/.test(lunchSrc) && /tickAlarm\(/.test(lunchSrc) && /e\.catchSquatch\(lockupCause\(/.test(lunchSrc) && !/capture\(|sSec\(/.test(lunchSrc));
 
 const { page, errors } = await g.open("?ch=2");
 const causes = await page.evaluate(() => Object.fromEntries(Object.entries(window.__ss.CAPTURES).map(([k, c]) => [k, c.cause])));

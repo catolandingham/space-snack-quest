@@ -1,4 +1,6 @@
 # Chapter 1: every on-screen word, in story order (for Brian's yes)
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
 Repo copy, synced Monday, November 9, 2026, through R63. The Chapter 1 redesign and the party are now on `main`. A row stays NEEDS BRIAN until Brian approves those exact words. The hallway gallery is not in the game yet.
 Updated Sunday, November 8, 2026, about 11:45 PM PT, then extended through the Nov 9 panels. This is the one list of every word that appears on screen in the Chapter 1 cartoon. Decisions behind each line are in `docs/DECISIONS.md` (codes in brackets); which picture is current is in `docs/STATE.md` and `LOCKED/INDEX.md`.
 
@@ -40,7 +42,7 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 |---|---|---|
 | Home: poster beside the door out | STAY IN HERE! / — Mops | EXISTING (game room art) |
 | Home: calendar on the wardrobe door (closed only) | DELIVERY | EXISTING (game room art) |
-| Home: crate bed badge and calendar badge | MOON PIES | EXISTING (game room art) |
+| Home: crate bed badge and calendar badge | STARS CAKES | EXISTING (game room art) |
 | Home: crate bed side | FRAGILE · THIS SIDE UP (+ drawn up-arrow) | EXISTING (game room art) |
 | Home: Guardian Box | G | EXISTING (game room art) |
 | Delivery room: ship badge and robot mailbox | UPS | EXISTING (game room art) |
@@ -107,7 +109,8 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 ### 4 · TV story *(no panel yet)* [S19]
 | Speaker / surface | Exact text | Status |
 |---|---|---|
-| *(no words decided; "Nobody can live outside" is cut)* | — | — |
+| Station Official, in the last picture | Nobody can live outside. The scrubbers keep us breathing. NO FUR. | In the game since 2026-11-25 (Brian brought the old Wookiee story back word for word, `src/modules/tv-story-lines.js`; S19's cut no longer applies) |
+| Station Official, new wording | We rely on the air scrubbers to keep us breathing. NO FUR. | Approved word for word, Brian 2026-11-26 (replaces the line above; the game changes on the party branch) |
 
 ### 5 · Lunch → the PA *(on the way to panel 01)* [S24]
 | Speaker / surface | Exact text | Status |
@@ -160,7 +163,7 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 ### 13 · Snack stand on the way home *(no panel yet)* [S33]
 | Speaker / surface | Exact text | Status |
 |---|---|---|
-| Person in line | I swear we had more Moon Pies... is that what they stole at lunch? | NEEDS BRIAN (Brian 4:14, 4:31 PM) |
+| Person in line | I swear we had more Stars Cakes... is that what they stole at lunch? | NEEDS BRIAN (Brian 4:14, 4:31 PM) |
 | Mops | Quick, hide. | NEEDS BRIAN (Brian 4:14 PM) |
 
 ### 14 · Their room: the Mars talk *(no panel yet)* [S36]
@@ -219,7 +222,7 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 | Speaker / surface | Exact text | Status |
 |---|---|---|
 | Desk nameplate | MANAGER | EXISTING (game Z6) |
-| Site header | MOON PIES | NEEDS BRIAN (prop on screen) |
+| Site header | STARS CAKES | NEEDS BRIAN (prop on screen) |
 | Site buttons | Order new box / Return empty crate | NEEDS BRIAN (Brian 4:20 PM; S48) |
 
 ### 23 · Pickup day: robots open a crate by the ship; Squatch hides in the mail room — `sketch-09-pickup-day.png` [R41, R40, R38, P13, S53]
@@ -299,4 +302,4 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 ## D. Counts (rows in section C, plus the room labels in B)
 **APPROVED: 1 · EXISTING: 21 · NEEDS BRIAN: 63** (rows whose status starts with those words). Struck and removed rows are not counted. "No words" rows are not counted. Isfred's name tag and every new R58–R63 line are NEEDS BRIAN because they are not in the game yet. The kid's gasp "!" is the game's existing sight mark (R59).
 
-Removed and not to be used: "MAIL ROOM" label (R17), the inspection announcement (S52), "Nobody can live outside" (S19), "A hoof stamp. Mops signed it." (Chapter 2, L2), "Mops, it's a mistake!" (R50), "Cool hat!" as the party knock-off (R60), and "more photos / move on" (R62).
+Removed and not to be used: "MAIL ROOM" label (R17), the inspection announcement (S52), "A hoof stamp. Mops signed it." (Chapter 2, L2), "Mops, it's a mistake!" (R50), "Cool hat!" as the party knock-off (R60), and "more photos / move on" (R62).

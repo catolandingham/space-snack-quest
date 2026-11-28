@@ -4,8 +4,8 @@
  * does nothing, leaves a stuck kid with no way forward (docs/CHAPTER-1-PROBLEMS.md, problem 1;
  * repeat-issues.md, issue 9).
  *
- * For each Chapter 1 beat the game can open (the Day 1 party by ?scene=QA, Day 2 and the night by
- * window.__ss.ch1JumpBeat): walk Squatch away from where the beat starts, hold ↺, and check
+ * For each Chapter 1 beat the game can open (the Day 1 party's scenes P2, P6 and P7 by its own jump, as
+ * ?beat=party:P6 opens them; Day 2 and the night by window.__ss.ch1JumpBeat): walk Squatch away from where the beat starts, hold ↺, and check
  *   (a) he stays in Chapter 1's same part (not the opening in the bedroom),
  *   (b) he has control and a goal afterwards,
  *   (c) ↺ puts him back where the step he is on began (the party and the night use their own restarts).
@@ -25,10 +25,9 @@ async function tryRestart(label, setUp) {
   const r = await page.evaluate(
     ([label, setUp]) => {
       const ss = window.__ss, n = ss.op;
-      if (setUp === "party") {
-        // The party as ?scene=QA opens it, with control.
-        ss.sceneQA ? ss.sceneQA() : null;
-        Object.assign(n, { scene: "QA", room: "hall", ch1Party: true, ch1Disguise: true, ch1PartyOver: false, q: [], cur: null, ctrl: true });
+      if (String(setUp).startsWith("party:")) {
+        // A party scene (src/modules/party.js), opened the way ?beat=party:P6 opens it.
+        ((n.q = []), (n.cur = null), window.SSQ.beat("ch1-party").jump(setUp.slice(6)));
       } else ((n.q = []), (n.cur = null), ss.ch1JumpBeat(setUp));
       for (let i = 0; i < 10; i++) ss.tick(1 / 30);
       const playing = !!n.ctrl && !n.cur && !n.q.length;
@@ -39,7 +38,10 @@ async function tryRestart(label, setUp) {
       const moved = { x: Math.round(n.sq.x), y: Math.round(n.sq.y) };
       ss.sectionReset();
       for (let i = 0; i < 10; i++) ss.tick(1 / 30);
-      const after = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: !!n.ctrl, chip: n.ch1Chip || n.chip || "" };
+      // (cut: a part that is a cutscene, the loading bay's beats 30 to 36, plays again from its start: the story queue
+      // has its steps; loading-bay.js restart; up: a card, a line or a picture waiting for NEXT, as at a beat that opens with
+      // one: the escape's "Six days later" on the home calendar)
+      const after = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: !!n.ctrl, up: !!(n.cur && ["card", "bub", "wait"].includes(n.cur.k)), chip: n.ch1Chip || n.chip || "", cut: !n.ctrl && !!(n.cur || n.q.length) && !!(window.SSQ.beat("ch1-bay") && window.SSQ.beat("ch1-bay").active()) };
       const putBack = after.x !== moved.x || after.y !== moved.y || after.step !== before.step;
       return { label, playing, before, moved, after, putBack };
     },
@@ -50,15 +52,15 @@ async function tryRestart(label, setUp) {
   return r;
 }
 
-const results = [await tryRestart("Day 1 party", "party")];
+const results = [await tryRestart("Day 1 party, the sneak (P2)", "party:P2"), await tryRestart("Day 1 party in disguise (P6)", "party:P6"), await tryRestart("Day 1 party, the FUR alarm (P7)", "party:P7")];
 for (const b of BEATS) results.push(await tryRestart(`beat ${b}`, b));
 
 const toOpening = results.filter((r) => r.before.scene !== "O1" && r.after.scene === "O1");
 g.check("↺ never sends him back to the opening from a later part of Chapter 1", toOpening.length === 0, toOpening);
 const otherPart = results.filter((r) => r.after.scene !== r.before.scene && r.after.scene !== "O1");
 g.check("↺ keeps him in the same part of the chapter", otherPart.length === 0, otherPart);
-const stuck = results.filter((r) => !r.after.ctrl || (r.before.chip && !r.after.chip));
-g.check("after ↺ he can move and has a goal", stuck.length === 0, stuck);
+const stuck = results.filter((r) => (!r.after.ctrl && !r.after.cut && !r.after.up) || (r.before.chip && !r.after.chip));
+g.check("after ↺ he can move and has a goal (or, in the loading bay's cutscene, the part plays again; or the card or line his part opens with waits for NEXT)", stuck.length === 0, stuck);
 // The party (QA) and the night (Q4) keep their own restarts (CH1_CHECKPOINTS). Everywhere else ↺ puts
 // him back where the step he is on began, on that same step (noteCh1Step in src/game/20-ch2.js).
 // Only beats that open with the player in control: a beat that opens in a cutscene has no step start yet.

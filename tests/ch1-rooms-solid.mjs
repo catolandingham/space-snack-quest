@@ -23,7 +23,7 @@ const FLOOR_Y = 256;
 const pic = (x0, x1, y0, y1) => ({ x0: Math.round(x0 * 0.75), x1: Math.round(x1 * 0.75), y0: Math.round((y0 * 640) / 830), y1: Math.round((y1 * 640) / 830) });
 
 const ROOMS = [
-  { id: "party hall, outside the party (lunch on Day 2)", set: { room: "hall", scene: "Q3", ch1D: true, ch1Party: false }, floor: true, things: [] },
+  { id: "party hall, outside the party (lunch on Day 2)", set: { room: "hall", scene: "Q3", ch1D: true }, floor: true, things: [] },
   { id: "hallway", set: { room: "passage", scene: "QP", ch1D: true }, floor: true, things: [] },
   {
     id: "manager's office",
@@ -36,10 +36,10 @@ const ROOMS = [
   },
   {
     id: "loading bay by day",
-    set: { room: "hangar", scene: "Q4", ch1D: true, ch1Night: false },
+    set: { room: "hangar", scene: "Q4", ch1D: true, ch1Night: false, ch1Ship: true }, // (the scanner arch's posts are there only with a ship docked)
     floor: true,
     things: [
-      { name: "plant", box: pic(137, 197, 455, 480) },
+      { name: "plant", box: pic(363, 423, 455, 480) }, // (v3: moved right of the bin)
       { name: "bin", box: pic(252, 316, 465, 485) },
       { name: "left post of the scanner arch", box: pic(465, 485, 515, 540) },
       { name: "right post of the scanner arch", box: pic(757, 777, 515, 540) },
@@ -58,7 +58,7 @@ async function place(room, x, y) {
   await page.evaluate(
     ([set, x, y]) => {
       const ss = window.__ss, n = ss.op;
-      Object.assign(n, { q: [], cur: null, ch1Party: false, ch1Office: false, ch1Night: false }, set);
+      Object.assign(n, { q: [], cur: null, ch1PartyNow: null, ch1Office: false, ch1Night: false }, set);
       Object.assign(n, { ctrl: true, sqPose: "stand", walkTo: null, moPose: "hidden" });
       ss.hall.camX = 0;
       n.sq.x = x;

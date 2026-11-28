@@ -26,7 +26,7 @@ The calendar ("LOOK · calendar" and its close-up) and the "That evening…" car
 | 7 | Homework cutaway, second picture: the heading at the top of the sheet | I SWEATY | sheet | approved | G 567 (I sweaty); okayed G 579 |
 | 8 | Homework sheet, under the heading | Name: Squatch | sheet | approved | okayed G 579 |
 | 9 | Homework sheet, the subject | SPACE MATH | sheet | approved | Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet) |
-| 10 | Homework sheet, first sum | 2 + 2 = 4 Moon Pies | sheet | approved | Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet) |
+| 10 | Homework sheet, first sum | 2 + 2 = 4 Stars Cakes | sheet | approved | Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet); the snack renamed, Brian 2026-11-26, question 86 |
 | 11 | Homework sheet, second sum | 4 − 4 = yum! | sheet | approved | Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet) |
 
 Lines that need your yes: none left (you said yes to 9, 10 and 11 on 2026-11-23: "13A", "Good with the 3 words on the homework sheet").

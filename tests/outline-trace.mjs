@@ -56,7 +56,8 @@ for (let y = 0, best = -1; y < 30; y++) {
   c > best && ((best = c), (row = y));
 }
 let runs = 0;
-for (let x = 41; x < 80; x++) if (!!line[row * w + x] !== !!line[row * w + x - 1]) runs++;
+// (along the whole top side, corners included: the line is 7.5 wide since 2026-11-26, so its rows run further)
+for (let x = 31; x < 90; x++) if (!!line[row * w + x] !== !!line[row * w + x - 1]) runs++;
 check("the line is dashed, not solid", runs >= 4, runs);
 
 if (failed) {

@@ -1,4 +1,4 @@
-// Chapter 1 scene 1 (walkthrough beats 1-3): the chapter reset, the hand-overs to the morning and party modules (src/modules/morning.js, party.js), the calendar close-up, and the party cones of the older free play.
+// Chapter 1 scene 1 (walkthrough beats 1-3): the chapter reset, the hand-overs to the morning and party modules (src/modules/morning.js, party.js), and the calendar close-up.
     // The chapter's state, reset at the start of Chapter 1 (the morning beat and its fallback both start here).
     function ch1ResetState() {
       ch2.qCheck = null;
@@ -20,27 +20,15 @@
         (n.ch1Trail = []),
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
-        (n.ch1Party = !1),
-        (n.ch1Disguise = !1),
-        (n.ch1Photo = !1),
-        (n.ch1BarDone = !1),
-        (n.ch1Cut = null),
         (n.ch1PartyNow = null),
-        (n.ch1Search = !1),
-        (n.ch1Mini = ""),
-        (n.ch1OctChase = !1),
+        (n.ch1Lunch = null), (n.ch1Bay = null),
+        (n.ch1Evening = null),
+        (n.ch1Escape = null),
+        (n.ch1Pickup = null),
         (n.ch1SureEnd = !1),
-        (n.guard = null),
-        (n.ch1Raid = null),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
         (n.ch1Calendar = null),
-        (n.ch1PadOn = !1),
-        (n.ch1Chain = !1),
-        (n.ch1Flyer = !1),
-        (n.ch1PartyT = 0),
-        (n.ch1PartyOver = !1),
-        (n.ch1Fur = !1),
         (n.ch1Morning = null),
         (n.sqLift = 0),
         (n.mo.walking = !1),
@@ -63,6 +51,14 @@
     // The party night's module (src/modules/party.js), or null if the module script did not load.
     function partyBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-party")) || null;
+    }
+    // The module that draws the room now (the party night or the lunch sneak in the hall, the loading bay), or null.
+    function hallBeat() {
+      return (window.SSQ && window.SSQ.hallOwner && window.SSQ.hallOwner()) || null;
+    }
+    // True while the party's snack close-up is open (src/modules/party-snacks.js): taps and drags go to it.
+    function partyCutOpen() {
+      return !!(partyBeat() && partyBeat().cutOpen && partyBeat().cutOpen());
     }
     // True at home that evening before the peek (party P1): the calendar is still there to look at.
     function ch1PartyAtHome() {
@@ -93,7 +89,7 @@
       window.SSQ.handOver &&
       window.SSQ.handOver({
         queue: (items) => J(items),
-        say: (who, text, style) => v(who, text, style || "say"),
+        say: (who, text, style, ear) => v(who, text, style || "say", !!ear), // ear: an overheard line (the ear icon)
         card: (id, text) => ({ k: "card", id, text }),
         run: (f) => N(f),
         until: (f) => cV(f),
@@ -101,7 +97,7 @@
         tapWait: () => ({ k: "wait", t: 0 }),
         current: () =>
           n.cur
-            ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "", panel: n.cur.panel, el: n.cur.el || 0, over: !!n.cur.over }
+            ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", text: n.cur.b ? n.cur.b.text : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "", panel: n.cur.panel, el: n.cur.el || 0, over: !!n.cur.over }
             : null,
         // Steps that come in front of the one up now, which comes back after them (Brian 31a: Mops's line over
         // the close-up). An item with over: true is drawn over the picture up now.
@@ -125,10 +121,9 @@
         face: (who, f) => {
           (who === "mops" ? n.mo : n.sq).f = f;
         },
-        step: (who, x, y, speed, dt) => mV(who === "mops" ? n.mo : n.sq, x, y, speed, dt),
-        still: (who) => {
-          (who === "mops" ? n.mo : n.sq).moving = !1;
-        },
+        step: (who, x, y, speed, dt) => ((o, w) => (w ? (mV(o, w.x, w.y, speed, dt), !1) : mV(o, x, y, speed, dt)))(who === "mops" ? n.mo : n.sq, window.SSQ && window.SSQ.roomWaypoint ? window.SSQ.roomWaypoint(who === "mops" ? "mops" : "sq", who === "mops" ? n.mo : n.sq, x, y) : null), // round solids (room-model.js)
+        still: (who) => ((who === "mops" ? n.mo : n.sq).moving = !1), roomSolids: () => ih(), roomBounds: () => sn(), // (the room model reads the room: room-model.js)
+        stopWalk: () => (n.walkTo = null), // a tap's walk ends (he hid where he stands: src/modules/lunch-sneak.js)
         // While Mops walks, he is not solid (he would shove Squatch in a jump; see R0).
         moWalking: (on) => {
           n.mo.walking = !!on;
@@ -179,11 +174,45 @@
         sfx: (name) => D[name] && D[name](),
         // The goal's yellow outline round a party spot's real thing (drawGoalMark keeps n.lastRing for the chip).
         markGoal: (spot) => drawGoalMark(spot),
-        // Half one ends: Squatch walks into the older free play in his outfit (src/game/12-ch1-redesign.js).
-        startFreePlay: () => ch1FreePlayStart(),
+        // The party night (P6 to P8): Mops in the hall at closing time (on `ctx`), an ambient line that fades by itself
+        // ("Say cheese!"), stars, beat 20 (the TV story) after "You have me."; the L2 ball and its rule (R43), for the lunch.
+        drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
+        ball: { radius: BALL_NOTICE_RADIUS, seconds: BALL_NOTICE_SECONDS, drawOn: (ctx, x, y, k) => onCtx(ctx, () => (e.save(), e.translate(x, y), e.scale(k, k), drawL2Ball(0, 0), e.restore())) },
+        ambient: (who, text, style) => kV(who, text, style),
+        addStars: (k) => {
+          n.stars = (n.stars || 0) + k;
+        },
+        tvStory: () => J(ch1TvEvening()),
+        // The home morning (src/modules/home-morning.js): the calendar close-up, then on to the lunch sneak.
+        openCalendar: (next) => ch1OpenCalendar(next),
+        takeLunch: () => ch1TakeLunch(),
+        shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
+        // The loading bay (src/modules/loading-bay.js): a locked room picture by the older program's name (it is then the
+        // one goal outlines trace), Dot, Bob and Lou as the room draws workers.
+        drawLocked: (ctx, id) => onCtx(ctx, () => drawLockedRoom(id)),
+        drawWorker: (ctx, x, y, name) => onCtx(ctx, () => u5({ x, y, name: name || "" })),
+        // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line).
+        switchTo: (who, byLine) => ((SWITCH_WHY.__beat = byLine || ""), switchTo(who, byLine ? "__beat" : "")),
+        // The evening (src/modules/evening.js): the papers' record (ch1SetPaper), and beat 43 after night one.
+        paper: (p) => ch1SetPaper(p),
+        sixDays: () => ch1SixDays(),
+        // The escape (src/modules/escape.js): the walk between rooms, beat 53 after it, the one capture rule's guard
+        // (and whether it is out), the robot drawing (the evening's too).
+        goTo: (dest, flags, next) => ch1GoDay(dest, flags, next),
+        chapterEnd: () => ch1ChapterEnd(), // the end of Chapter 1, after pickup.js's beat 61
+        // Who the stick drives (switchTo, announced by the card "You are MOPS now." when `why` is given), and who it is.
+        playAs: (who, why) => switchTo(who, why),
+        playing: () => (x.mops ? "mops" : "sq"),
+        callSecurity: (by) => ch1CallSecurity(by),
+        secOn: () => !!ch2.sec,
+        drawRobot: (ctx, x, y, mail, k) => onCtx(ctx, () => dq(x, y, !!mail, k)),
+        offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),
         squatchScale: () => wl,
+        // Who the player is, and the switch (the party cleanup, src/modules/party-cleanup.js): its card, with `by` as its why, comes first.
+        player: () => (x.mops ? "mops" : "sq"),
+        switchTo: (who, by) => !!x.mops !== (who === "mops") && (switchTo(who === "mops" ? "mops" : "squatch"), by && n.q.unshift({ k: "card", id: "switch", who: who === "mops" ? "mops" : "sq", text: "You are " + (who === "mops" ? "MOPS" : "SQUATCH") + " now.", by })),
         text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
       });
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.
@@ -193,7 +222,7 @@
       let beat = window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-morning"),
         alone = !!(beat && beat.homeAlone && beat.homeAlone());
       return n.ctrl && n.hopOut < 0 && !de() && n.room === "closet" && n.wardrobe !== "open" &&
-        !n.ch1Day2 && !n.ch1Party && !n.ch1Zoom && !n.ch1Calendar &&
+        !n.ch1Day2 && !n.ch1Zoom && !n.ch1Calendar &&
         (n.scene === "O1" || (n.scene === "Q1" && (alone || ch1PartyAtHome())));
     }
     function ch1CalendarSpots() {
@@ -302,7 +331,7 @@
         }
         item.lines.forEach((line, i) => calendarText(line, x, y + 49 + (i - (item.lines.length - 1) / 2) * 22, 22));
       }
-      calendarText("Sponsored by MOON PIES", 360, 492, 25, "#8b5a3c", "center", 700);
+      calendarText("Sponsored by " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), 360, 492, 25, "#8b5a3c", "center", 700);
       // A very enthusiastic red crayon circle, not an extra clue or a new delivery date.
       ctx.strokeStyle = "#e5533d";
       ctx.lineWidth = 3;
@@ -334,42 +363,8 @@
       e.translate(460, 320); e.scale(0.92 + 0.08 * zoom, 0.92 + 0.08 * zoom);
       e.drawImage(paper, -360, -265);
       e.restore();
+      hmBeat() && hmBeat().drawCalendar(e, zoom); // Day 2: today's marks (src/modules/home-morning-art.js)
       // No paw on the close-up (Brian 2026-11-23: "It's the calendar paw that doesn't make sense").
       // At 375px wide this remains a roughly 44px target, unlike the older cut-in X.
       L(880, 540, 58); r("#ffffff", 4); g("X", 880, 540, 40, "#1e2430", "center", 900);
-    }
-    // Sight cones on everyone at the party (Brian, 2026-11-23: "let's try all of them and then we can adjust").
-    // Who stands where; which way they look comes from src/modules/party-watch.js. The guest by the door keeps
-    // his own turning cone during the sneak (above).
-    function ch1PartyPeople() {
-      let out = [];
-      CH1_GUESTS.forEach((g) => {
-        out.push({ id: (window.SSQ && window.SSQ.guestId(g[2])) || g[2], x: g[0], y: g[1] });
-      });
-      for (let id in CH1_PARTY_CAST) {
-        let at = id === "octopus" && n.ch1Oct ? [n.ch1Oct.x, n.ch1Oct.y] : CH1_PARTY_CAST[id];
-        out.push({ id, x: at[0], y: at[1] });
-      }
-      return out;
-    }
-    // The cones, while the player sneaks to the plant or walks the party in disguise; each knows whether
-    // Squatch is inside it (the game's own sight check, so the shaded area is exactly where he is seen).
-    function ch1PartyCones() {
-      if (!(window.SSQ && window.SSQ.partyCones) || n.room !== "hall" || !n.ch1Party) return [];
-      if (!(n.ch1Disguise && !n.ch1PartyOver)) return [];
-      return window.SSQ.partyCones(ch1PartyPeople(), n.sq, (n.ch1Look || 0) > 0, { half: STAND_CONE_HALF, len: STAND_CONE_LEN }).map((c) => ({ ...c, half: STAND_CONE_HALF, len: STAND_CONE_LEN, askOnly: !0 }));
-    }
-    // Drawn under the people in drawCh1Party: whole cones (the party module's drawCones: furniture never cuts a
-    // cone short), each shown only when Squatch is near it (the distance fade); the one he is in fills yellow.
-    // In disguise a cone only brings a "?" over whoever sees him, never a catch (askOnly, read by
-    // tests/ch1-kid-play.mjs).
-    function drawCh1PartyCones() {
-      let pb = partyBeat(),
-        cones = pb ? pb.drawConesOn(e, ch1PartyCones(), n.sq, n.sqPose === "hidden") : [];
-      cones.forEach((c) => (c.mark = c.inside ? "?" : ""));
-      n.ch1Cones = cones;
-    }
-    // Drawn last in drawCh1Party: "?" over everyone whose cone has Squatch in it (in disguise).
-    function drawCh1PartyMarks() {
-      (n.ch1Cones || []).forEach((c) => c.mark && g(c.mark, c.x, c.y - ADULT_PX * 1.25 - 8, 36, "#ffcf33", "center", 900));
     }

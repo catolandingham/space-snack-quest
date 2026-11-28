@@ -323,7 +323,7 @@
           at: [G0.x, 330],
           when: padMo && !Q.log,
           f: () => {
-            ((Q.log = !0), ee("secret", "deliverylog", G0.x, 320), TV([{ k: "panel", id: "dlog" }, v("mops", "...Pancake stand. Every Tuesday.")]));
+            ((Q.log = !0), ee("secret", "deliverylog", G0.x, 320), TV([{ k: "panel", id: "dlog" }, v("mops", "..." + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand. Every Tuesday.")]));
           },
         }),
         spot({ id: "zip", verb: "ASK", cap: "Zip", who: "mo", x: Af.x, y: Af.y + 40, r: 120, at: [Af.x, 280], when: padMo, hot: !0, f: s6 }),
@@ -423,7 +423,7 @@
           { k: "panel", id: "route" },
           v("sq", "Phobos! Mars is RIGHT next door!"),
           v("mops", "Folks here still jump at a Squatch. Searchlights and gate bots lock you up. Keep your head down."),
-          v("sq", "Which way to the pancake stand?"),
+          v("sq", "Which way to the " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand?"),
           { k: "panel", id: "brochure" },
           v("mops", "The address is under the coffee."),
           v("mops", "We need someone who knows the way."),
@@ -456,7 +456,7 @@
         (n.act = null),
         n.pulse.clear(),
         J([
-          v("mops", "Could you take us to the pancake stand on Mars?"),
+          v("mops", "Could you take us to the " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand?"),
           v("zip", "Sure, if you help me first. My star map's locked in the old temple."),
           v("zip", "Door only opens for sunlight. Rovers guard the mirrors."),
           v("sq", "Mops! Sing to the rovers. Like at the gas stop!", "whisper"),
@@ -984,7 +984,7 @@
           [
             ["PHOBOS \xB7 Rover garage", "2 dozen"],
             ["MARS \xB7 Crater Caf\xE9", "1 dozen"],
-            ["MARS \xB7 Pancake stand", "3 dozen, every Tuesday"],
+            ["MARS \xB7 " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand", "3 dozen, every Tuesday"],
           ].forEach((o, i) => {
             (g(o[0], -170, -80 + i * 80, 20, i === 2 ? "#e5533d" : y, "left", 900),
               g(o[1], -170, -52 + i * 80, 16, "#59657d", "left", 700));

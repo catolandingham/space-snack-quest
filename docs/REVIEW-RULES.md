@@ -3,22 +3,58 @@
 
 | Lines | Heading |
 | --- | --- |
-| 22–25 | # Review rules |
-| 26–77 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 78–80 | ## Techniques |
-| 81–83 | ## Mistake: locked art was redrawn |
-| 84–88 | ## Mistake: optional inspection interrupted getting out of bed |
-| 89–91 | ## Mistake: a big doc's section index went stale |
-| 92–94 | ## Mistake: a rebuilt beat forgot the step restart |
-| 95–97 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 98–100 | ## Mistake: a killed run was read as a failing test |
-| 101–103 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 104–106 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 107–113 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 114–121 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 122–130 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 131–142 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 40–45 | ## Mistakes Brian's videos of Day 2 and the chapter's end caught: physics (2026-11-27) |
+| 46–50 | ## Mistakes caught building pickup day (2026-11-26 night) |
+| 51–57 | ## Mistakes caught building the escape rebuild (2026-11-26 night) |
+| 58–61 | # Review rules |
+| 62–113 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 114–116 | ## Techniques |
+| 117–119 | ## Mistake: locked art was redrawn |
+| 120–124 | ## Mistake: optional inspection interrupted getting out of bed |
+| 125–127 | ## Mistake: a big doc's section index went stale |
+| 128–130 | ## Mistake: a rebuilt beat forgot the step restart |
+| 131–133 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 134–136 | ## Mistake: a killed run was read as a failing test |
+| 137–139 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 140–142 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 143–149 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 150–157 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 158–174 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 175–187 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 188–190 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 191–193 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 194–202 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 203–214 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 215–226 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 227–240 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 241–247 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 248–258 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 259–268 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 269–274 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 275–280 | ## Mistakes caught joining Day 2 (2026-11-27) |
+| 281–294 | ## Mistakes caught building the loading bay (2026-11-26) |
+| 295–308 | ## Mistakes caught building the evening and night one (2026-11-26) |
+| 309–317 | ## Mistakes caught building the escape (2026-11-26) |
+| 318–328 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
 <!-- /section-index -->
+## Mistakes Brian's videos of Day 2 and the chapter's end caught: physics (2026-11-27)
+- Only the player's own walk asked the room what is solid; scripted moves (Mops following Squatch, the alarm's runner, the pushed crate) went in straight lines through the counter, the walkway and the robot, and each beat kept its own solids. Every scripted step of Squatch and Mops now goes through the room model (`src/modules/room-model.js` `roomWaypoint`, from the engine's `step`), module movers through `stepRound`, and a pushed thing is checked with `boxFits`/`addKeeper` in the same frame as the step. A new mover goes through it, and `tests/room-physics.mjs` samples `physicsNow()` and `physicsLog()` the whole time.
+- The home room painted the crate bed again over everyone whenever Squatch alone stood behind it, so Mops in front vanished under it. A thing in a locked picture that people stand behind has a floor line (`HOME_BASELINES`) and is drawn in the same back-to-front list as the people (`homeDepthItems`); the test counts Mops's pixels over the bed, run once on the old build to see 0.
+- Feet are a point, but Mops's body is twice as wide as the feet box the solid lists allow for, so his body went over the crates and the tourist. A walker's solids grow by how much wider than a feet box he is (`bodyExtra`), and by what he pushes (`setCarry`).
+- The pushed crate was sized against home by the room rule, but home draws people at three times their scale, so the crate came out twice the size of the crates it joins. A thing that travels between rooms is sized by the room's Squatch (`crateK`), and one size rule covers it in every room.
+- The goal's dashed line was drawn over Mops by `markBox`, which had no list of people to leave out. Highlights leave out the people's boxes (`peopleBoxesNow`), except in close-ups.
+## Mistakes caught building pickup day (2026-11-26 night)
+- A switch card (`playAs` with a reason) queued from inside a story step goes to the end of the queue, so the lines queued after it played before the card and the step's own start ran last (the dress-up's lines came before "You are SQUATCH now."). Queue a switch last, and put what follows it in the function it calls.
+- A goal line was the same words as an older beat's ("Squatch: hide in the plant"), and the goal test keys goals by their words, so the new one silently replaced the old one's check. Goal lines are unique words.
+- A yellow drawing made of straight lines (a crayon rocket's flame, a bucket drawn with lineTo) reads as a yellow arrow to the goal test. Props drawn in yellow use rounded shapes, or another colour.
+- Squatch hidden in a crate stood where the crate was, and the home room drew him there standing. Someone inside a thing is off the picture (-400), and his bubbles point at the thing (speakerAt).
+## Mistakes caught building the escape rebuild (2026-11-26 night)
+- A walk-through doorway whose opening lay past the room's walking edge could never be walked into (feet stop at the edge, and a tap's walk stops up to 8 short of it). Every doorway's opening overlaps the floor his feet can reach, and a test walks through each one (tests/escape-vent.mjs).
+- "Robot! Duck!" was said with no robot to see: its light showed only after he hid. A warning's danger is drawn from the warning on.
+- A +50 secret paid again after ↺, because ↺ does not take stars back. A secret pays once per beat, kept outside the restored state.
+- Goals in the second and later rooms of a walk had no outline (the vent in the bay, the keypad in the hallway), and the goal test looked only in the first room. Each room of a walk outlines where he is going.
+- A test helper that reads "lines until control comes back" kept reading into the next scene's lines; a helper that reads lines stops at a count or at the step it expects.
+
 # Review rules
 
 Copied word for word on 2026-11-06 from the "Process: review checklist" section of `HANDOFF.md` (HANDOFF: Space Snack Quest v3, updated 2026-11-02, in the Grok workspace zip). Do not edit these rules without Brian's yes. `CLAUDE.md` at the repo root holds the short form.
@@ -119,6 +155,42 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - A test read the source for `size: 42` instead of measuring the mark drawn. Measure what is drawn (review rule 22).
 - Drawings for a later half and a look Brian did not pick sat in shipped modules. They live in `tools/` until the half that uses them.
 
+## Mistakes caught building the party rebuild, half two (2026-11-24)
+- Two pieces of state shared one name (`p.lost` was both "They lost you." and the outfit's lost pieces), and the game threw every frame. A new field on a shared state object gets a name no other module uses; grep the state's name before adding one.
+- Moving a beat to modules deleted the code that held tuning pins. Move each pin with its value and its name to the module that now owns the rule, point docs/TUNING-PINS.json at it, and list retired pins (their feature deleted) for Brian; never drop a pin silently.
+- The party asked the old sound table for "chime", which it never had, so three moments were silent and no test noticed. A module plays its own sounds and a test reads what was played (`now().sound.played`).
+- Joe's home theme played through the party night because the music picker only knew the old flags. A rebuilt beat that owns a room says so to the music picker (`warmWhy`), with a test.
+- The independent review of PR #87 found a fully dressed kid standing still caught in 7 seconds, in his first minute. A rule that can end a scene gets a "do nothing for a minute" test with the real numbers (`tests/party-free.mjs`: 60 s still in the spotlight).
+- A test set the octopus's rest to 0, so "a second hug knocks it off" passed while the real numbers (rest 14 s, straighten 8 s) made it impossible. Tests run with the shipped numbers; a test may wait, never zero a timer the player lives with.
+- Bubbles and labels sat on Squatch in the stills ("Say cheese!", DANCE · circle, a name tag over "Mops!"). Party tests read the bubble's and the label's boxes against Squatch's (`overSquatch`), and the label rule tries beside him before giving up.
+- Guests, the band and Mops walked through Squatch, and he stood on Isfred. Anyone who walks checks whether Squatch is in the way and waits; every person who stands still is solid.
+
+- The first "wait for Squatch" rule only stopped people walking toward him, so people leaving at closing time brushed past him sideways, 21 px apart. Everyone in the party walks with one helper that goes round him or waits (`stepClear` in `party-hall.js`), keeping further off in front of him, where a taller guest covers him; a walker he blocks waits only a moment, so the party always ends. `tests/party-free.mjs` and `tests/party-endings.mjs` measure how close anyone walking comes.
+- A test named the camera tourist as the guest who takes the second look; the plan names no guest, and a milling guest often gets there first. A test checks what the plan says (the same guest turns, stares and raises the alarm) and names a person only where the game makes it so.
+- The double-take "?" and the "FUR!" burst are drawn over the guest's head, so a guest standing just below Squatch put them on his head (the second-look still). Every mark the party draws moves beside the guest when it would cover him, and the test measures where the "?" is drawn.
+- A suite printed "checks passed" and then did not exit for many minutes: Chrome's crash handler and Google Updater, started by the test Chrome, kept its output pipes open after the browser closed. The game and the test were fine. Before calling a suite hung, look for "checks passed" or "Failed:" in its output, and wait on that line rather than on the process ending.
+- Giving him control at closing time and making his hall door a circle broke two older suites that drive the party their own way (`ch1-playthrough` waited for control to be off; `every-goal-has-target` stood him inside the new trigger); only the full run found them. When a scene's control, trigger or timing changes, grep `tests/` for that scene's name and run every suite that drives it before the full run.
+- In the retaken videos a "?" stayed over a guest after the alarm started and on into closing time: the double-take and the last look were never cleared when the scene moved on. Moving to the alarm or to closing time clears every per-guest look (`curious`, `seenBy`), and tests count the "?" and "!" actually drawn.
+
+## Mistakes caught building party round three, Brian's video notes (2026-11-24)
+- The brief guessed the white ring at his door was the go-home spot's ring; it was the walk-tap ring, drawn by other code. Before changing a drawing Brian points at, find what draws it from the frame itself (the video frame, then a with-and-without picture diff), not from a guess.
+- A raised paw was drawn behind his ear, so one pose had only one paw showing. A posed figure is checked in every pose, by the colour at the place each part should show.
+- A colour check sampled the edge of a shape (the ear, which the head's outline crosses) and failed for the wrong reason, and an earlier version sampled a place the change never touched, so it passed with and without the change. A colour check samples well inside the shape, says how many of its samples lie inside the thing being tested, and is run once without the change to see it fail.
+- A still was taken after reading the game's state, and the game had moved on (the guard had already lost him). For a still of one exact moment, stop the game's clock on that frame first (`freeze` in `tests/party-round3.mjs`).
+- A test pressed the action button on the same tick he got control, before the game had offered the action. A test waits for the offer it is about to press (`n.act`), as a kid waits for the button.
+- A speed check took the slowest single tick, which is short whenever a walker turns a corner inside a tick. Speed is measured over the whole walk; the longest single step is the check for jumps.
+- Deleting one helper took its neighbour with it (the tests' `seenByNow`), and only the next test run showed it. After deleting a block, build and run the suite that reads it before making the next change.
+- The reviewer of round three found a check that could not fail: it moved the drawn beam and the point it tested by the same amount, so "the beam covers where he is seen" was true whatever the code did. For every check, name the change to the game that would make it fail; if there is none, it is not a check. (The beam is drawn higher than the floor patch sight is measured on; the tests now check the thing a kid reads: the beam lies on his head when he is seen. Brian is told the difference.)
+- The push back at the hallway doorway started a line, and the same frame could still start an alarm or closing time, so the line could have shown over either. The frame that starts a scripted moment does nothing else, anything that could end the scene waits for it, and a test starts the other thing in the middle (the last song ending during the push back).
+- The searching look, asked for the guard who follows him home, was also given to the hall guards. Build a look for the one character Brian named; list the others it could suit and ask.
+- A length was typed twice (the flash's 0.25 in the code, `PHOTO.flash` in the table the test read). A number a test reads from a table must be the number the code uses.
+
+## Standing rule: painstakingly obvious (Brian, 2026-11-24)
+His words, on the snack close-up, for every piece of the game: "It just needs to be more painstakingly obvious, and we need to kind of build this as a core thing we're looking at all times." Before a picture or a beat goes to Brian, ask of each thing on screen: would a 10-year-old know what it is, what it is doing and what he can do about it, without being told? If the answer needs a sentence of explaining, the drawing is not done.
+
+## Standing rule: nobody walks through furniture (Brian, 2026-11-26)
+His note on the home morning (video note 0:18): "he kind of glitches through the crate... is there a physics rule we can adopt for the future?" The rule, word for word as the phase-3 brief gives it: "Nobody walks through furniture: every walk goes round it, checked by a test over every scripted walk." Every walk a beat scripts is a list of corners in its own module (the home morning's `HOME_MORNING_WALKS`, the bedtime story's `BEDTIME_WALKS`) that the code walks, and `tests/scripted-walks.mjs` samples each one every 2 px against the furniture boxes (`tests/data/home-furniture.json`, the ones `tests/standing-spots.mjs` uses) and the things on the floor. A new scripted walk goes in such a list and in that test in the same change.
+
 ## Mistakes caught building the morning sound (2026-11-24)
 - A sound timed to a picture was checked against the time read after the frame that played it, so it looked a frame late. A sound check reads the picture's time at the moment the sound played (the step's `el` less that frame), and allows one frame.
 - A wait on a real clock (the snoring's audio clock) met a test that only ticks the game: the room's snores did not come. A test that counts sounds booked on the audio clock lets real time pass there.
@@ -139,3 +211,118 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - The reviewer found the bucket's drips rose through the whistle's own pitches (1.1 to 1.7 kHz), the very mix-up Brian asked to end, and the check compared peaks that were mostly noise. A new sound that plays near another is measured in that sound's band (the drip now falls in pitch, under 700 Hz, and the test measures above 1 kHz).
 - The reviewer found a branch for Mops standing far to the left of his bucket that nothing in the loop can reach, and no test ran it. Code for a case that cannot happen is deleted, not kept.
 - The reviewer found the beard was never measured against the painted bucket (only the shine was), and a level check read the number in the source. Measure the drawn beard and the rendered sound.
+
+## Mistakes caught building the snacks and the dance, and merging them (2026-11-24)
+- A snack in his paw when the close-up closed went into the bag without its stars, because the stars were paid only where a snack lands. When something can be earned on two paths (the usual one, and a close in the middle), pay it in one place both paths go through (`snackShut`), and test closing in the middle of the action.
+- A check labelled "a 44 px target" tested for 30. The number in a check is the number in its label; if the drawing does not meet it, change the drawing or change what is claimed, and say so.
+- The dance's size and its smallest target were typed in the rules file and again in the drawing file. A number the drawing and the rules share is exported by one of them.
+- A long "do nothing" check set the song's clock back so the song would not end the dance. Start a fresh scene with time to spare instead of resetting a clock the player lives with.
+- A drawing read a list only the game's tick creates. A drawing never assumes the tick ran first; it draws a hand-made or brand-new state without throwing.
+- A test that steps the game by its own ticks waited for the bartender to turn while a line was up. The bar waits while a line is up, so the wait ran out without saying so and the next step ran in the wrong moment. A "run until" helper's time-out is checked, and a test taps a line away (or checks for it) before waiting on anything the line pauses.
+- A NEXT pressed in a line's first moments is ignored or only finishes writing the line. A test presses NEXT the way a kid does: after a moment, and again until the line is gone.
+- The paw icon sat on the hall pyramid's top snack and nobody had noticed. Before changing a close-up, look at the picture it opens from, with its icon on.
+- Another guest's line (the octopus's hiccup) can come up in the middle of the thing under test and pause it. A test of one toy either keeps inside the first minute or taps other guests' lines away as a kid would.
+- Merging the two party branches, a new check ("once the staring is over the octopus notices") was written from how the builder thought the scene ends; in the game a kid who stands still after the crash is seen and the alarm starts first. Before writing a check about what happens next, run the scene once and read what does happen.
+
+## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24)
+- The TV's place was typed from the older program's drawing code, which the locked home picture does not follow (the real TV is 37 higher), so the button was drawn in mid-air under the shelf. Measure a thing in a locked picture from the picture itself (a pixel scan in the running game), never from old drawing code.
+- A flag was set for the older program to draw the TV on, and nothing changed on screen: the room is a picture now. After handing a drawing job to other code, look at the frame before writing the test's expectation.
+- The scene after the hat grew by four lines and a walk, and Mops carried the lifted hat on his face to the TV. When a scene is made longer, check what every character is still holding from the moment before.
+- A glow made with a canvas shadow turned the white flyer yellow, because each later shape's shadow falls on the shapes drawn before it. Draw a glow as its own soft patch behind the thing, then the thing with no shadow.
+- The flyer's place was chosen first ("the stage's end") and the dancers' sight mapped second; every way to it was inside a cone. Before choosing where a thing to sneak to goes, map who sees what from the game's own cones (tests/party-flyer.mjs keeps the map as a check: a clear way, how wide, and that the straight line is not clear).
+- The sound suite played every quiet line in Mops's voice, so Squatch's quiet lines "failed". A test plays a line with its own speaker.
+- A test compared a resting place with where Mops stood, read after Mops had walked off. A check about a moment reads the state at that moment, or compares with someone who has not moved since.
+- The independent review of the flyer sneak found the flyer's box typed twice: in the party's own table and again in the goal-outline table. A goal outline for a thing the game draws reads that thing's own box (`GOAL_TARGETS["hall:grab-flyer"].rect` is `FLYER.box`), and a test checks they are one object.
+- The same review found the new ending's restart tested only at its very end (the TV on). A scene that gained steps gets a restart check in the middle of each new step (the hat going down, the horn press), then one clean run to the end.
+- A still tool set a Day 2 flag by hand (the office flag in the hall) and drew a room the game never shows that way. A hand-made state for a still copies a state the game itself makes (read the scene's own set-up first), and the report says which stills are hand-made.
+- The first clear way to the flyer was 48 wide in game numbers and passed its own test; on a phone that is 18 px, less than a finger, and the kid robot (which keeps a kid's distance from watchers) could not get up it. A gap a kid must steer through is judged in phone pixels (the picture is about 0.37 of game size): 100 game px or more, and the kid robot must walk it before it is called clear.
+- Making the showing-4 video, the robot ran home after an alarm and did not hide; the guard's light fell on him, the guard stepped at him and back to his looking place every frame, gave up, and "They lost you." sent him back to the party. Every place the capture rule can end gets a "do nothing" run (home too, not only the hall): standing in the open he is caught, with the card (`tests/party-catch.mjs`).
+
+## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25)
+- A suite threw "getImageData: Value is not of type 'long'" because a module had changed and index.html had not been rebuilt, so the game sent a number the new test expected and the old build did not have. After any change in `src/`, run `npm run build` before running a suite.
+- A scripted replacement changed one of two lines that looked alike and missed the other, so the hall check read Squatch at the home room's size and failed for the wrong reason. After a scripted edit, grep that every place meant to change did.
+- "No fur below the cuff" first counted single blended pixels at the edge of a snack (a pie's dark middle against its crust) as fur. A check that a colour is absent looks for a patch of it (the pixel and its neighbours), within the area the thing could be, not one blended pixel anywhere.
+- A sleeve check sampled a folded arm where its own cuff and paw lie in front of the sleeve, and failed though the drawing was right. Before sampling along a part, leave out where another part of the same figure is drawn over it, and say so in the check.
+- Running a test with `STILLS=x` wrote a folder `x/` into the repo and `git add -A` staged it. Stills go to an absolute path outside the repo; check `git status` before committing.
+
+## Mistakes caught building Brian's showing-4 notes (2026-11-25)
+- A test read two lines with a pause between them as one group and two lines with none as two groups, so the second read swallowed the next four lines and waited out its clock. Lines that follow one another with no pause are read together and split afterwards.
+- A path search said there was no way to the flyer for any start time; the reason was a place no cone could ever leave free (the robot's sweep always crossed the only approach). Before tuning numbers, map which floor is never free over a whole cycle and give the goal a pocket nobody's cone reaches.
+- The sneak planner did not know the vent, and a planned wait by it started the fur alarm. A planner for a scene knows every rule that can end it there (cones, the vent), not only the cones.
+- A tool that runs the game faster than real time (the planned walk, many ticks in one call) made a real-time sampler see jumps. Any sampler around a fast-forwarded stretch is told where it starts and ends (`walkPlan` pushes a break), and the stretch measures its own steps.
+- Mops and the guard (and Squatch with his top hat) are drawn about 150 to 230 tall at home, so two people on one lane can never pass each other without overlapping; the fix was different lanes (the back of the room and the front), checked by their drawn boxes every tick, and Squatch going round the back when Mops stands between him and where he is going.
+- Changing who the home guard gives up on (only once Squatch is under the bed) broke an older check that he gives up on a kid standing out of sight in the early scenes. A rule Brian asked to change for one scene (after the party alarm) stays as it was everywhere else; grep the tests for the rule's old behaviour before changing it.
+- A still of one exact frame (a small "?" beside a guest) came out without the "?": the test that drew it read the canvas calls in the same moment, but by the time the screenshot was taken the game's own loop had drawn later frames, in which the "?" was gone. A still of one exact frame is copied from the canvas in the same call that draws it (`toDataURL`), and the check reads a pixel of the thing, not only that it was asked to be drawn.
+- Going home early through his door needs him to have walked away from it first (`leftDoor`); coming back from the alarm's card, the walk in ends inside the door's circle, and with `leftDoor` still set from before the alarm he was sent straight home again (the photo test froze). Every way back into a scene resets the "has walked away" kind of flag (`resume` now does), and a test stands him just inside the door after each way back.
+- The reviewer of this round found Squatch detouring round the back of the room for a Mops who had not come in yet (`between` read Mops's place without asking whether he is in the room). A helper that reads someone's position first asks whether that someone is there.
+
+## Mistakes caught building Brian's showing-5 notes (2026-11-25)
+
+- Places where people stand were typed without checking them against the room's furniture, and Mops stood on the bucket at home in two scenes. Every new standing spot goes into `tests/standing-spots.mjs`, which checks it against the floor each thing takes up (at home up to the shins, since the room draws people three times bigger).
+- Boots sounded every 0.45 s while any guard was "in the hall", even while the guard at home stood talking to Mops. A footstep plays only when that person's feet moved (`src/modules/footfalls.js`); `tests/footsteps.mjs` checks it across Chapter 1 from the game state, not from the footstep code.
+- Logic for the party went into `src/game/` (sizes, the walk ring's bookkeeping, the singing rule) although the rule said modules. `tests/game-no-growth.mjs` now fails when `src/game/` grows.
+- Moving the talk off the bucket put Squatch's held-out flyer over Mops: a drawn person is wider than his feet (his arm and what he holds). A new place for two people talking is checked with the drawn boxes (`tests/party-home.mjs`), not only with the feet.
+- A test that opens a scene, waits a moment in real time and only then stops the clock reads a scene that has already moved on (the talk had fetched the flyer before the first look). Stop the clock and restart the part (`__ss.sectionReset()`) before reading where it starts; the beat's own `restart()` does not clear the story queue.
+- Words drawn inside a scaled drawing (the GANITOR tag in Mops's own units, 2026-11-26) were read by `tests/canvas-text.mjs` at their unscaled font size (2 CSS px), because it only adds a move, not a scale. Write words in game pixels: find the spot in the drawing's units, then set the transform to the picture's own scale there and give the font in game pixels (`src/modules/ganitor.js` drawGanitorTag).
+- A test of a ball or hiding rule that only tried the open floor passed while the doorway still let a rolled-up Squatch through and a noticed ball could stay put through the search (the round C code review). Test each button a hiding pose can still reach, and the search after a sighting.
+
+## Mistakes caught building Brian's showing-6 notes (2026-11-26)
+
+- Sight was tested at one point a quarter of the way up Squatch while he is drawn about 85 tall, so a cone drawn across his head did not see him ("It looks like he's right in the octopus' cone, what am I missing??"). What a cone is drawn on is what it sees: sight tests his whole drawn outline (`party-watch.js` `coneEdge`), and `tests/party-showing6.mjs` checks the drawn cone against his drawn pixels. A change to sight re-checks every layout built on it (P2's glancer, P4's sweeps, the guards' reach).
+- Guards walked straight from point to point, through a plant pot. Anyone who walks a route round the room goes round its furniture (`guardStep`), and a route's whole walk is checked step by step (`tests/standing-spots.mjs`), not only where it stops.
+- A wait was tied to the end of a song (the photo after the dance, 28 s of nothing). After an action ends, the next beat starts within about a second, or the wait is shown.
+
+## Mistakes caught joining Day 2 (2026-11-27)
+- Three branches built side by side each drew the crate bed's stamp (a layer on the home picture, a stamp drawn over the old label in the evening, a navy badge in the escape), so a joined game showed two or three stamps on one crate. Before building a drawing of a thing another branch also shows, search the sibling branches for it; when joining, keep one drawing and give the others its parts (`crate-stamp.js` `familyStampOnRoom`, `drawFamilyStampAt`).
+- A hand-over put the two characters at a fixed spot (the evening's start placed them at the hallway's far end while beat 36 had ended at the near end), so they jumped across the room. A beat that follows another starts from where the last one left them; `tests/day2-joins.mjs` checks nobody moves more than 60 in a frame at a hand-over.
+- The evening queued its own walk into the hall after handing over to the bay's 36b, so the storm started on top of the robots. A hand-over is the last thing in a queue: build the queue so nothing follows it.
+- A picture cache keyed only by the picture's file kept the crayon in the stamp after he had rubbed it out (the night tint cached the version with it). A cache of a drawing that changes with the story has the story's state in its key.
+
+## Mistakes caught building the loading bay (2026-11-26)
+- The older program's "pa" bubble style is a banner fixed in the middle of the picture, so the first build's PA line sat over the window, nowhere near the wall speaker (Brian's rule: beside the speaker, with sound waves). A speaker's line is an ordinary bubble placed by the beat (`bubbleBeside`, `speakerAt`), and a test reads the drawn bubble's box against the speaker's (`tests/loading-bay.mjs`).
+- A beat that draws a locked room itself must paint the picture through the older program (`drawLocked`): the goal outline traces whichever locked picture was painted last, so a room painted any other way gets an outline traced from the previous room.
+- A bubble over a close-up covered the close-up (a long line wraps to about 490 wide). Place the close-up and the bubble together, and test the drawn boxes apart.
+- A layer over a locked picture (the hallway's Employee of the Month photo) was drawn by a beat's over-the-room hook, after the people, so Mops's horns went behind it (Brian, the loading bay video at 0:14.8). A layer that belongs to the room is painted right after the room's picture (`drawWall` from `drawCh1Passage`), and a test counts his fur's pixels over it, run once with the old order to see it fail.
+- The hallway's robots were drawn at the bay's pixel size, so next to the hallway's bigger people they looked small, and they stood on the office door's painting (Brian, 1:37.2). Anything drawn in two rooms is scaled by each room's grown-up (`adultPxFor`), and a test checks its drawn box against the room's doors and walls.
+- The ramp in the bay picture comes with the ship: a thing that arrives with something else goes away before it (the ramp back up into the ship, then the ship), and the scanner's posts are solid only while it is there.
+- Every bubble's name tag read "Speaker" in the rebuild: the bridge's `speakerName(who)` asked every beat in turn, and the home morning's `speakerName()` (no argument, its own wall speaker's name) answered for everyone. The bridge asks only a beat whose `speakerName` takes the speaker, and the bay's test reads the name on Dot's, Bob's and Lou's bubbles.
+- Three robots rolled down the ramp one after another to spots left to right, so the second rolled through the first, already standing in its place. People sent to a row of spots go to the far one first; `tests/standing-spots.mjs` checks each walk against the people already standing.
+- The hallway's way into the bay was a trigger at x 916, but the hallway's walk bounds stop him at 900, so a player could never get through (the showing tool stopped at x 893; the test had placed him at 935 by hand). A place walked into must be inside the room's walk bounds, and a test checks the numbers; a test that puts him somewhere by hand cannot prove he can walk there.
+- The lockup card's words ("A robot", "in the hallway") were typed in the beat's code, and Isfred or a worker seeing him read "A tourist". Every word on the card comes from the lines file, and each watcher gets its own (pending) words.
+- The robots' cones faded in only near him (the party's guest rule), so in the video the sneak and the party hall showed robots with no cones, and the first lane's cone reached the hall doorway where he comes in: caught three times before he could move. Robot cones carry `always` (the shared rule), a test reads every robot cone as shown, and a test checks no lane's cone reaches the doorway.
+- The ball behind the cargo sat wholly behind it, so the player could not see him at all. A ball hiding behind something sits against its side, partly showing.
+- A merge left `import { readFileSync }` twice in `tests/standing-spots.mjs`, so the whole suite stopped at load and its bay checks (written for the old walks) went unseen. After a merge, run every suite the merged files touch, not only your own.
+## Mistakes caught building the evening and night one (2026-11-26)
+
+- A spot was built by spreading a place object that also held the thing's own box (the bin's outline box), so the spot had a `box` and the action button looked for his feet inside the bin: GRAB · copies and POST · mailbox never came up where he stood. Build a spot from `x`, `y` and `r` only, and test it by `offerNow()` where the kid stands, not by calling the spot's function.
+- On a walk through a doorway the room changed first and the step only after the walk in, so for a moment the room and the step disagreed: ↺ there gave him control in a step whose doorway was in another room (stuck), and the older program drew the room for those frames. A step changes with the room (`evening.js` intoRoom), and a test presses ↺ in the middle of a walk in.
+- The ball rule was paused during an alarm, so a rolled-up Squatch was never found by the guards (the reviewer). The ball rule runs with every cone, the guards' included, alarm or not, as in the lunch sneak.
+- ROLL · ball is on the button almost everywhere in a sneak, and the kid robot pressed it, then walked on (which unrolls him) into a cone, over and over. The robot leaves the ball alone except where rolling up is the goal, rolls up when seen in the night's bay, and crosses the night robot's column on its rhythm, as the flyer sneak's robot does; a kid robot started from `KID_START=evening:37` reached the tally card caught 0 times.
+- A way home was tested by moving him in straight lines through the mail room's wall, which a kid's walk goes round, into a robot's cone; the showing video found it. A route a test calls fair is stepped against the room's solids at every step, and the kid robot or the showing tool walks it.
+- The hall alone was darkened at night, and the hallway, home and the office stayed in daylight (Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime."). Night is one rule for every room, `src/modules/night-look.js` (the locked night picture where one exists, else the day picture under the night tint with its lights kept bright, the characters drawn lit over it); a beat at night draws its rooms through it, and a test checks every room a night beat shows.
+- A robot rolled across a doorway and Squatch walked over the sleeping Mops, because scripted walks went in straight lines and never met the room's solids. Every scripted walk (robots, the family, Mops) is stepped against the solids in a test, people included, and a robot's cone is drawn whenever it is on screen.
+- A cone that stopped short of him still caught him, and a cone that touched him for one frame did too. A sighting needs the drawn cone to reach him and hold about half a second, with a "?" while it registers.
+- Giving the two robots parked in the mail room their cones (robots always show cones) put the left one's cone out past the mail room's wall onto the way in to the mailbox, so the showing was seen and the alarm went off before POST · mailbox. When a cone is added or turned, walk the step's fair way through it in a test (`tests/evening-physics.mjs` walks the way in to the mailbox).
+- After merging a lower branch, the evening's hall drawing still called a hand-over the merge had removed (`bridge.goalMark`), and every frame of the hall threw. After any merge, run the beat's own suites before building on it.
+- Mops asleep is drawn by the evening module, so the older program counts him as "not in the picture" (`moPose` is hidden) and silently skips any bubble of his ("offscreen"). A character a module draws itself speaks through its own speaker id (`sleeping-mops`, placed by `speakerAt`).
+- A rebuilt beat needed new debug beats (138 to 145) and the older program's jump only passed 37 to 42 and 142 to 144 on, so the new links opened nothing. When a module adds debug beats, widen the older program's range in the same change (it may only shrink in lines: change the condition, do not add one).
+## Mistakes caught building the escape (2026-11-26)
+
+- Mops walked into the office and vanished: the office's own drawing (12-ch1-redesign.js drawCh1OfficeRoom) draws only Squatch unless the old Isfred flag is on. When a beat moves someone into a room another drawing owns, check that drawing draws them, and test their drawn pixels (they go when he is hidden).
+- The night robot's sight tested one point above his feet while its cone was coloured by his whole outline, so the cone went yellow on him for most of a second with no reaction. Sight uses the same test as the drawing (`coneSees`), and a test checks every frame the drawn cone holds him.
+- Walks and a robot's run went in straight lines through the bay's bin and the mail room's wall. Every route is a list of corners in the place file, and a test walks each one step by step against the room's solids.
+- A wordless thought picture that plays by itself showed the pink sheet with its words at 6 to 8 game pixels. A picture that plays by itself has no words: draw things in it with their words left out.
+- Restart tests changed `debug().state`, a JSON copy, so they changed nothing in the game and passed for nothing. A test that changes a beat's state changes the live game-state field.
+- New art helpers (`rr`, `paint`, `words`, `clamp`, `INK`...) reused top-level names other modules use; esbuild renames them. Give a new module's top-level names its own prefix (`es...`).
+
+## Mistakes Brian's videos of the escape caught (2026-11-26)
+
+- Walks were checked against the older program's solids, which in the loading bay did not include its walkway (the ramp and scanner frame), so people walked over it. A room's own things are listed as solids in the module that draws the room (`bay-watch.js` BAY_SOLIDS), and every scripted walk is a route of corners tested step by step against them.
+- A robot's sight used his outline at party-hall size while the bay draws him smaller, so it reacted while its drawn cone stopped short of him. Sight uses the points of him as he is drawn in that room (`bay-watch.js` coneOnBody), and a reaction waits until the drawn cone has been on him for half a second, a "?" filling in meanwhile.
+- A thought bubble was placed from a head height worked out with the wrong scale, so it sat on his face. A thought takes the box of the head as the room draws it and sits above it with a gap (`thought-place.js`), and a test measures the gap.
+- The ball by the vent sat on the mail room's wall line, so it looked like it was inside the wall. A hiding pose that sits on the floor gets a shadow, and its place is checked against the lines of the room behind and in front of it.
+- The independent review of round two found the scripted walk into the bay passing right through the patrolling robot, its cone yellow on him for seconds with no reaction: a scripted walk past a watcher is tested frame by frame with the watcher live (no cone on him, the distance between them), or the watcher waits out of the way while the story walks.
+- It also found a stale block left at the end of a test that overwrote the new block's results, so the new check could not fail: when a test block is replaced, delete the old one, and run the check once against the old code to see it fail.
+- Two numbers for one place (the ROLL button's circle 60, "at the vent" 50) left a kid rolled up at 55 with nothing happening: one number, used by both.
+
+- Round 8 (2026-11-27): a walker carrying something (Mops's pushed crate) was routed for his feet alone, and his load ran into a table's front where every step was taken back. Anything that walks with a load gives the room model the load's own floor (`room-model.js setCarry` near, far, up, down), so the way round keeps the load clear too. And a waiting spot for a follower is never on the leader's goal ring (Mops waited 22 px from the hallway's doorway ring).

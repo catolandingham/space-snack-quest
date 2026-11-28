@@ -223,7 +223,6 @@
       );
     }
     function noteSection() {
-      ch1StampBalloon();
       if (p.state !== "op") return;
       if ((n.scene || "")[0] === "Q") return noteCh1Step();
       let scene = n.scene || "",
@@ -253,8 +252,6 @@
           cook: ch2.cook || "",
           pulse: [...n.pulse],
           bots: n.room === "hall" ? B.bots.map((b) => ({ ...b })) : null,
-          balloonRest: n.ch1BalloonRest || "",
-          balloonPopped: !!n.ch1BalloonPopped,
         }));
     }
     // Redesigned Chapter 1 (Q scenes): ↺ restarts the step the player is on (Brian, K29: restart the
@@ -262,8 +259,7 @@
     // every op field named ch1..., the scene, room, both characters and the glows. Functions are not
     // saved (a step's "what comes next" is set again by the step itself).
     function noteCh1Step() {
-      // Not while an overlay is open inside the step (dress-up, the snack cut-in): ↺ closes those.
-      if (!n.ctrl || n.cur || n.q.length || n.ch1Cut) return;
+      if (!n.ctrl || n.cur || n.q.length) return;
       let id = n.scene + "|" + n.room + "|" + (n.ch1Step || "");
       if (ch2.qCheck && ch2.qCheck.id === id) return;
       let ch1 = {},
@@ -341,7 +337,6 @@
         n.pulse.clear());
       for (let id of c.pulse || []) n.pulse.add(id);
       c.bots && (B.bots = c.bots.map((b) => ({ ...b })));
-      c.balloonRest != null && ((n.ch1BalloonRest = c.balloonRest || ""), (n.ch1BalloonPopped = !!c.balloonPopped));
       ch2.noted = c.id;
       return !0;
     }
@@ -382,8 +377,7 @@
         (ch2.sqStash = null),
         (x.sing = !1),
         n.pulse.clear(),
-        String(n.scene || "").startsWith("G") && (n.chip = ""),
-        (n.ch1Cut = null));
+        String(n.scene || "").startsWith("G") && (n.chip = ""));
       // The party night's full-screen views (the dress-up, the alarm close-up) close on a restart too.
       partyBeat() && partyBeat().closeViews();
     }
@@ -602,9 +596,13 @@
           // from the room, without the opening cards (src/modules/morning.js).
           let beat = window.SSQ && window.SSQ.beat("ch1-morning");
           if (beat && beat.beforeSong()) return void beat.start({ restart: !0 });
+          if (hmBeat() && hmBeat().restart()) return; // Day 2 before he is up: the home morning starts again
+          if (luBeat() && luBeat().restart()) return; // the lunch sneak between its steps: back to the last one
+          if (bayBeat() && bayBeat().restart()) return; // the loading bay's cutscene: the part he is in starts again
+          if (evBeat() && evBeat().restart()) return; // the evening (evening.js) between its steps: back to the last one
+          if (esBeat() && esBeat().restart()) return; // the escape between its steps, the same
+          if (pkBeat() && pkBeat().restart()) return; // pickup day, the same
           if (restoreCh1Step(ch2.qCheck)) return void (n.ctrl = !0);
-          // No saved start for this step (the player has not had control in it yet): only the lunch walk has a hand-made one.
-          if (scene === "QB" && n.ch1Step === "sneak") return (ch1RestartLunch(), void (n.ctrl = !0));
           return void (n.cur || n.q.length || (n.ctrl = !0));
         }
         if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);
@@ -697,7 +695,7 @@
                 ((ch2.sec = { x: o.f > 0 ? 980 : -40, y: 520, hide: 0, mode: "come", by: "pump" }),
                   kV("bot", "SQUATCH ON THE LOT! Report him or fuel him!"),
                   kV("bot2", "Fill 'er up! HOLD STILL!"),
-                  kV("sq", "I run on PANCAKES! (Back out the door!)", "whisper"),
+                  kV("sq", "I run on " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("FAMILY") : "CAKES") + "! (Back out the door!)", "whisper"),
                   D.alarm());
               }
               return;
@@ -934,7 +932,7 @@
           f: () => {
             ((ch2.flipCard = !0),
               ee("secret", "postcard", B0.x, 170),
-              TV([{ k: "panel", id: "postcard" }, v("mops", "Furry pancakes... on Mars. Hm.")]));
+              TV([{ k: "panel", id: "postcard" }, v("mops", "Big furry " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + "... on Mars. Hm.")]));
           },
         }),
         spot({ id: "counter", verb: "ASK", cap: "for work", who: "mo", x: Ul.x, y: Ul.y, r: 80, at: [Ul.x, 210], when: diner && i === "g2", hot: !0, f: UA }),
@@ -2278,7 +2276,7 @@
           r("#fffaf0", 5),
           g("ORDER #" + o, 0, -150, 30, y, "center", 900),
           C([-120, -120, 120, -120], y, 2));
-        let i = ["", "Chili bowl", "Soup bowl", "Big pancake plate", "Chili bowl", "Space salad", "Pie dish"][o] || "Plate";
+        let i = ["", "Chili bowl", "Soup bowl", "Big cake plate", "Chili bowl", "Space salad", "Pie dish"][o] || "Plate";
         return (g(i, 0, -70, 26, "#e5533d", "center", 900), g("WASH IT!", 0, 120, 30, "#3478f6", "center", 900), e.restore(), !0);
       }
       if (l === "postcard") {
@@ -2288,7 +2286,7 @@
           m(-260, -170, 520, 340, 10),
           r("#fff3d6", 5),
           g("Greetings from MARS!", 0, -120, 34, "#e5533d", "center", 900),
-          g("Big furry pancakes!", 0, -60, 26, y, "center", 800));
+          g("Big furry " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + "!", 0, -60, 26, y, "center", 800));
         for (let o = 0; o < 3; o++) (X(-60 + o * 4, 50 - o * 16, 70, 18), r("#e8a548", 3));
         return (
           XV(-56, 4, 30, 12, 10, 4, 0),

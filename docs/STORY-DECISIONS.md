@@ -73,6 +73,7 @@ Your answers to the old questions:
 - The note and the box are not the whole reveal.
 - A later "who they are" scene is wanted, and Squatch still does not know during it.
 - The lid spelling stays on purpose.
+- 2026-11-26 (Brian, chat 18b A): at bedtime, after the crate story, Mops says "And you've always had your Guardians, watching over you." over a picture of Squatch's crayon drawing of the Guardians, with no hint that he writes the notes. The player still learns that only at the vent (beat 48). Details: `docs/DECISIONS.md`, "Bedtime story, 2026-11-26".
 
 Still open (O18): whether Chapter 2's "Years ago, on Stormtop..." flashback still happens, now that the Guardians flashback is at Chapter 1 bedtime (S37). The hoof-stamp line "A hoof stamp. Mops signed it." is a cut (L2). That cut is in [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17), and it waits on your written yes there.
 
@@ -122,4 +123,5 @@ These three were not in the eight questions above. They are listed so this page 
 
 - **Ship (VEHICLE, L19).** 2026-11-08. The Mars vehicle is a ship, not the van. Which ship is still open (O22).
 - **Dad's line (DAD, L20).** 2026-11-08. The pancake-hair joke ("You'll get hair in the pancakes.") replaces "Health rules."
+- **Mops is a "Ganitor" (2026-11-26).** Brian, in chat: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." Decided as a fact about Mops (goat + janitor, his job title). Where it shows, his pick the same day ("I like all of them a b c d e"): five places, listed in `docs/BRIAN-ASKS-OPEN.md` item 14 and `docs/DECISIONS.md` ("Bedtime story, 2026-11-26"), to be built in a later round. Not on screen anywhere yet.
 - **Ending (ENDING, L21).** 2026-11-08. One closing picture instead of the long "Ever since..." card. A sketch comes first. Mops cleans with his beard.

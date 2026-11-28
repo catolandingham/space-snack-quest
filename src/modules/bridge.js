@@ -9,17 +9,38 @@
  * The older program must guard every use (`window.SSQ && ...`): if the module script ever fails to
  * load, the game must still run as it did.
  */
+import { drawTagStar } from "./escape-mopoff.js";
 import { outlineCanvas, OUTLINE } from "./outline.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
-import { partyCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
+import { SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { createGuestArt } from "./guests.js";
 import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
 import { createMorningSound } from "./morning-sound.js";
-import { MIX } from "./sound-mix.js";
+import { MIX, buses } from "./sound-mix.js";
+import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
-import { placeLabel } from "./cap-place.js";
+import { placeLabel, THING_WORDS } from "./cap-place.js";
+import { quietLine } from "./party-lines.js";
+import { quietBedtimeLine } from "./bedtime-story-lines.js";
+import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
+import { adultPxFor, doorAdultPx } from "./room-sizes.js";
+import { showRoomScaleTable } from "./room-scale.js";
+import { mopsBeardLook } from "./mops-beard.js";
+import { mopsBeardOver, syncMopsFace, mopsFaceSnipped } from "./mops-face.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG, CRAYON_ON_WALL } from "./ganitor.js";
+import { singingNow } from "./music-rules.js";
+import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
+import { drawBubbleTail } from "./bubble-tail.js";
+import { createSpeechVoice } from "./speech-voice.js";
+import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
+import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
+import { snackWord } from "./snack-name.js";
+import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
+import { setCameraSource, cameraUpFrom, cameraLayerDrawn } from "./bay-camera.js";
+import { cakeChartDrawn } from "./cake-chart.js";
+import { setRoomEngine, roomWaypoint, walkerSolids, freeSpot, homeDepthItems, homeDepthDrawn, physicsNow, physicsLog, clearPhysicsLog, HOME_BASELINES, afterMove } from "./room-model.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -27,17 +48,62 @@ import { placeLabel } from "./cap-place.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+// (the evening, evening.js, also keeps the older program's record of night one: the crayon drawing on the wall, the
+// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay; the escape, escape.js, the night, the ball and the journey;
+// pickup day, pickup.js, the costume, the ship, the office, the keepsake drawing)
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Bay", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D", "ch1Escape", "ch1Night", "ch1DidBall", "ch1Journey", "ch1Pickup", "costumeOn", "ch1Ship", "ch1Office", "ch1Keepsake"]);
 
 export function createBridge() {
   const beats = new Map();
+  // His crayon in the crate bed's stamp is there until a rebuilt beat says he has rubbed it out (the evening's 39b, and
+  // every beat after it: crayonGone()).
+  setCrayonSource(() => ![...beats.values()].some((b) => b.crayonGone && b.crayonGone()));
   const outlines = new Map();
   const guests = createGuestArt();
   // The engine functions the older program hands over (see handOver), and the fields beats have written.
   let engine = null;
   const written = new Set();
+  // The bay's security camera is up from Day 2's beat 30 on (round 7, q: 123; bay-camera.js)
+  setCameraSource(() => !!engine && cameraUpFrom(engine.get));
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
+  // (a guest's line: which guest says it, for the guest's own voice)
+  const speechVoice = createSpeechVoice(() => engine, () => {
+    const party = beats.get("ch1-party");
+    return party && party.talker ? party.talker() : "";
+  });
+  // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays and the night
+  // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Joe's theme with its singing,
+  // 2026-11-26); through the rest of the home morning, what it says (quiet for the PA, then "day2am").
+  let musicCueNow = ""; // the cue the music last followed (refined), for tests
+  const refineCue = (cue) => {
+    // While a beat's alarm is on (the one capture rule: FUR!, the alarm, the search), no music; after it, the music
+    // stays quiet in this place until a visit to another place (music-picks.js hushNow; Brian 2026-11-26).
+    for (const [id, b] of beats) if (b.alarmOn && b.alarmOn()) return (hushNow(undefined, b.alarmKey ? b.alarmKey() : null, id), "");
+    // the part that had the alarm started again (its state is a new one: a restart after the LOCKUP card, or ↺): a new
+    // visit, so the music comes back
+    const h = hushKey();
+    if (h && h.owner) {
+      const b = beats.get(h.owner);
+      (!b || !b.alarmKey || b.alarmKey() !== h.key) && unhush();
+    }
+    if (cue !== "home") return cue;
+    const tv = beats.get("ch1-tv-story"),
+      bed = beats.get("ch1-bedtime-story"),
+      hm = beats.get("ch1-home-morning"),
+      // the home morning's own music: the bedtime music while the night is dark, quiet as it comes up and through the
+      // PA, then "Morning" from the speaker (home-morning.js musicCue; null when it has no say)
+      morning = hm && hm.musicCue ? hm.musicCue() : null,
+      ev = beats.get("ch1-evening");
+    // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
+    // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
+    if (tv && tv.showing && tv.showing()) return "tv";
+    if (bed && bed.quietNow && bed.quietNow()) return "";
+    // (Day 2's night one at home after the fight: no song tonight, story pass beat 41: their song is their bond, and its
+    // absence is felt)
+    if (ev && ev.nightNow && ev.nightNow()) return "";
+    return bed && bed.showing && bed.showing() ? "bedtime" : morning != null ? morning : cue;
+  };
   return Object.freeze({
     version: 1,
     /**
@@ -59,7 +125,26 @@ export function createBridge() {
           e.set(field, value);
         },
       });
+      setRoomEngine(engine);
     },
+    /** The room model (room-model.js): the next corner of a scripted step round the room's solids, or null (straight). */
+    roomWaypoint,
+    /** The room model: right after a walker's own step (a pushed crate keeps out of things). */
+    afterMove,
+    /** The room model: a walker's own solids (grown by how much wider than a feet box his body is). */
+    walkerSolids,
+    /** The room model: the free floor nearest a place, for a walker in the room now. */
+    freeSpot,
+    /** The room model: the home room's things as items in the people's back-to-front list (drawn at their floor lines). */
+    homeDepthItems,
+    homeBaselines: HOME_BASELINES,
+    /** Tests: the room model's record (moves through solids), where everyone stands now, the home things drawn over whom. */
+    physicsNow,
+    physicsLog,
+    clearPhysicsLog,
+    homeDepthDrawn,
+    /** Tools only: the one-scale-per-room proposal (room-scale.js), on or off in this page, for its picture sheet. */
+    showRoomScaleTable,
     /** The handed-over engine functions, or null before the older program has started. */
     engine() {
       return engine;
@@ -68,22 +153,161 @@ export function createBridge() {
     beatWrites() {
       return [...written];
     },
-    /** Brian's Floating in Space recording in the morning. See home-music.js. */
+    /**
+     * Mops's GANITOR name tag (ganitor.js), drawn by his drawing (60-frame-draw.js Fe) in his own units on `ctx`, at his
+     * scale `scale` (game pixels to one of his units).
+     */
+    /** How the older program draws Mops's beard now (mops-beard.js: once snipped on pickup day, { noBeard: true }), or null. */
+    mopsBeardLook() {
+      // (the HUD's Mops face follows the snip: mops-face.js)
+      syncMopsFace(engine && engine.drawMopsOn);
+      return mopsBeardLook();
+    },
+    /** The switch card's Mops (60-frame-draw.js): the snipped beard drawn over him once snipped (mops-face.js). */
+    mopsBeardOver,
+    /** Tests: whether the HUD's Mops face shows the snipped beard. */
+    mopsFaceSnipped,
+    drawGanitorTag(ctx, scale) {
+      const drew = drawGanitorTag(ctx, scale);
+      // the gold star he won in the Mop-Off stays on his tag for the rest of the chapter (escape-mopoff.js)
+      const es = beats.get("ch1-escape");
+      es && es.tagStar && es.tagStar() && drawTagStar(ctx, GANITOR_TAG);
+      return drew;
+    },
+    /** Tests: Mops's name tags drawn since the last call ({ readable, scale }). */
+    ganitorTags() {
+      return ganitorTagsDrawn();
+    },
+    /** Tests: what the hallway's crayon card drew last (ganitor.js), or null. */
+    hallwayCrayonDrawn() {
+      return hallwayCrayonDrawn();
+    },
+    /** Squatch's crayon card on the hallway wall, "ME" and "MOPS THE GANITOR" (ganitor.js), for 14-ch1-day2.js. */
+    drawHallwayCrayon(ctx) {
+      // (round 7, q: 128: the drawing stays hidden behind the crooked photo; nothing is drawn on the wall)
+      return CRAYON_ON_WALL ? drawHallwayCrayon(ctx) : null;
+    },
+    /** The morning's music at home (its pick in music-picks.js: Floating in Space). See home-music.js. */
     homeMusic,
+    /**
+     * The music element, every frame it plays: the file and stretch its cue plays, and how loud now (music-picks.js).
+     * At home while the TV story is on the screen the cue is "tv".
+     */
+    musicSpan(el, cue) {
+      return keepInSpan(el, refineCue(cue));
+    },
+    /**
+     * The one FUR alarm of Chapter 1 (Brian 2026-11-26, the red alert whoop: party-board-sounds.js BOARD.alarm), for
+     * the older program's alarm sound. The music stops with it (hushNow). True once played; false while sound is off
+     * (the older program then plays nothing either).
+     */
+    alarmSound() {
+      const b = buses(engine);
+      if (!b) return false;
+      // (the music stops with the alarm, and stays quiet here until another place: music-picks.js hushNow; the older
+      // program calls this each time its alarm sounds)
+      hushNow();
+      BOARD.alarm({ c: b.ctx, o: b.fx }, b.ctx.currentTime + 0.01);
+      return true;
+    },
+    /** The older program's music cue, every frame once its music has started: where the music is (music-picks.js). */
+    musicCue(cue) {
+      seeCue((musicCueNow = refineCue(cue)));
+      return cue;
+    },
+    /** Tests: the cue the music follows for the older program's cue `cue` (after the TV and bedtime stories'). */
+    refinedCue(cue) {
+      return refineCue(cue);
+    },
+    /** Tests: the cue the music follows now (after the TV story's and the bedtime story's), and where it is. */
+    musicNow() {
+      const v = visitNow();
+      return { ...v, visitCue: v.cue, cue: musicCueNow };
+    },
+    /**
+     * Plays one of the game's sounds that are not music by its name (music-picks.js SOUND_PICKS: Mops's bleat),
+     * at the effects level under the master volume. The same player as the morning's bleat (music-picks.js
+     * playSound); nothing plays while sound is off. True once asked for.
+     */
+    playSoundPick(name) {
+      const b = buses(engine);
+      return !!b && playSound(b.ctx, b.fx, name, b.ctx.currentTime + 0.05);
+    },
+    /** Tests: every sound pick asked for so far ({ name, at, started }). */
+    soundPicksPlayed() {
+      return soundsPlayed();
+    },
     /** The morning's and home alone's made-up sounds (snoring, the ding-dong, mopping...). See morning-sound.js. */
     morningSound,
     /** How loud music and sound effects are under the master volume; the engine reads it. See sound-mix.js. */
     mix: MIX,
-    /** A speech bubble opens: its tick, and Mops's meh on his first line in a scene. See morning-sound.js. */
+    /**
+     * A speech bubble opens: its tick, and Mops's meh on his first line in a scene. His gentle lines
+     * ("You have me.", party-lines.js `quiet`; his bedtime line, bedtime-story-lines.js) never get the meh. See
+     * morning-sound.js. Everyone else's speech gets a muffled "wah-wah" voice under it (never a sung line or a
+     * thought). See speech-voice.js.
+     */
     bubbleSound(b, scene) {
-      morningSound.bubble(b, scene, homeMusic.debug().playing);
+      morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b) || quietBedtimeLine(b));
+      speechVoice.speak(b);
     },
+    /** The title screen's Credits button (drawn by the older program's title) and a tap on it. See credits.js. */
+    credits: Object.freeze({ drawButton: drawCreditsButton, tap: creditsTap, shown: creditsShown }),
+    /** The voices under speech bubbles (tests read what played). See speech-voice.js. */
+    speechVoice,
+    /**
+     * A bubble's tail, drawn after the older program draws the bubble: pointed to the speaker's head, or a thought's
+     * three circles to the thinker. Returns what it drew (tests). See bubble-tail.js.
+     */
+    drawBubbleTail,
     /** The wall speaker in the home room, for placing its bubble. See morning.js. */
     speakerBox() {
       return SPEAKER;
     },
+    /**
+     * (bedtime branch, 2026-11-26) Mops's mop bucket in the home room (Brian: "Let's go with it moving forward"), drawn
+     * over the painted bucket of the locked picture, under the people, and again over Squatch when he stands behind it.
+     * Returns its box, or null while not ready (the painted bucket shows). See mop-bucket.js.
+     */
+    drawHomeBucket(ctx, front) {
+      return drawHomeMopBucket(ctx, front, !!engine && isNightNow(engine.get));
+    },
+    /** Tests: where the home bucket was last drawn. */
+    homeBucketDrawn: lastHomeMopBucket,
     /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
     cutaway: Object.freeze({ last: lastCutaway }),
+    /**
+     * The night look (Brian, 2026-11-26: every room looks different at night). The older program draws each locked
+     * room picture, and cuts pieces of it, from nightPicture(id, img): at night the room's night picture or its tinted
+     * one, by day `img` itself. nightNow() says whether the story is at night; nightDrawn() (tests) which rooms drew
+     * their night look since the last call. See night-look.js.
+     */
+    nightPicture(id, img) {
+      return nightPicture(id, img, !!engine && isNightNow(engine.get));
+    },
+    nightNow() {
+      return !!engine && isNightNow(engine.get);
+    },
+    nightDrawn,
+    /**
+     * The station's snack, named in one place (snack-name.js; Brian 2026-11-26, question 86): snack("name") for
+     * sentence text, "one" for one of them, "NAME" and "ONE" in capitals. The older program guards each use and shows
+     * a plain word ("snacks") if the module script ever fails.
+     */
+    snack: snackWord,
+    /**
+     * The station's stamp on a crate the older program draws (its crate, the old calendar): a blue star and the snack's
+     * name in thin blue letters, centred at (x, y), `s` times its size. See crate-stamp.js.
+     */
+    drawSnackStamp(ctx, x, y, s) {
+      return drawStationStamp(ctx, x, y, s);
+    },
+    /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
+    crateStampDrawn,
+    /** Tests: the bay camera's layer (round 7, q: 123): how many pictures had it, and the last one's id. */
+    cameraLayerDrawn,
+    /** Tests: the crayon chart over his bed, as the home pictures' layer last drew it (cake-chart.js). */
+    cakeChartDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
       if (typeof id !== "string" || !id) throw new Error("registerBeat needs an id");
@@ -95,22 +319,65 @@ export function createBridge() {
     beat(id) {
       return beats.get(id) || null;
     },
+    /**
+     * The rebuilt beat that draws the room on screen now (the party night, the lunch sneak, the bay's 36b and the evening in the
+     * hall; the loading bay, the evening and the escape in the loading bay; the escape in the vent), or null: the older program asks it for the room's picture, and in the hall for its
+     * walls (bounds) and what feet cannot walk through (solids).
+     */
+    hallOwner() {
+      for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
+      return null;
+    },
+    /**
+     * Where a speaker's bubble points, from the rebuilt beat that places it (Isfred beside him at the party, the wall
+     * speakers, Squatch's eyes in a plant...), or null: the older program's own place for that speaker. Only a beat that is on now (active) answers.
+     */
+    speakerAt(who) {
+      for (const b of beats.values()) {
+        const at = b.speakerAt && (!b.active || b.active()) ? b.speakerAt(who) : null;
+        if (at) return at;
+      }
+      return null;
+    },
+    /** The name over a speaker's bubble, from the rebuilt beat that names that speaker, or "". */
+    speakerName(who) {
+      for (const b of beats.values()) {
+        // (only a beat that names speakers by who they are: the morning's speakerName() names its own wall speaker)
+        const name = b.speakerName && b.speakerName.length >= 1 && b.speakerName(who);
+        if (name) return name;
+      }
+      return "";
+    },
+    /** A bubble that sits beside its speaker instead of over him, from the rebuilt beat that says so, or null. */
+    bubbleBeside(who) {
+      for (const b of beats.values()) {
+        const at = b.bubbleBeside && b.bubbleBeside(who);
+        if (at) return at;
+      }
+      return null;
+    },
+    /** Feet nobody walks through that a rebuilt beat adds to a room the older program draws (00-core.js). */
+    extraSolids(room) {
+      const out = [];
+      for (const b of beats.values()) b.extraSolids && out.push(...b.extraSolids(room));
+      return out;
+    },
     /** Ids of every rebuilt beat, in the order they were registered. */
     beatIds() {
       return [...beats.keys()];
     },
     /**
      * The dashed outline of the thing inside `box` (game positions) of `source` (a locked room picture or a
-     * canvas the size of the game picture), traced once and kept under `key`. Returns { canvas, x, y } to
-     * draw at (x, y), or null. See outline.js.
+     * canvas the size of the game picture), traced once and kept under `key`, with `opts` (outline.js OUTLINE:
+     * width, dash, gap). Returns { canvas, x, y } to draw at (x, y), or null. See outline.js.
      */
-    outline(key, source, box) {
+    outline(key, source, box, opts) {
       // A picture the browser will not let us read (a page opened straight from disk) gets no outline
       // rather than stopping the game's drawing.
       if (!outlines.has(key)) {
         let o = null;
         try {
-          o = outlineCanvas(source, box);
+          o = outlineCanvas(source, box, opts);
         } catch (e) {
           o = null;
         }
@@ -119,7 +386,7 @@ export function createBridge() {
       return outlines.get(key);
     },
     /**
-     * Draws the soft yellow outline round the real thing a Chapter 1 goal needs (GOAL_TARGETS), pulsing
+     * Draws the one highlight (outline.js: the dashed gold line) round the real thing a Chapter 1 goal needs (GOAL_TARGETS), pulsing
      * gently. `picture` is the locked room picture on screen (traced things come from it). `avoid` is a list of
      * boxes (the people standing there): the outline is not drawn inside them, so it never draws over Squatch
      * (Brian, 2026-11-23: "The dash outline drawing over him doesn't work."). Returns the box outlined, or null
@@ -128,6 +395,11 @@ export function createBridge() {
     drawGoalOutline(ctx, room, spotId, picture, time, avoid) {
       const target = GOAL_TARGETS[room + ":" + spotId];
       if (!target) return null;
+      // the party draws the hall on its own locked picture: trace from that one (the older program's last room
+      // picture is another room's, so the plant's outline was traced from the wrong picture and drew nothing)
+      const party = beats.get("ch1-party"),
+        own = party && party.roomPicture ? party.roomPicture() : null;
+      own && (picture = own);
       const alpha = 0.85 + 0.15 * Math.sin((time || 0) * 4); // always clearly visible (Brian G#430: "I can't really see it")
       ctx.save();
       for (const b of avoid || []) {
@@ -144,6 +416,11 @@ export function createBridge() {
         ctx.lineWidth = OUTLINE.width;
         ctx.strokeStyle = OUTLINE.color;
         ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+      } else if (target.source) {
+        // a thing the game draws itself (the home morning's rocket and lunch bag): traced from its own drawing
+        const src = target.source();
+        const o = src ? this.outline(room + ":" + spotId + ":drawn", src, target.trace, target.line) : null;
+        o && ctx.drawImage(o.canvas, o.x, o.y);
       } else if (picture && picture.complete && picture.naturalWidth) {
         const o = this.outline(room + ":" + spotId + ":" + picture.src, picture, target.trace);
         o && ctx.drawImage(o.canvas, o.x, o.y);
@@ -153,10 +430,25 @@ export function createBridge() {
     },
     /** Where a "VERB · thing" label goes: next to its thing, clear of Squatch and other things. See cap-place.js. */
     placeLabel,
+    /** Whether Chapter 1 shows "VERB · thing" words beside the things (false: the gold line alone, #110). See cap-place.js. */
+    thingWords: THING_WORDS,
+    /**
+     * True where no "VERB · thing" words are drawn beside things: Chapter 1 (its scenes S, O and Q, and the party night,
+     * whose scenes are P like Chapter 3's, so it asks the party beat) while THING_WORDS is false.
+     */
+    noThingWords(scene) {
+      if (THING_WORDS) return false;
+      const party = beats.get("ch1-party");
+      return /^[SOQ]/.test(scene || "") || !!(party && party.active && party.active());
+    },
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
-    /** Party sight cones: where each person's cone starts and which way it points. See party-watch.js. */
-    partyCones,
+    /** How tall a grown-up is drawn in a room (85% of its door; the party hall 40% bigger). See room-sizes.js. */
+    adultPxFor,
+    /** 85% of a room's door, with no party-hall growth. See room-sizes.js. */
+    doorAdultPx,
+    /** True while singing is on (no background music then). See music-rules.js. */
+    singingNow,
     /** Seconds a guest watches Squatch with "?" before it turns into "!". See party-watch.js. */
     seenTooLong: SEEN_TOO_LONG_SECONDS,
     /** The approved guest pictures (guests.js), for the party's own drawing. */

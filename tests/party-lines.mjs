@@ -73,7 +73,10 @@ const code = party.map((m) => m.src).join("\n").replace(/\/\*[\s\S]*?\*\/|\/\/.*
 const ids = [...code.matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1]).filter((id) => PARTY_LINES.some((l) => l.id === id));
 const asked = [...code.matchAll(/partyLine\("([a-z0-9-]+)"\)/g)].map((m) => m[1]);
 const used = new Set([...ids, ...(/lockupCause\(/.test(code) ? ["lockup-cause"] : [])]);
-const unused = PARTY_LINES.filter((l) => BUILT_HALVES.includes(l.half) && !used.has(l.id)).map((l) => l.id);
+// (a removed line, its row kept so no number shifts, is not shown, so it is not looked for)
+const unused = PARTY_LINES.filter((l) => BUILT_HALVES.includes(l.half) && !l.removed && !used.has(l.id)).map((l) => l.id);
+const stillShown = PARTY_LINES.filter((l) => l.removed && used.has(l.id)).map((l) => l.id);
+check("the party code never asks for a removed line", stillShown.length === 0, stillShown);
 check("the party code uses every line of the halves built so far", unused.length === 0, unused);
 check("the party code asks only for lines that exist", asked.every((id) => PARTY_LINES.some((l) => l.id === id)), asked.filter((id) => !PARTY_LINES.some((l) => l.id === id)));
 const typed = PARTY_LINES.filter((l) => l.text.length > 3 && (code.includes(JSON.stringify(l.text)) || code.includes(`"${l.text}"`) || code.includes(`'${l.text}'`)));

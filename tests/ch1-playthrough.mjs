@@ -9,6 +9,7 @@
  */
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
+import { SNACK, FAMILY } from "../src/modules/snack-name.js";
 
 const g = await startGame({ port: 8801, name: "ch1-playthrough" });
 const { ctx, page, errors } = await g.open("?ch=1");
@@ -187,7 +188,6 @@ const bubbles = await page.evaluate(() => {
     ups: { scene: "Q2", room: "hangar", ch1D: true, ch1Ship: true, crew: "", crew2: "tease", night2: true },
     scanner: { scene: "Q9", room: "hangar", ch1D: true, ch1Ship: true, ch1Night: false, ch1Office: false },
     robot: { scene: "Q9", room: "hall", ch1D: false, ch1Office: true },
-    kid: { scene: "QA", room: "hall", party: true },
   };
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
   const k = cv.width / 960;
@@ -208,7 +208,7 @@ const bubbles = await page.evaluate(() => {
     n.ch1Night = !!extra.ch1Night;
     n.ch1Office = !!extra.ch1Office;
     n.ch1Crew = extra.crew || "";
-    n.ch1Party = !!extra.party;
+    n.ch1PartyNow = null;
     n.sqPose = extra.pose || "stand";
     n.moPose = "stand";
     n.sq.x = (extra.sq || [400, 520])[0];
@@ -229,7 +229,7 @@ const bubbles = await page.evaluate(() => {
     return { who, at, marks, top: at.y < 80 && Math.abs(at.x - 480) < 40 };
   };
   const out = [];
-  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot", "kid"]) out.push(placed(who, setups[who]));
+  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot"]) out.push(placed(who, setups[who]));
   out.push(placed("tourist", { scene: "Q3", room: "hall", ch1D: false }));
   out.push(placed("ups", { scene: "Q4", room: "hangar", ch1D: true, ch1Night: true, crew: "" }));
   out.push(placed("ups", { scene: "Q5", room: "hangar", ch1D: true, ch1Night: true, crew: "tease" }));
@@ -243,176 +243,42 @@ g.check(
   { missingSpeaker, bubbles },
 );
 
+// The party in disguise (P6, src/modules/party-free.js): three songs share the pinned 3 minutes
+// (COOL_HAT_SECONDS), and closing time (P8b, the wall speaker's line) comes after the third, not sooner, with no
+// "Cool hat!". The test sets the party's clock just short of the end, as the older check did.
 const hat = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
-  n.scene = "QA";
-  n.ctrl = true;
-  n.ch1Party = true;
-  n.ch1Disguise = true;
-  n.ch1Flyer = true;
-  n.ch1PartyOver = false;
-  n.ch1PartyT = ss.COOL_HAT_SECONDS - 0.2;
+  const b = window.SSQ.beat("ch1-party");
   n.q = [];
   n.cur = null;
-  ss.tick(0.3);
-  const said = n.log.filter((e) => e.k === "bub").map((e) => e.text);
-  return { seconds: ss.COOL_HAT_SECONDS, said, over: n.ch1PartyOver, disguise: n.ch1Disguise };
+  n.log = [];
+  b.jump("P6");
+  const p = n.ch1PartyNow;
+  // He stands behind the crowd at the front of the hall, where nobody is looking.
+  n.sq.x = 600;
+  n.sq.y = 585;
+  ss.tick(0.05);
+  Object.assign(p, { song: 2, songT: 60 - 0.3, ft: 180 - 0.3 });
+  ss.tick(0.2);
+  const before = b.now().scene;
+  ss.tick(0.2);
+  ss.tick(0.05);
+  // (closing time opens with the cheer, the band's bow and the lights a step darker, about 4.6 s: Brian 2026-11-26)
+  for (let i = 0; i < 120 && !(n.cur && n.cur.k === "bub"); i++) ss.tick(0.05);
+  const said = n.log.filter((e) => e.k === "bub").map((e) => e.text).concat(n.cur && n.cur.b ? [n.cur.b.text] : []);
+  return { before, after: b.now() && b.now().scene, said };
 });
-// Half one of the party rebuild: the older free play's time (the pinned 3 minutes) still ends it, but with no
-// "Cool hat!" line: he walks home and the evening ends there (half two brings closing time).
-g.check("the free play ends at 3 minutes of party play, not sooner, with no \"Cool hat!\"", hat.seconds === 180 && hat.over && !hat.said.includes("Cool hat!"), hat);
-
-const balloon = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  const said = () => n.log.filter((e) => e.k === "bub").map((e) => e.text);
-  const arm = () => {
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = true;
-    n.ch1Disguise = true;
-    n.ch1Flyer = true;
-    n.ch1PartyOver = false;
-    n.ch1PartyT = 0;
-    n.ch1Balloon = "up";
-    n.ch1BalloonT = 0;
-    n.ch1BalloonY = 460;
-    n.ch1Kid = "gasp";
-    n.ch1Fur = false;
-    n.ctrl = true;
-    n.q = [];
-    n.cur = null;
-    n.log = [];
-    n.sq.x = 180;
-    n.sq.y = 500;
-    n.sqPose = "stand";
-    ss.hall.camX = 0;
-  };
-  const drain = (steps = 40) => {
-    for (let i = 0; i < steps; i++) {
-      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
-      ss.tick(0.2);
-    }
-  };
-  const spot = (verb) => ss.spotsNow().find((s) => s && s.verb === verb);
-  arm();
-  const missedJump = !spot("JUMP");
-  const gasped = n.ch1Kid;
-  ss.drawFrame();
-  ss.tick(ss.BALLOON_GRAB_SECONDS + 0.2);
-  const ceiling = { balloon: n.ch1Balloon, kid: n.ch1Kid, gasped, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), jumpWasThere: !missedJump };
-  arm();
-  spot("JUMP").f();
-  const jumped = { held: n.ch1Balloon === "held", legs: n.ch1JumpT > 0, kid: n.ch1Kid };
-  spot("GIVE").f();
-  drain();
-  const back = { balloon: n.ch1Balloon, kid: n.ch1Kid, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), fur: said().includes("FUR! Security!") };
-  arm();
-  spot("JUMP").f();
-  const walksBefore = (n.ch1Walks || []).length;
-  spot("KEEP").f();
-  drain(100);
-  const kept = {
-    yell: said().includes("Scary Wookiee!"),
-    fur: said().includes("FUR! Security!"),
-    over: n.ch1PartyOver,
-    walked: (n.ch1Walks || []).length > walksBefore,
-    window: ss.BALLOON_GRAB_SECONDS,
-  };
-  return { ceiling, jumped, back, kept };
-});
-g.check("a balloon that reaches the ceiling only makes the kid sad", balloon.ceiling.gasped === "gasp" && balloon.ceiling.balloon === "ceiling" && balloon.ceiling.kid === "sad" && balloon.ceiling.disguise && !balloon.ceiling.over && !balloon.ceiling.yell && balloon.ceiling.jumpWasThere, balloon.ceiling);
-g.check("bringing the balloon back keeps the disguise and the kid stays quiet", balloon.jumped.held && balloon.jumped.legs && balloon.jumped.kid === "wide" && balloon.back.balloon === "back" && balloon.back.kid === "up" && balloon.back.disguise && !balloon.back.over && !balloon.back.yell && !balloon.back.fur, balloon);
-g.check("keeping the balloon makes the kid yell and Squatch walk off", balloon.kept.yell && balloon.kept.fur && balloon.kept.over && balloon.kept.walked && balloon.kept.window === 6, balloon.kept);
-
-const extras = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  const said = () => n.log.filter((e) => e.k === "bub").map((e) => e.text);
-  const arm = () => {
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = true;
-    n.ch1Disguise = true;
-    n.ch1Flyer = true;
-    n.ch1PartyOver = false;
-    n.ch1PartyT = 0;
-    n.ch1HatAskew = false;
-    n.ch1Hugs = 0;
-    n.ch1Snacks = 0;
-    n.ch1Look = 0;
-    n.ch1Photo = false;
-    n.ch1InShot = false;
-    n.ch1Spill = 0;
-    n.ch1PartyDid = {};
-    n.ch1Balloon = "back";
-    n.ctrl = true;
-    n.q = [];
-    n.cur = null;
-    n.log = [];
-    n.stars = 0;
-    n.sqPose = "stand";
-    n.sq.x = 400;
-    n.sq.y = 520;
-    ss.hall.camX = 0;
-  };
-  const drain = () => {
-    for (let i = 0; i < 20; i++) {
-      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
-      ss.tick(0.05);
-    }
-  };
-  arm();
-  ss.spotsNow().find((s) => s.verb === "HUG").f();
-  drain();
-  const once = { askew: !!n.ch1HatAskew, disguise: n.ch1Disguise, line: said().includes("*hic* Fellow tourist!"), over: n.ch1PartyOver };
-  ss.spotsNow().find((s) => s.verb === "HUG").f();
-  drain();
-  const twice = { disguise: n.ch1Disguise, over: n.ch1PartyOver, fur: said().includes("FUR! Security!") };
-  const show = () => {
-    ss.tick(0.05);
-    return n.cur && n.cur.id;
-  };
-  const walk = (x, y) => {
-    ss.tapAt(x, y);
-    let at = { x: n.sq.x, y: n.sq.y };
-    for (let i = 0; i < 60; i++) {
-      ss.tick(0.1);
-      at = { x: n.sq.x, y: n.sq.y };
-      if (Math.hypot(at.x - x, at.y - y) < 14) break;
-    }
-    ss.tick(0.1);
-    return { at, offer: ss.offerNow() && ss.offerNow().verb };
-  };
-  const frame = ss.CH1_FRAME;
-  const cam = ss.CH1_CAM;
-  const shot = { x: (frame.x0 + frame.x1) / 2, y: (frame.y0 + frame.y1) / 2 };
-  arm();
-  const starsIn = n.stars;
-  const into = walk(shot.x, shot.y);
-  ss.actionDown();
-  const inside = { shot: n.ch1InShot, stars: n.stars - starsIn, bonus: ss.PHOTO_BONUS, panel: show(), into };
-  arm();
-  const starsOut = n.stars;
-  const away = walk(cam.x, cam.y);
-  ss.actionDown();
-  const outside = { shot: n.ch1InShot, stars: n.stars - starsOut, panel: show(), away };
-  return { once, twice, inside, outside };
-});
-g.check("the first octopus hug tugs the hat and the second starts the alarm", extras.once.askew && extras.once.disguise && extras.once.line && !extras.once.over && !extras.twice.disguise && extras.twice.over && extras.twice.fur, extras);
+const free = await import(new URL("../src/modules/party-free.js", import.meta.url).href);
 g.check(
-  "walking into the shot and pressing SNAP pays the placeholder bonus",
-  extras.inside.into.offer === "SNAP" && extras.inside.shot && extras.inside.stars === extras.inside.bonus && extras.inside.panel === "ch1photo",
-  extras.inside,
+  "the party in disguise lasts its 3 minutes (three songs), then closing time, not sooner, with no \"Cool hat!\"",
+  free.COOL_HAT_SECONDS === 180 && free.SONG_SECONDS * 3 === 180 && hat.before === "P6" && hat.after === "P8b" && hat.said.includes("The party's over. Good night, Stormtop!") && !hat.said.includes("Cool hat!"),
+  hat,
 );
-g.check(
-  "Squatch outside the frame gets no photo bonus",
-  extras.outside.away.offer === "SNAP" && !extras.outside.shot && extras.outside.stars === 0 && extras.outside.panel === "ch1photo",
-  extras.outside,
-);
+// The balloon (and the balloon kid), the octopus's two-hug alarm, the SNAP photo button and the snack bar cut-in
+// went with the old free play on purpose (party rebuild, half two). Their replacements in P6 are checked in
+// tests/party-free.mjs: the octopus's hugs knock a piece off, the camera's flash pays the photo bonus once, and
+// the snack close-up (five snacks topple the pyramid; the bartender's two catches).
 
 const play = await page.evaluate(() => {
   const ss = window.__ss;
@@ -425,9 +291,11 @@ const play = await page.evaluate(() => {
   const texts = () => n.log.filter((e) => e.k === "bub" || e.k === "card" || e.k === "panel").map((e) => e.text);
   let last = "";
   let still = 0;
-  let acts = [];
+  let acts = [],
+    esRoom = "";
   let end = "stuck";
-  for (let i = 0; i < 12000; i++) {
+  // (round 7 added beats: the camera going up, the photos, the robots waking, the plan at the desk, the office robot)
+  for (let i = 0; i < 16000; i++) {
     if (n.ch1Calendar) {
       ss.tick(0.3);
       ss.opTap();
@@ -482,38 +350,145 @@ const play = await page.evaluate(() => {
       still = 0;
       continue;
     }
-    if (n.ch1Raid && n.room === "hall") {
+    // The party in disguise and closing time (src/modules/party-free.js, party-endings.js).
+    const pb = window.SSQ.beat("ch1-party"),
+      pn = pb && pb.now();
+    if (pn && pn.dance) {
+      // The full-screen dance: he taps the glowing spot (the dance notes where it is); it ends with the song.
+      const cv = document.querySelector('canvas[aria-label="dance"]'),
+        dn = n.ch1PartyNow && n.ch1PartyNow.dance,
+        gl = dn && dn.live && dn.seen && dn.seen.glow;
+      cv && gl && i % 4 === 0 && cv.dispatchEvent(new PointerEvent("pointerdown", { clientX: gl.x, clientY: gl.y, pointerId: 8, bubbles: true }));
+      cv && gl && i % 4 === 0 && cv.dispatchEvent(new PointerEvent("pointerup", { clientX: gl.x, clientY: gl.y, pointerId: 8, bubbles: true }));
+      ss.tick(0.1);
+      still = 0;
+      continue;
+    }
+    if (pn && pn.scene === "P6" && pn.done.dance && n.ctrl && !n.cur) {
+      // After the dance he enjoys the party until closing time, the way a careful kid does: he stands where no cone
+      // reaches, and steps somewhere else when someone looks his way or turns for a second look.
+      const cones = pb.cones();
+      const inCone = (c, x, y) => {
+        const dx = x - c.ox,
+          dy = y - 20 - c.oy;
+        let a = Math.atan2(dy, dx) - c.a;
+        while (a > Math.PI) a -= 2 * Math.PI;
+        while (a < -Math.PI) a += 2 * Math.PI;
+        return Math.abs(a) <= c.half + 0.08 && Math.hypot(dx, dy) <= c.len + 16;
+      };
+      const seen = (x, y) => cones.some((c) => inCone(c, x, y));
+      const curious = pn.curious && pn.curious.phase !== "wait";
+      if (seen(n.sq.x, n.sq.y) || curious || n.sq.y < 400) {
+        // (clear of the vent, the plants, the hallway doorway and the octopus's place by the snacks)
+        const SAFE = [[600, 585], [320, 585], [560, 470], [420, 470], [250, 585], [520, 585], [130, 585]];
+        const far = (x, y) => !curious || !pn.curious || Math.hypot(x - n.sq.x, y - n.sq.y) > 120;
+        const to = SAFE.find(([x, y]) => !seen(x, y) && far(x, y)) || SAFE.find(([x, y]) => !seen(x, y));
+        to && ((n.sq.x = to[0]), (n.sq.y = to[1]));
+      }
+      n.sqPose = "stand";
+      ss.tick(0.2);
+      still = 0;
+      continue;
+    }
+    if (pn && pn.scene === "P8b" && pn.mops && n.ctrl && !n.cur) {
+      // Closing time: Mops has come in mopping; Squatch walks over to him, and they go home together.
+      n.sq.x = pn.mops.x - 50;
+      n.sq.y = pn.mops.y + 4;
+      acts[acts.length - 1] === "WALK · Mops" || acts.push("WALK · Mops");
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    if (pn && pn.scene === "P8b" && !n.cur && !pn.mops) {
+      // The band packs up and everyone leaves, two by two (he has control meanwhile and stays where he is).
+      ss.tick(0.1);
+      still = 0;
+      continue;
+    }
+    // The evening's close-ups (src/modules/evening.js): the brochure's X, the paw on the order's box.
+    const evb = window.SSQ.beat("ch1-evening");
+    if (evb && evb.viewOpen()) {
+      const did = evb.viewAct();
+      did === "MARK · box" && acts.push(did);
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    // (hidden through the evening's alarm after the loud post: he waits in the crate until they lose him)
+    if (n.ch1Evening && n.ch1Evening.alarm && n.ch1Evening.pose === "hidden") {
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    // The escape's close-ups (src/modules/escape.js): a tap on the keypad's keys, the site's button, the snacks.
+    const eb = window.SSQ.beat("ch1-escape"),
+      es = eb && eb.active() ? eb.debug().state : null;
+    if (es && es.cu && n.ctrl && !n.cur && n.q.length === 0) {
+      const P = eb.place;
+      ss.drawFrame(); // (a kid sees the close-up before he taps it)
+      if (es.step === "pad") {
+        for (const d of P.OFFICE_CODE) (ss.tapAt(P.keyAt(d).x, P.keyAt(d).y, false), ss.tick(0.05));
+        acts.push("TYPE · " + P.OFFICE_CODE);
+      } else if (es.step === "site") {
+        esRoom = n.room;
+        // (round 7, q: 124: the Universal Postal Service page, one tap a page: SCHEDULE A PICKUP, BIG, GOAT STUFF)
+        const pg = es.sitePage || 0,
+          b = [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1], P.SITE.to[0]][pg];
+        ss.tapAt((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, false);
+        acts.push("TAP · " + ["SCHEDULE A PICKUP", "BIG", "GOAT STUFF", "MARS"][pg]);
+      } else if (es.step === "drawplan") {
+        // (round 7, q: 132: the plan at his desk, one picture a tap)
+        const o = ss.offerNow();
+        o && (o.f(), acts.push(o.verb + " · " + o.cap));
+      } else if (es.step === "label") {
+        // the printed label (51): his paw takes it
+        ss.tapAt(480, 600, false);
+        acts.push("TAKE · label");
+      } else if (es.step === "note") {
+        // the Guardian note (48): a tap writes the next line
+        ss.tapAt(480, 320, false);
+        acts.push("TAP · note");
+      } else if (es.step === "snacks" || es.step === "food") {
+        const i = P.SNACKS.kinds.findIndex((_, k) => !es.snacks.gone[k]);
+        if (i >= 0 && !es.snacks.carry) (ss.tapAt(P.SNACKS.at[i].x, P.SNACKS.at[i].y, false), acts.push(es.step === "food" ? "LEAVE · food" : "TAKE · snack"));
+        for (let k = 0; k < 12; k++) ss.tick(0.05);
+      }
       ss.tick(0.05);
       still = 0;
       continue;
     }
     if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
-      if (n.ch1PadOn) {
-        for (const d of ["4", "7", "2", "3"]) ss.ch1PadPress(d);
-        ss.tick(0.05);
-        still = 0;
-        continue;
-      }
       if (n.scene === "Q5") {
         const rolls = ss.spotsNow().filter((s) => s && s.verb === "ROLL");
         if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
       }
+      // (round 7, q: 128: the photos are the goal now, so the route looks at them; past photo 5 the hallway robot
+      // comes through: he rolls up and waits for it to pass)
+      if (n.ch1Evening && n.ch1Evening.step === "dodge") {
+        const o = ss.offerNow();
+        o && o.verb === "ROLL" && n.ch1Evening.pose === "stand" && (o.f(), acts.push("ROLL · ball"));
+        ss.tick(0.05);
+        still = 0;
+        continue;
+      }
       // Optional bedroom inspections are tested separately; this route follows the story goal.
       // A spot with a place to stand: a circle (r) or a box (the home-alone desk). A doorway the party walks him
       // through has no button: standing in it is the action.
-      const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0) && (s.r > 0 || s.box) && s.id !== "home-calendar");
+      const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0 || s.box) && (s.r > 0 || s.box) && s.id !== "home-calendar");
       const spot = spots[0];
       if (!spot) {
-        end = "no-spot " + n.scene;
+        end = "no-spot " + n.scene + (n.ch1Evening ? " ev:" + n.ch1Evening.step + ":" + n.ch1Evening.pose + ":" + !!n.ch1Evening.alarm + ":" + n.ctrl : "");
         break;
       }
-      n.sq.x = spot.x;
-      n.sq.y = spot.y;
-      n.sqPose = "stand";
+      // (the spot names who stands there: Squatch, or Mops when the player is Mops: the escape's 44a to 44d)
+      const who = spot.who === "mo" ? n.mo : n.sq;
+      who.x = spot.x;
+      who.y = spot.y;
+      spot.who === "mo" || (n.sqPose = "stand");
       ss.drawFrame();
       ss.tick(0.05);
       if (!spot.verb) {
-        acts.push("WALK · " + spot.id);
+        acts[acts.length - 1] === "WALK · " + spot.id || acts.push("WALK · " + spot.id);
         ss.tick(0.05);
         still = 0;
         continue;
@@ -547,26 +522,32 @@ const play = await page.evaluate(() => {
     acts,
     texts: texts(),
     state: ss.ch1State(),
-    shown: shown.filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|4723/.test(s)),
+    shown: [...shown, ...(window.SSQ.beat("ch1-escape") ? window.SSQ.beat("ch1-escape").debug().words : [])].filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|SCHEDULE A PICKUP|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|169556/.test(s)),
     tally: ss.chTally(),
     vent: n.ch1VentLunch || 0,
     paw: n.ch1Paw || 0,
     sucked: n.ch1PinkSucked || 0,
-    one: n.ch1One || 0,
+    // the lunch sneak (lunch-sneak.js): one snack cake taken and eaten, two left on the plate
+    one: n.ch1Lunch && n.ch1Lunch.pie === "eaten" && n.ch1Lunch.pies === 2 ? 1 : 0,
     lights: n.ch1Lights || 0,
-    code: n.ch1Code || "",
+    // the escape (escape.js): the slip ends in the Guardian Box, his last snack cake on the Guardians' plate, the computer's room
+    escape: n.ch1Escape ? { slip: n.ch1Escape.slip, plate: n.ch1Escape.snacks.onPlate.length, bag: n.ch1Escape.snacks.bag, typed: n.ch1Escape.typed } : null,
+    siteRoom: esRoom,
     brochure: !!n.ch1Brochure,
-    boxed: !!n.ch1Boxed,
-    left: !!n.ch1Left,
-    slipped: !!n.ch1Slipped,
-    packed: n.ch1Packed || 0,
+    boxed: !!(n.ch1HomeMorning && n.ch1HomeMorning.gift === "box"), // the gift in the Guardian Box (home-morning.js)
+    // pickup day (pickup.js): he climbed out of his crate in the mail room; it rode on the ship
+    pickup: n.ch1Pickup ? { climbed: !!n.ch1Pickup.climbed, crate: n.ch1Pickup.crate, packed: n.ch1Pickup.packed } : null,
     paper: n.ch1PaperLog || [],
+    // the loading bay (loading-bay.js): where the day's two stuck copies went
+    bayPapers: n.ch1Bay && n.ch1Bay.papers ? n.ch1Bay.papers.where : "",
+    officeCode: window.SSQ.beat("ch1-escape").place.OFFICE_CODE,
+    order: window.SSQ.beat("ch1-evening").debug().cutIns.includes("order"),
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-// The party night's half one (src/modules/party.js): the peek, the plant, home through his door, the dress-up,
-// out through his door; then the older free play (no flyer to take, no balloon: they went with the rebuild).
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "WALK · go-home", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+// The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
+// door; the party in disguise (the dance), closing time, and walking home with Mops.
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-hall-door", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "LOOK · photos", "ROLL · ball", "WALK · ev-hall", "HIDE · bar", "GREET · kid", "TALK · family", "WALK · ev-home", "OPEN · box", "BITE · cake", "HOLD UP · brochure", "SHOW · brochure", "ASK · again", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · box", "POST · mailbox", "HIDE · crate", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "DRAW · plan", "DRAW · plan", "DRAW · plan", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "WALK · es-door", "TYPE · code", "TYPE · 169556", "USE · computer", "HIDE · desk", "USE · computer", "TAP · SCHEDULE A PICKUP", "TAP · BIG", "TAP · GOAT STUFF", "TAP · MARS", "TAKE · label", "WALK · es-door", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "WALK · es-door", "OPEN · closet", "PUT IN · box", "READ · note", "OPEN · box", "PACK · note", "WALK · pk-tuft", "EAT · poster", "PACK · box", "PACK · bucket", "PACK · snacks", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "TAKE · drawing", "PUT ON · label", "GET IN · crate", "WALK · pk-door", "WALK · pk-row", "KNOCK · crate", "SPILL · bucket", "CLIMB OUT · crate", "HIDE · mailbox", "WALK · pk-door", "SNIP · beard", "PUT ON · beard", "PUT ON · horns", "PUT ON · jacket", "BLEAT · Mops", "BLEAT · Mops", "BLEAT · Mops", "WALK · pk-door", "WALK · pk-box", "PICK UP · box", "WALK · pk-to-scan", "BLEAT · robot", "GO · ship", "BOARD · scanner", "PRESS · beard", "CLIMB · ramp", "PLAY · tape", "ZOOM · in", "OPEN · box", "BITE · cake", "HIDE · crate", "BLEAT · crew"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -580,56 +561,104 @@ const must = [
   "Stay out of their sight!",
   "Let's give a big hello to our friends from Bleep-Bloop Robotics!",
   "Soon their helper robots will be here, to help with the heavy work.",
+  // his worry, right after the robots line (Brian 2026-11-25)
+  "Robots for the heavy work? That's Mops's job!",
+  "I have to show Mops.",
   "And now... put your hands together for the Croc Boys!",
   "Stormtop-vania 1-2-3-4-5!",
-  "I've never gotten to dance at a party.",
-  "FUR! Security!",
-  "A flyer. And fur on the floor.",
+  // at home after the flyer sneak (Brian 2026-11-25, showing-5 note 2: "Phew", the flyer under the bed, two thoughts)
+  "Phew, made it!",
+  "That party looked so fun.",
+  "I'll sneak back in a costume and dance!",
+  // Closing time and the walk home with Mops (party-endings.js); the raid and Mops finding the flyer went with
+  // the old free play.
+  "The party's over. Good night, Stormtop!",
+  "Everyone out there has someone.",
+  "You have me.",
   "The Guardians came! They always come when I'm scared.",
   "He forgot his lunch!",
-  "Squatch! You should be hiding.",
   "My lunch! You're the best.",
-  "I know you, Squatch, you're probably hungry... you know the rule, grab one snack.",
+  // the loading bay, rebuilt from the story pass of 2026-11-26 (loading-bay-lines.js): a few lines from each beat
   "Universal Postal Service ship arriving!",
-  "I better go see what that is.",
-  "Please let me follow you, I'll be really sneaky.",
-  "Okay, just this time, but hide carefully.",
-  "Mops, don't worry, you know how much we love you here. Even our visitors always love you.",
-  "Isfred! A crate is damaged in the mail room.",
+  `The ${SNACK.name} ship!`,
+  "Hide when I say hide.",
+  "Quick! The manager is coming!",
+  "NO FUR. PROCEED.",
+  "Fur in the vents... that was me.",
+  "It's a HAT.",
+  "Mops, don't worry.",
+  "Here's the code to unlock the door.",
   "Left one of the copies in the office. What do I do with the other two?",
   "I'll take care of it.",
   "Delicious.",
   "You're gumbling! (goat mumbling)",
+  "I can't understand you with paper in your mouth.",
   "Ptoo!",
+  "They never forget.",
+  "Big hairball.",
   "What's the difference between fur and hair?",
   "Paperwork.",
-  "I swear we had more Moon Pies... is that what they stole at lunch?",
-  "Quick, hide.",
-  "Are those other Sasquatches?",
-  "I need to get back to work, we'll talk about it tonight.",
-  "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here.",
-  "Mail scanned. Pawature accepted.",
-  "Six days later",
-  "Replaced? The manager was lying to me.",
-  "I'm going to be replaced. The new robots are coming on the ship tomorrow. Remember that pancake place? Let's go find out about it.",
-  "Oh, it was on the form I sent, I mean, never mind.",
-  "Didn't a copy get sucked into the vent?",
-  "I hope Mops doesn't notice...",
-  "Hurry, hurry, pink slip, got it!",
+  // (round 7, 2026-11-27: the brochure scene as Mops, the M moment, the fight)
+  "Behind the bar. Quick.",
+  "You missed a corner.",
+  "The Great Red Storm is passing!",
+  "Red like Mars.",
+  `The ${FAMILY.NAME}!`,
+  "The only goat janitor in the whole galaxy.",
+  `Hey. What were you saying about ${FAMILY.name}?`,
+  "A family of Wookiees makes them.",
+  "You can only get them at their stand.",
+  "In fact, I've got a brochure here.",
+  "Take this home.",
+  "We'll talk tonight.",
+  "No fizz.",
+  "We always thought it said STARS.",
+  "Maybe it's MARS!",
+  "That evening…",
+  "Mops! Look. Maybe my crate says MARS.",
+  "The man said Wookiees. You're not a Wookiee.",
+  "Why won't you help me find my family?",
+  "I AM your family.",
+  "Maybe my REAL family wouldn't make me hide!",
+  "Bed. The floors don't mop themselves.",
+  "The floors don't mop themselves...",
+  "The form!",
+  "If they replace Mops...",
+  "MAIL SCANNED.",
+  "PAWATURE ACCEPTED.",
+  "No! The pink one!",
+  "It's done.",
+  // (the escape rebuilt from the story pass of 2026-11-26: escape-lines.js; "Six days later" is drawn on the home
+  // calendar now, tests/escape-mops.mjs)
+  "ROBOT SIDE. GOAT SIDE.",
+  "The manager lied to me.",
+  "Squatch was right.",
+  "They're replacing me.",
+  `Let's go find that ${FAMILY.name} stand.`,
+  "It was on the form. I... never mind.",
+  "Didn't a copy get sucked into a vent?",
+  "Goat-sized. You keep watch.",
+  "I asked Mars. Mars said no.",
+  "I hope he didn't read the order form.",
+  "Mmf! Mmf mmf!",
+  "You're gumbling again!",
   "Get it before he sees it.",
   "This time, take all the snacks you want.",
-  "I'm worried about the Guardians. I'll leave them some food.",
-  "Get out. They're checking a crate.",
+  "What about the Guardians?",
+  "Squatch! Get out.",
+  "HAIR. PROCEED.",
   "The spare jacket. The beard. And the horns.",
   "More bleat. Less roar.",
-  "HAIR... PROBABLY. PROCEED.",
+  "...PROBABLY.",
   "Send in Mops for his Employee of the Month photo.",
   "Mops isn't here.",
   "Not here? He can't live off the station!",
   "He was replaced by the new robot shipment.",
   "I never ordered a replacement! Get me the security tapes.",
   "Later that evening...",
-  "The base called the ship. It has to stop.",
+  "A Wookiee!",
+  "Call from Stormtop.",
+  "He's with me.",
 ];
 let at = -1;
 const order = must.map((line) => {
@@ -639,9 +668,9 @@ const order = must.map((line) => {
 });
 g.check("the story lines show in cartoon order", order.every(([, i]) => i >= 0), order.filter(([, i]) => i < 0).map(([line]) => line));
 g.check(
-  "Squatch hid in a crate on pickup day, climbed out, then wore the costume",
-  play.state.didBall === true && play.state.peeked === true && play.state.climbed === true && play.state.inCrate === false && play.state.costume === true,
-  play.state,
+  "Squatch hid in his crate on pickup day, climbed out (the crate rode on without him), then wore the costume",
+  play.state.didBall === true && play.pickup && play.pickup.climbed === true && play.pickup.crate === "ship" && play.state.costume === true,
+  { state: play.state, pickup: play.pickup },
 );
 const walks = walkChanges(play.state.trail);
 g.check("every room change walks off and walks in", walks >= 12, { walks, sample: play.state.trail.slice(0, 8) });
@@ -649,227 +678,80 @@ const doors = doorUses(play.state.walks);
 const offPicture = (play.state.walks || []).filter((w) => w.x < 0 || w.x > 960 || w.y < 0 || w.y > 640);
 g.check("walks stay on the picture", offPicture.length === 0, offPicture.slice(0, 6));
 g.check(
-  "the office computer is in the hallway and the walks still use the hall doors",
-  play.state.siteRoom === "passage" && doors.backHome >= 2 && doors.overHall >= 2,
-  { siteRoom: play.state.siteRoom, doors, walks },
+  "the office computer is in the office (R84) and the walks still use the hall doors",
+  // (the evening, evening.js, and pickup day, pickup.js, walk him home through their own doorways now, logged at the
+  // doorway he left by, so no walk home through the hall's door is the older program's any more: the walks over to
+  // the hall are what is counted)
+  play.siteRoom === "office" && doors.overHall >= 2,
+  { siteRoom: play.siteRoom, doors, walks, log: (play.state.walks || []).filter((w) => w.phase !== "off").map((w) => w.phase[0] + ":" + w.room + ":" + w.x + "," + w.y) },
 );
 const paper = play.paper || [];
-const binAt = paper.indexOf("bin");
 const pawsAt = paper.indexOf("paws");
 const ventAt = paper.indexOf("vent");
 g.check(
-  "the pink copy reaches the bin before any vent, and the vent is only after the paw check",
-  binAt >= 0 &&
-    pawsAt > binAt &&
-    paper.indexOf("bite") >= 0 &&
-    paper.indexOf("bite") < binAt &&
-    paper.indexOf("mouth") > paper.indexOf("bite") &&
-    paper.indexOf("mouth") < binAt &&
+  "the copies end in the bin in the bay (the bay keeps where they are, loading-bay.js), and the vent is only after the paw check",
+  pawsAt >= 0 &&
+    play.bayPapers === "bin" &&
     (ventAt < 0 || ventAt > pawsAt) &&
     play.vent === 0 &&
     play.paw === 1 &&
     play.sucked === 1 &&
     play.one === 1 &&
     play.lights === 1 &&
-    play.code === "4723" &&
-    play.brochure &&
+    // (the old keypad's code and the brochure in his paw were the older program's; the escape's keypad, typed below,
+    // and the brochure pinned on the home wall, tests/escape-home.mjs, are the joined game's)
+    play.officeCode === "169556" &&
+    play.escape &&
+    play.escape.typed === "169556" &&
     play.boxed &&
-    play.left &&
-    play.slipped &&
-    play.packed === 2 &&
-    paper.includes("slip") &&
-    paper.includes("box") &&
-    paper.indexOf("box") > paper.indexOf("slip"),
-  { paper, vent: play.vent, paw: play.paw },
+    play.escape.plate === 1 &&
+    play.escape.bag === 4 &&
+    play.escape.slip === "box" &&
+    !!play.pickup &&
+    play.pickup.packed.box &&
+    play.pickup.packed.bucket,
+  { paper, vent: play.vent, paw: play.paw, bayPapers: play.bayPapers, sucked: play.sucked, one: play.one, lights: play.lights, code: play.code, officeCode: play.officeCode, brochure: play.brochure, escape: play.escape, boxed: play.boxed, pickup: play.pickup },
 );
 g.check(
-  "the order box, the Mars letter, and the Guardian box are drawn",
-  play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
-  play.shown,
+  "the paw-order close-up opened (its words are measured in tests/evening.mjs), and the Mars letter and the Guardian box are drawn",
+  // (ORDER MORE ROBOTS is on the pink sheet in the evening's paw-order close-up, src/modules/evening.js; the Guardian
+  // Box: its close-up on pickup day, opened with OPEN · box, src/modules/pickup.js)
+  play.order && play.shown.some((s) => /^MARS LOST & FOUND\.?$/.test(s)) && play.acts.includes("OPEN · box") && !!play.pickup && play.pickup.packed.box,
+  { shown: play.shown, order: play.order },
 );
-g.check("the vent board, the alarm, and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
-g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
-
-const laterBalloon = await page.evaluate(() => {
+g.check("the vent board and the snack site's buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("SCHEDULE A PICKUP"), play.shown);
+// The red FUR alarm is part of the locked party hall picture now (its words are in the picture, not drawn text):
+// it shows on the back wall, by the hallway doorway, during the party.
+const { HALL } = await import(new URL("../src/modules/party-hall.js", import.meta.url).href);
+const red = await page.evaluate((a) => {
   const ss = window.__ss;
   const n = ss.op;
+  n.q = [];
+  n.cur = null;
+  window.SSQ.beat("ch1-party").jump("P2");
+  // past the fade into the room
+  for (let i = 0; i < 30; i++) ss.tick(0.05);
+  ss.drawFrame();
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
   const k = cv.width / 960;
   const cx = cv.getContext("2d", { willReadFrequently: true });
-  const redAt = (x, y) => {
-    const p = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
-    return p[0] > 180 && p[1] < 130 && p[2] < 120;
-  };
-  const arm = (balloon) => {
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = true;
-    n.ch1Office = false;
-    n.ch1Disguise = true;
-    n.ch1PartyOver = false;
-    n.ch1Balloon = balloon;
-    n.ch1BalloonRest = "";
-    n.ch1BalloonPopped = false;
-    n.ch1BalloonPop = 0;
-    n.ctrl = true;
-    n.q = [];
-    n.cur = null;
-    n.sqPose = "stand";
-    n.sq.x = 640;
-    n.sq.y = 520;
-    ss.hall.camX = 0;
-  };
-  const lock = (balloon) => {
-    n.ch1Cut = null;
-    arm(balloon);
-    ss.spotsNow().find((s) => s.verb === "SNAG").f();
-    const state = ss.ch1State();
-    n.q = [];
-    n.cur = null;
-    return state.balloonRest;
-  };
-  const show = (scene) => {
-    n.scene = scene;
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = false;
-    n.ch1Office = false;
-    n.ctrl = false;
-    n.q = [];
-    n.cur = null;
-    ss.hall.camX = 0;
-    for (let i = 0; i < 12; i++) ss.tick(0.1);
-    ss.drawFrame();
-  };
-  const ceiling = lock("ceiling");
-  const popsBeforeHall = ss.ch1State().balloonPops;
-  show("Q7");
-  const ceilingSeen = { rest: ss.ch1State().balloonRest, onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeHall };
-  n.ch1BalloonRest = "";
-  ss.CH1_CHECKPOINTS.Q4();
-  const loaded = ss.ch1State().balloonRest;
-  const tied = lock("back");
-  const popsBeforeTied = ss.ch1State().balloonPops;
-  show("Q7");
-  const tiedSeen = { onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeTied, popped: ss.ch1State().balloonPopped };
-  const kept = lock("held");
-  const missed = lock("up");
-  n.ch1Party = false;
-  n.ch1Office = true;
-  n.scene = "Q9";
-  n.ctrl = true;
-  n.q = [];
-  n.cur = null;
-  const before = ss.ch1State().balloonPops;
-  ss.tick(0.05);
-  ss.drawFrame();
-  const once = {
-    pops: ss.ch1State().balloonPops - before,
-    word: ss.shown().includes("POP!"),
-    ctrl: n.ctrl,
-    quiet: n.q.length === 0 && !n.cur,
-  };
-  ss.tick(2);
-  n.room = "closet";
-  ss.tick(0.2);
-  n.room = "hall";
-  n.scene = "Q9";
-  n.ch1Office = true;
-  ss.tick(0.3);
-  ss.drawFrame();
-  return { ceiling, loaded, tied, kept, missed, ceilingSeen, tiedSeen, once, again: ss.ch1State().balloonPops - before };
-});
-g.check(
-  "the balloon stays in later hall scenes and pops once on the last visit",
-  laterBalloon.ceiling === "ceiling" &&
-    laterBalloon.loaded === "ceiling" &&
-    laterBalloon.tied === "tied" &&
-    laterBalloon.kept === "tied" &&
-    laterBalloon.missed === "ceiling" &&
-    laterBalloon.ceilingSeen.rest === "ceiling" &&
-    laterBalloon.ceilingSeen.onCeiling &&
-    !laterBalloon.ceilingSeen.tied &&
-    laterBalloon.ceilingSeen.pops === 0 &&
-    laterBalloon.tiedSeen.tied &&
-    !laterBalloon.tiedSeen.onCeiling &&
-    !laterBalloon.tiedSeen.popped &&
-    laterBalloon.once.pops === 1 &&
-    laterBalloon.once.word &&
-    laterBalloon.once.ctrl &&
-    laterBalloon.once.quiet &&
-    laterBalloon.again === 1,
-  laterBalloon,
-);
-const slice = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  n.scene = "QA";
-  n.room = "hall";
-  n.ch1Party = true;
-  n.ch1Disguise = true;
-  n.ch1Flyer = true;
-  n.ch1PartyOver = false;
-  n.ch1PartyT = 10;
-  n.ch1Cut = null;
-  n.ch1BarDone = false;
-  n.ch1Chain = false;
-  n.ch1Bag = 0;
-  n.stars = 0;
-  n.ctrl = true;
-  n.q = [];
-  n.cur = null;
-  n.log = [];
-  ss.spotsNow().find((s) => s.verb === "OPEN").f();
-  const opened = n.ch1Cut && n.ch1Cut.id === "bar" && n.ctrl === false;
-  const t0 = n.ch1PartyT;
-  ss.tick(1);
-  const paused = n.ch1PartyT === t0;
-  ss.ch1Pointer("down", 430, 200);
-  ss.ch1Pointer("up", 40, 560);
-  const bagged = n.ch1Cut && n.ch1Cut.bag === 1 && n.stars === 0;
-  n.ch1Cut.face = 1;
-  n.ch1Cut.held = "top";
-  ss.ch1Pointer("up", 400, 300);
-  ss.tick(0.05);
-  const first = n.log.some((e) => e.text === "...Nice gloves.") && n.ch1Cut;
-  n.ch1Cut.face = 1;
-  n.ch1Cut.held = "bottom";
-  const beforeAlarm = n.ch1PartyOver;
-  ss.ch1Pointer("up", 400, 500);
-  const second = n.log.some((e) => e.text === "Wait a second... fur!") || n.ch1PartyOver;
-  n.ch1PartyOver = false;
-  n.ch1Disguise = true;
-  n.ch1Cut = { id: "bar", zoom: 1, paw: { x: 200, y: 500 }, held: "", bag: 1, back: 0, glance: 0, face: 0, catches: 0, drag: false };
-  n.ch1Chain = false;
-  ss.ch1Pointer("down", 420, 400);
-  ss.ch1Pointer("up", 40, 560);
-  return { opened, paused, bagged, first, second, beforeAlarm, chain: n.ch1Chain, look: n.ch1Look, bag: n.ch1Bag };
-});
-g.check(
-  "the bar cut-in pauses the party, counts snacks, and a bottom grab spills once",
-  slice.opened && slice.paused && slice.bagged && slice.first && slice.chain && slice.look === 4 && slice.bag === 2,
-  slice,
-);
+  let reds = 0,
+    all = 0;
+  for (let y = a.y0 + 2; y < a.y1 - 2; y += 2)
+    for (let x = a.x0 + 2; x < a.x1 - 2; x += 2) {
+      const p = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
+      all++;
+      p[0] > 170 && p[1] < 110 && p[2] < 110 && reds++;
+    }
+  return { room: n.room, reds, all };
+}, HALL.alarm);
+g.check("the red FUR alarm shows on the party hall's back wall", red.room === "hall" && red.reds > red.all * 0.25, red);
+g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
+
+// The balloon that stayed in later hall scenes went with the old free play on purpose (party rebuild, half two),
+// and so did the snack bar cut-in: the snack close-up is checked in tests/party-free.mjs.
 g.check("no page errors", errors.length === 0, errors);
-const pad = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  n.ch1PadOn = true;
-  n.ch1Pad = "";
-  n.ch1Step = "pad";
-  n.ch1Door = false;
-  ss.ch1PadPress("4");
-  ss.ch1PadPress("9");
-  const cleared = n.ch1Pad === "" && !n.ch1Door;
-  ss.ch1PadPress("4");
-  ss.ch1PadPress("7");
-  ss.ch1PadPress("2");
-  const mid = n.ch1Pad;
-  ss.ch1PadPress("3");
-  return { cleared, mid, code: n.ch1Code, door: n.ch1Door, on: n.ch1PadOn };
-});
-g.check("a wrong keypad digit clears, and 4723 opens the door", pad.cleared && pad.mid === "472" && pad.code === "4723" && pad.door && !pad.on, pad);
+// (the keypad's wrong key and the code are checked in tests/escape.mjs)
 await ctx.close();
 await g.finish("ch1-playthrough");
 
@@ -881,7 +763,9 @@ function doorUses(walks) {
     if (a.phase !== "edge" || b.phase !== "in") continue;
     if (a.room === "hangar" && b.room === "hall" && a.x < 160 && b.x > 800) use.backHall++;
     if (a.room === "hall" && b.room === "closet" && a.y > 560 && b.x > 800) use.backHome++;
-    if (a.room === "closet" && b.room === "hall" && a.x > 800 && b.y > 560) use.overHall++;
+    // (the walks the escape and pickup day let him do himself log the doorway he left by at both ends: escape-doors.js;
+    // the hall's bottom door is at y 556 there)
+    if (a.room === "closet" && b.room === "hall" && a.x > 800 && (b.y > 550 || b.x > 800)) use.overHall++;
     if (a.room === "hall" && b.room === "hangar" && a.x > 800 && b.x < 160) use.overDelivery++;
   }
   return use;

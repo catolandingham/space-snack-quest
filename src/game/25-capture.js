@@ -20,7 +20,7 @@
       lure9: { cause: "The bot saw Squatch in the box. Security caught him.", joke: () => kh() },
       lure11: { cause: "The bot saw Squatch behind the plant. Security caught him.", joke: () => kh() },
       // Chapter 2
-      pump: { cause: "A pump bot saw Squatch on the lot. Security caught him.", joke: () => [v("bot", "Report him or fuel him?"), v("sq", "Pancakes. Park the nozzle.")] },
+      pump: { cause: "A pump bot saw Squatch on the lot. Security caught him.", joke: () => [v("bot", "Report him or fuel him?"), v("sq", (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + ". Park the nozzle.")] },
       diner: { cause: "Gloop saw Squatch at the counter. Security caught him.", joke: () => [v("gloop", "Counter's closed. Lockup's open."), v("sq", "I'll take it to go.")] },
       blorp: { cause: "Blorp saw Squatch in the diner. Security caught him.", joke: () => [v("gloop", "Counter's closed. Lockup's open."), v("sq", "I'll take it to go.")] },
       sink: { cause: "Gloop saw Squatch at the sink. Security caught him.", joke: () => [v("gloop", "The window caught the sink."), v("sq", "Next time I roll.")] },
@@ -196,7 +196,7 @@
         let face = Math.atan2(n.sq.y - 20 - (s.y - 28), n.sq.x - s.x);
         return (
           seenCone(s.x, s.y - 28, face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
-          drawCh1Alien(s.x, s.y, "hat", ALIEN_ADULT, Math.cos(face) < 0 ? -1 : 1)
+          drawCh1Alien(s.x, s.y, "hat", alienHere(), Math.cos(face) < 0 ? -1 : 1)
         );
       }
       if (n.room === "hall") return;
@@ -226,8 +226,6 @@
       S11: () => Js(),
       // Redesigned Chapter 1 night: back at the bin, yellow copy not mailed yet.
       Q4: () => ch1RestartNight(),
-      // The party. A catch stays in the party, a little back from where he was seen.
-      QA: () => ch1RestartParty(),
     };
     const CH3_CHECKPOINTS = {
       p1: () => {

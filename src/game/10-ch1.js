@@ -797,16 +797,8 @@
               (n.sq.moving = !1),
               n.pulse.delete("tv"),
               J([
-                { k: "card", id: "fb", text: "Years ago, on Stormtop..." },
-                { k: "fb", pic: "tour", cap: "A Wookie tour group came to visit Stormtop." },
-                { k: "fb", pic: "shed", cap: "They shed. A LOT." },
-                { k: "fb", pic: "clog", cap: "The fur clogged the air scrubbers. Everyone gasped for air!" },
-                { k: "fb", pic: "clog", cap: "*gasp*" },
-                N(() => {
-                  ((n.fbPic = "banish"), (n.banT = n.T));
-                }),
-                v("official", "Nobody can live outside. The scrubbers keep us breathing. NO FUR.", "say"),
-                { k: "card", id: "fb", text: "Now" },
+                // the Wookiee story (src/modules/tv-story.js)
+                ...((window.SSQ && window.SSQ.beat("ch1-tv-story") && window.SSQ.beat("ch1-tv-story").steps()) || []),
                 N(() => {
                   ((n.fbPic = ""), (n.tvOn = !1));
                 }),
@@ -1088,7 +1080,7 @@
           at: [462, 380],
           when: !n.found.has("stash") && n.lunch === "held",
           f: () => {
-            (D.pickup(), ee("secret", "stash", 462, 300), TV([v("sq", "Mops's emergency Moon Pies!")]));
+            (D.pickup(), ee("secret", "stash", 462, 300), TV([v("sq", "Mops's emergency " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + "!")]));
           },
         }),
         spot({
@@ -1122,7 +1114,7 @@
               n.found.add("sched"),
               J([
                 { k: "panel", id: "sched" },
-                v("sq", "Moon Pie day!"),
+                v("sq", (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "Snack") + " day!"),
                 N(() => {
                   n.ctrl = !0;
                 }),
@@ -1445,8 +1437,8 @@
     function sf(l) {
       let o = l.sp > 0 && l.pause <= 0 && l.alert === 0 ? Math.abs(Math.sin(n.T * 8)) * 3 : 0;
       (l.alert > 0
-        ? (Qt(l.x, l.y - o, l.col, QT_ADULT, n.sq.x > l.x ? 1 : -1), X(l.x, l.y - 58, 4, 5), r(y, 0))
-        : (Qt(l.x, l.y - o, l.col, QT_ADULT, 0), L(l.x, l.y - 64 - o, 16.5), r(l.hair, 2.5)),
+        ? (Qt(l.x, l.y - o, l.col, qtHere(), n.sq.x > l.x ? 1 : -1), X(l.x, l.y - 58, 4, 5), r(y, 0))
+        : (Qt(l.x, l.y - o, l.col, qtHere(), 0), L(l.x, l.y - 64 - o, 16.5), r(l.hair, 2.5)),
         Of(l.x, l.y - 112, l.alert > 0));
     }
     function jp() {

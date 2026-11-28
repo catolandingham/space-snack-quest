@@ -3,26 +3,30 @@
 
 | Lines | Heading |
 | --- | --- |
-| 25–31 | # Brian's asks that are not in the game yet |
-| 32–46 | ## 1. Build next |
-| 47–63 | ## 2. Needs your eyes |
-| 64–67 | ## 3. Your instructions disagree |
-| 68–69 | ## 4. Everything else not built |
-| 70–88 | ### Morning and home |
-| 89–100 | ### Party |
-| 101–116 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 117–121 | ### Snacks and dress-up |
-| 122–134 | ### Day 2 and night |
-| 135–139 | ### Escape and later chapters |
-| 140–143 | ### Looks and lines |
-| 144–151 | ### Sound |
-| 152–155 | ### Words and rules |
-| 156–168 | ### How the bots work |
-| 169–176 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 177–192 | ## 5. Merged, in a pull request, and being built |
-| 193–203 | ## 6. Corrections to the checkers |
+| 26–35 | # Brian's asks that are not in the game yet |
+| 36–45 | ## 1. Build next |
+| 46–64 | ## 2. Needs your eyes |
+| 65–68 | ## 3. Your instructions disagree |
+| 69–70 | ## 4. Everything else not built |
+| 71–85 | ### Morning and home |
+| 86–96 | ### Party |
+| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 113–117 | ### Snacks and dress-up |
+| 118–127 | ### Day 2 and night |
+| 128–132 | ### Escape and later chapters |
+| 133–136 | ### Looks and lines |
+| 137–144 | ### Sound |
+| 145–148 | ### Words and rules |
+| 149–161 | ### How the bots work |
+| 162–169 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 170–187 | ## 5. Merged, in a pull request, and being built |
+| 188–198 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 This page lists everything Brian asked for that is not in the game yet, checked against main on 2026-11-23 and against an independent review the same day.
 When an ask gets built, it leaves this page. Bots: read "Build next" before choosing work.
@@ -33,24 +37,21 @@ Brian's G Bot messages 419 to 603 were written while he looked at the old "v2" b
 
 Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win over older words.
 
-1a. **Vents tug the disguise.** Brian, 2026-11-23: "No, it tugs the disguise": with the disguise on, the vent tugs a piece and does not pull fur or set off the alarm (R108 stays). The no-disguise half (swirls always turning inward; too close, a tuft drifts in, then fur goes in and the alarm sounds) is built in the party rebuild, half one (draft PR #85, `src/modules/party-vent.js`). The tug comes with half two (P6), on the outfit the kid chose; the older free play still has its SUCK button until then.
-3. **Raising the alarm at the party, in free play.** Brian, 2026-11-23: the guest runs to the wall alarm. Built for the peek and sneaks in draft PR #85 (`src/modules/party-alarm.js`); the older free play still runs its own alarm until half two. "anytime you're seeing or anytime fur detected someone needs to run the trip alarm." (K 163).
-4. **A catch at the party, in free play.** Brian, 2026-11-23, "Card, restart scene": built for P1 to P5 in draft PR #85 (each scene restarts on a catch or ↺). The older free play still puts him back a little in the party until half two splits it (P6 to P8).
-5. **Wookiee growl.** Brian agreed today to copy his recording into the game. "the Wookie noise kind of sounds like like a whoopee cut cushion." (S 192).
-6. **Guests move around during the party.** "people are milling about during party" (G 526). Facing Isfred during the speech ("everyone would be facing him during, in the speech", G 295) is built in draft PR #85 (P3); milling comes with half two (P6).
-8. **Mops's heart cone and its size.** Open PR #35 turns the hearts on in Chapter 1; review it, do not rebuild. "coming up from Mops Cone is supposed to be the floating hearts" (G 442); "Mop can still have a cone, it's just that the cone he had was super small compared and looked odd compared to the size of the other cones." (G 427).
 9. **No outline unless required.** Only the thing the player must go to next gets an outline. "I don't think we should have yellow outlines in Squatch when it's not actually requiring you to do the thing." (G 567). Outline of props the game draws itself, dashed and outside: "For the bush outline, I'd still like it to be outside of the object and dashed." (G 438). The glowing circle and bouncing arrow still draw outside Chapter 1 (60-frame-draw.js:522-545): "it doesn't need an arrow!!" (S 1153).
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
 13. **Last, if time allows: karaoke.** Brian, 2026-11-23. Karaoke with the Moon Pie song: "For karaoke, let's actually do a different song." (S 1013); "I'm good with the Moon Pie's song." (S 1019). Today it is tap-to-howl only.
+14. **"Ganitor", D only.** Brian, 2026-11-26: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." A, B, C and E are built on branch `feat/ch1-lunch-sneak` (round C, not merged; `src/modules/ganitor.js`). Left: D) the robot janitor notice (robots can be janitors, only Mops is a Ganitor); three wordings went to Brian in the round C report, not built until he picks one.
 
 ## 2. Needs your eyes
 
+- **The bedtime crate story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (PR #89, draft, not merged) with the old captions (approved 2026-11-26, "keep the old crate story words") and his bedtime line (approved as written, #36); the mop bucket picture is on (his answer of 2026-11-26). His 2026-11-26 notes are built there too: Squatch asks "Tell me about when we first met?" (approved), Mops's "...Weeee-eenn-nnttt?", Joe's theme sung from his ask (#37), the Guardians picture with his approved line, the crate story's memory look (#38), the baby a furry ball in his mop bucket and two tourists peeking in before "Nothing to see here!" (video note 0:39), and falling asleep with a yawn, the tuck, Mops falling asleep beside the bed like a fainting goat (#33), the light going down and three snores. Waiting for his eyes. Open: the "?" over the tourists (suggested); the light goes down by itself as Mops settles (nobody turns it off); the new bucket is also drawn over the home room's painted bucket (his yes was said about the bedtime picture's bucket: confirm the room); the morning's beard-wringing close-up keeps its own bucket, not his new mop bucket (he approved that close-up separately): change it too?
+- **The home morning (beats 22 to 24).** Built on branch `feat/ch1-day2-morning` (draft, not merged), including "Make the first gift obvious" ("that needs to be more obvious.", S 92): the rocket is the only thing outlined and glowing when he wakes. His 2026-11-26 notes are built there too: the box clearly bigger than the rocket (0:21), the first build's box view with the older notes and the crayon drawing (0:21), and his crayon Guardians in a thought bubble as he holds up the gift (0:30, the story hole; with Mops's Guardians line at bedtime). His answers of 2026-11-26 are built: the calendar optional, the box back in the closet, the note's words, MOPS on the bag, the two prompts approved. Placeholder drawings. Round D (his notes and answers of 2026-11-26) built there too: the PA wakes Mops, asleep by the bed since bedtime (#41, #33; the PA words are suggested, pick them), the note read when he picks up the rocket (0:24), bigger thought bubbles with a trail (0:11), no walking through the crate (0:18), the taller closet (0:20), walking to the bag first (0:30; the chip "Squatch: go to the bag by the door" needs your yes). Pick: the goal outline (options sheet A to E) and whether labels on the picture go (0:18, 0:20).
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
-- **The theme song.** "don't like the theme song :/ definitely not the singing part" (G 318). Joe's track is one he uploaded ("This should be main theme", S 354; "It's all good", S 361). Ask which song he meant before building.
-- **Wookiee TV panel.** "Wookiee TV panel. Just go with the one we built before." (G 603). Main has three panels after the party; is that the one he meant?
+- **Which music where** (2026-11-26, showing 6: "I don't think we should default to the vocal part of this song"; "let's find alts to very where else"). Built: his picks of 2026-11-26 in one table (`src/modules/music-picks.js`): Floating in Space (the new recording) the first time home on day one, a home rotation every other daytime visit (Carefree, Morning, Rainbows), Joe's theme with its singing at bedtime, from Squatch's ask (bedtime branch, round D; it was Reawakening), Odyssey for the TV story, Lobby Time in the empty hall, Sneaky Snitch for sneaking, Der Kleber Sting when caught, Funky Chunk then Stormtop-Sylvania for his dance then Funky Chunk for the band, Run Amok for the octopus chase, Mops's hum at closing, Joe's opening tune on the title. The goat bleat plays on the morning song's bleat line, in Floating in Space's gaps and on the bedtime story's "...Weeee-eenn-nnttt?". The music stops when the alarm goes off and comes back only at the next place (Brian 2026-11-26, notes on the lunch video: "when alarm goes off, I presume music should stop").
+- **The guards' flashlights** (2026-11-26, showing 6: "should they always come with flashlights on?"). In the hall the guards carry none (plain sight cones while they are in the hall); at home the guard's beam is on from the doorway until Mops sends him off. On only while searching, off walking in and out? Not changed until he says.
 - **Hallway and corners.** "Adding The Airlock Button Here For No Reason Doesn't Really Make Sense" (P L198). "The Alarm Can Not Be In The Bush Here" (P L163). The hall asks about the speaker and FUR alarm on one wall and the window wrap (S 457, 463, 466) are checked against the locked hall picture, which has the speaker and alarm on the back wall and no wrap.
 - **Sizes and looks of people.** Room-door sizing is built, cutscene sizes unchecked. "please go ahead with sizing people by each room's door, even tho it risks running out" (S 1163). "It could just be is Fred." (S 982). "I hate the arms on the green guys - just make them normal" (K 314).
 - **Room changes and camera.** "it kind of jumps to him dropping into the middle of the next scene versus like a smooth walk" (S 195); "the camera being in off placement and so so so many of those things" (K 328). Characters jumping: "All Of A Sudden You're Hidden Like We Need An Actual Transition Here" (P L90) means show how he got hidden.
@@ -69,19 +70,14 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ### Morning and home
 - Thought bubbles for animals. "Thought bubble is fine just was pointing out it was not in the version you showed" (S 593).
-- Vent strings, crossed-off planets, toy bin. "Draw strings between postings and make it more obvious he's searching like a detective" (S 590).
 - Mops goat body and tail. "Full beard to floor, remember!! And more goat body" (S 522). He is called "Janitor, goat janitor is what mops is called." (G 565); humor "where do we have humor about him being the planet's first goat / janitor - aka ganitor? Need to add that in." (S 218). Old unused scenes hold some of these words.
-- Make the first gift obvious. "that needs to be more obvious." (S 92).
 - Things to touch on the walk to the room. "maybe look around, maybe there's another thing or two he can interact with on the way." (S 405).
 - Bedtime story flashback: Mops at his desk, Guardians, big furry Sasquatches. "I agree with A, that works really well." (S 429).
-- Janitor finds Squatch and keeps him. "I Know What It's Like To Be One Of A Kind" (P L134).
 - Sasquatch family visits and is sent back. "We Should Show Sasquatch Family Coming To Visit" (P L120).
 - Pretend to sleep, wait for the janitor. "You Would Just Pretend To Go To Sleep And Then Wait For The Ganitor To Actually Fall Asleep" (P L168).
-- Guardian note in the vent. "we know you're thinking about going to Mars. Don't worry, we'll always be with you." (S 408).
 - Package inspection announcement. "due to suspicious activity, we will be inspecting every package" (S 408).
 - The slip is the confirmation and mail-back form. "this is the confirmation form and also what you mail back to us if you want to order any more." (S 405).
 - UPS-replacing-Amazon joke. "Maybe there's kind of a funny nod, like UPS replacing Amazon" (S 408).
-- Pink note needs a paw print. "pink note needs squatch print remember?" (S 580).
 - Reason Mops dismisses Mars, made obvious. "there's a reason why he thinks it's a waste of time to go to Mars." (S 1058).
 - Order signed in triplicate. "I like Paul signs the order, but it's in triplicate" (S 380).
 - Moon Pies delivered for a reason. "Actually make sure the moonpies get delivered and maybe there's a reason why ?" (K 156).
@@ -90,8 +86,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Hall: speaker and FUR alarm placement, window wrap, fur-alarm zoom. "let's have the viewing portal wrap from the far left wall all the way up behind the wall where the fur alarm and the speaker are" (S 457); "let's just make sure at some point we do a zoom in on the fur alarm." (S 466). Check against the locked hall picture.
 - More people. The bartender (draft PR #85) and the Croc Boys are in; more guests wait until Brian sees this cast. "don't we need more people around than just one, two, three, four Five, six" (S 954).
 - Random conversations to join. "there should be random conversations he could join and be part of" (S 361).
-- Tower of snacks topples after too many, not the first. "I still like the idea that Towering Pyramid does kind of a Rube Goldberg chain." (S 1030).
-- "Got any pancakes" at the stand, "Mom's Pancakes", spilled coffee. "It's Just Mom's Pancakes" (P L154); "One Of Them Should Say Got Any Pancakes" (P L147).
 - Guests' eyes pop after the spill. "why are there eyeballs if they can't see us?" (S 65).
 - An alarm on the wall of every room. "There Should Be An Alarm In Every Room Too" (P L107).
 - Trip on the bucket; janitor turns around. "Should he Trip on the Bucket Sure Yeah" (P L41).
@@ -100,19 +94,19 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ### Playthrough 2026-11-23 (party, for the party rebuild)
 Brian played the live game on his iPhone on 2026-11-23. His party comments, in his words, in the order he said them. These are for the party rebuild, not for the morning fixes. Two of them are built in the morning-fixes PR and left off this list: the faces at the top right ("that's supposed to tell me who I'm playing") show only where a switch is possible (19a), and "The yellow flashing light on the bottom right doesn't make sense" (the bobbing arrow on story waits) is gone; NEXT is the only cue (18a).
-- Peeking: "I'm not peeking here. Look, it's like I fully walked out. That doesn't make sense."
 - The banner and the camera: "The 'coming soon' is not on the actual sign. The camera's pointing in the wrong direction."
 - Guest sizes (unclear on the recording; best reading, the guests are different sizes in a way that looks wrong): "The creatures are kind of various sizes, the way that doesn't make sense."
 - One sign: "It's not clear that's an actual sign. I think we could just have 'Robotics Delegation, coming soon' on the same sign, if we want."
 - Sideways: "Notice how when I've got it landscape, that label is behind Chapter One. But this is fine."
-- Peek versus sneak, and being seen: "Am I supposed to be peeking this whole time? I thought I was sneaking out and then trying to get to the plant. Well, I can't even. And also I'm in the line of sight here, but nothing happens. That doesn't make sense."
 - Placement, at the host on the stage: "And then what's this random thing here? And then that's like a truncated, oddly shaped thing. Got to think about placement of everyone."
 - "Why are there no eyeballs on this?"
 - The host's welcome speech: "Just think about the order of this too. And then, again, coming from the exact wrong place. Now the eyeballs. And then just magically back in there. I shouldn't have to talk you through this. They should make sense. This is just random now."
 - The disguise screen: "Come on. You should be able to audit all these things, like what is this?"
-- The hallway: "I should be able to try and go to the hallway and then it should stop me because the janitor's there."
-- Too fast (unclear on the recording): "It's way too fast. This doesn't make sense. I feel like it should be full screen." Brian in Snack Quest Chat, 2026-11-23: this is the dance arrow game, played in a thin strip at the bottom; he felt it "should be full screen".
 - Brian in Snack Quest Chat, 2026-11-23: "line of sights are cut off": the drawn sight cones are cut short.
+
+### Party video notes and answers, 2026-11-24 (not built yet)
+Brian watched the party video and answered every question the same evening (his clicks and words; the builder's copy is the private ANSWERS file of 2026-11-24). Built already and left off this list: the dance drawn once, the small camera flash, no walk ring on an outlined place, the hallway bounce and its line, the guard's flashlight beam and searching look, no yellow cones in a whole disguise. Still to build, in his words:
+- Day 2 and the snack bar (for the Day 2 build, not the party PR): "Next day, if he stole all the snacks, then they can go to the bar and [someone] could say that's strange. I've never seen the snack bar empty before, but if he didn't steal all the snacks then there's a chance to get one the next day". Who says the line is still to ask. The party saves it: `window.SSQ.beat("ch1-party").snackRecord()` gives { all, left, bag, toppled }.
 
 ### Snacks and dress-up
 - A hint on/off option and a Settings button. "Maybe we have like a Hints on Hints off Option" (P L21); "Maybe We just have like a Settings button Or something" (P L23).
@@ -120,14 +114,11 @@ Brian played the live game on his iPhone on 2026-11-23. His party comments, in h
 - Ball-hide in every room. "I like the idea he can do it to hide when he wants" (S 705).
 
 ### Day 2 and night
-- Photo gallery with five photos a visit, a crooked picture, movie-still gags. "each visit should by default just be like five photos maybe?" (S 853); "Darth Vader's pretty much near perfect, really no notes there" (S 985).
-- Gallery with arrows and an X always there. "arrows to sweep left or right, and then an X that's there at all times" (S 883).
+- The gallery's approved movie-scene pictures (the gallery itself is built, feat/ch1-evening, with stand-in pictures). "Darth Vader's pretty much near perfect, really no notes there" (S 985).
 - Janitor gets sucked out when robots land. "Is there a way where, like, the janitor can get sucked out when the robots land or something?" (S 223).
 - Squatch sneaks to the grate, music distracts robots. "we should have squatch sneak over to grate after distracting robots with music" (S 596).
-- Manager shakes the robots' hands. "The Guy Who Ordered Them Should Shake The Hands Of Dot Bob And Lou As They Leave" (P L103).
 - Foreshadow rolling into a ball. "Foreshadowing The Fact That You Can Roll Up Into A Ball" (P L182).
 - Ship cutscene, security cameras. "We got a call from The From Stormtop Uh Security cameras" (P L222).
-- Squatch shows the brochure. "Squatch Should Show Him The Brochure" (P L165).
 - Hurtful line, then "I didn't mean that". "He Should Say Something More Like Um I Wish You Would Have Left Me In That Crate Or Something" (P L176).
 - Loading-bay banishment shown, and the office rule issued. "It Should Actually Show Them Getting On The Ship At The Loading Bay" (P L50); "Then Show Him In Like The Office Issuing A New Rule On The Computer" (P L53).
 - Lobby crowd obvious. "I kind of think it should be obvious that they're coming in, it needs to be a change" (S 33).
@@ -182,6 +173,8 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
+- The lunch sneak, beats 25 to 27 (draft PR #91, branch feat/ch1-lunch-sneak, stacked on feat/ch1-day2-morning): the sneak past the guests to the hallway, GIVE · lunch, Mops eats a hay sandwich and the bag, one snack behind the counter. Brian's answers of 2026-11-26 are built there (round C: the one-snack line, ROLL · ball, the counter close-up, the bigger MOPS bag, Ganitor A, B, C and E; round D: only the hallway lit up, two wandering guests, the walk-through doorway, crate eyes at the seam, Mops mopping with his beard by his bucket, a slow look and hearts, the duck as the ball). Its questions for Brian are in docs/MASTER-BACKLOG.md.
+- The party night (draft PR #87, branch feat/party-half-two): Brian's showing-5 decisions of 2026-11-25 and his showing-6 notes of 2026-11-26 are built (sight sees his whole body, no hiss under the crowd, no singing away from bedtime, his Croc Boys song, the photo right after the dance, guards round the furniture); his showing-7 notes 12 to 18 of 2026-11-26 are built (voices under bubbles, thought trails, the slower band start with the mic and the close-up, notes from the band, notes under his door, the flyer's size, the shirt for a disguise); his answers of 2026-11-26 are built too (the flyer on the bed, the band order, the chase music, the photo rule, the dance speed words, closing time, the Credits screen and the rest: DECISIONS "Brian's answers of 2026-11-26").
 - The quiet room's mopping (the same branch, draft PR #88), Brian after its video, 2026-11-24: "It's hard to tell the difference between the whistle and the squeaking. Can we make the snore and whistle a bit more prominent? ... see the janitor walking around, mopping the floor with his beard ... the water on the floor kind of following ... And then walking back to the bucket to squeeze it out." Built: Mops's loop before the first tap, a louder snore, swish-only strokes while Squatch sleeps (`src/modules/mop-loop.js`). Waiting for his ears and eyes.
 - The morning's sound (branch feat/morning-sound, draft), Brian's answers of 2026-11-24: 34A (every MY PICK on the sound board, in the morning and home alone), 31a (the beard squirts when tapped; "Hey, stop that!"), 30a (a cutaway with no words and nothing to tap plays by itself), the music and effects levels and Brian's recording turned up 10 dB. The morning fixes (18a to 21a) merged on 2026-11-24 as PR #86.
 - The tap-path change.

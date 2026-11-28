@@ -4,13 +4,15 @@
  * fails if the two ever differ, and fails if the party code types a word of its own.
  *   id      the line's name in the code and in the tests
  *   half    1 = scenes P1 to P5 (peek to dress-up, built first), 2 = P6 to P8 (free play, alarm, endings)
- *   who     "banner", "isfred", "sq" (Squatch thinks or says it), "card", "chip" (the goal chip), "button" (the big
- *           action button), "tag" (the name over a bubble), "meter", "guest" (a party guest), "bartender", "octopus", "band", "speaker", "mops",
+ *   who     "badge" (a gold badge in the dance), "banner", "isfred", "sq" (Squatch thinks or says it), "card", "chip" (the goal chip), "button" (the big
+ *           action button), "tag" (the name over a bubble), "meter", "guest" (a party guest), "bartender", "octopus", "band", "speaker", "mops", "guard" (the guard who follows him home),
  *           "lockup" (the LOCKUP card) or "note" (the small note after hiding)
  *   text    the words, exactly as shown. The lockup line has two blanks, {who} and {where}, filled from the
  *           "who-*" and "where-*" lines.
  *   status  "approved" (Brian's yes, `source` says where) or "needs-yes" (not final until he says yes). Brian said
  *           "Yes to all" to the 31 lines that needed it on 2026-11-24 (Snack Quest Chat).
+ *   removed true for a line the game no longer shows (its row stays, so the sheet's numbers never shift)
+ *   quiet   true for a gentle line of Mops's that must not get his goat "meh" (the bubble's soft tick stays)
  *   source  where the words or the yes came from. "Waiting" = written before, never given his yes. "New" = written
  *           for the party plan.
  * The "That evening…" card is the morning's (morning-lines.js); Isfred's name over his bubble is the engine's.
@@ -45,7 +47,7 @@ export const PARTY_LINES = Object.freeze([
   { id: "isfred-band", half: 1, who: "isfred", text: "And now... put your hands together for the Croc Boys!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "tag-band", half: 1, who: "tag", text: "Croc Boys", status: "needs-yes", source: "New: the name over the band's song bubble (Isfred has just called them the Croc Boys); coordinator, 2026-11-24" },
   { id: "band-song", half: 1, who: "band", text: "Stormtop-vania 1-2-3-4-5!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
-  { id: "sq-dance-wish", half: 1, who: "sq", text: "I've never gotten to dance at a party.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
+  { id: "sq-dance-wish", half: 1, who: "sq", text: "I've never gotten to dance at a party.", status: "approved", source: "Brian's yes of 2026-11-24; removed 2026-11-25 (line 80 said it); put back 2026-11-26 in P3, watching the band, before the flyer sneak (Brian: put it back where it was before the dance)" },
   { id: "chip-home", half: 1, who: "chip", text: "Squatch: sneak home for a disguise", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   // P5, dress-up
   { id: "button-closet", half: 1, who: "button", text: "OPEN · closet", status: "approved", source: "Brian 2026-11-23: 6A (home alone)" },
@@ -58,14 +60,110 @@ export const PARTY_LINES = Object.freeze([
   { id: "bartender-fur", half: 2, who: "bartender", text: "Wait a second... fur!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "octopus-hic", half: 2, who: "octopus", text: "*hic* Fellow tourist!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "sq-juke", half: 2, who: "sq", text: "I gotta juke this fool.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
-  { id: "sq-mops", half: 2, who: "sq", text: "Mops!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
+  // Removed 2026-11-24 (the row is kept so the sheet's numbers do not shift): "sq-hallway" below replaced it.
+  { id: "sq-mops", half: 2, who: "sq", text: "Mops!", status: "approved", source: "Removed 2026-11-24: replaced by line 43 (it had Brian's yes of 2026-11-24)", removed: true },
   // P7, the FUR alarm and the run home
   { id: "chip-run", half: 1, who: "chip", text: "Squatch: run home and hide!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   // P8, the endings
   { id: "speaker-closing", half: 2, who: "speaker", text: "The party's over. Good night, Stormtop!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "sq-someone", half: 2, who: "sq", text: "Everyone out there has someone.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
-  { id: "mops-have-me", half: 2, who: "mops", text: "You have me.", status: "approved", source: "R52, decided" },
+  { id: "mops-have-me", half: 2, who: "mops", text: "You have me.", status: "approved", source: "R52, decided", quiet: true },
+  // Added after the first 42 (new lines go at the end, so no number ever shifts)
+  { id: "sq-hallway", half: 2, who: "sq", text: "I can't go there. Mops will see me.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat" },
+  // Party round four (Brian's answers of 2026-11-24, asks/video-notes-2026-11-24/ANSWERS.md)
+  { id: "sq-arms", half: 2, who: "sq", text: "Those arms will pull off my disguise!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-grab", half: 2, who: "button", text: "GRAB · snacks", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-join", half: 2, who: "button", text: "JOIN · photo", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "card-more", half: 2, who: "card", text: "There's more to find at the party!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "card-all", half: 2, who: "card", text: "You found everything at the party!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-back", half: 2, who: "button", text: "Back to the party", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-keep", half: 2, who: "button", text: "Keep going", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-alarm", half: 2, who: "guard", text: "Someone pulled the fur alarm.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-ran", half: 2, who: "guard", text: "They saw someone run in here.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "mops-wookiee", half: 2, who: "mops", text: "Sure. I'm hiding a Wookiee in here.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-ridiculous", half: 2, who: "guard", text: "Ha! You're right. That's ridiculous.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-poker", half: 2, who: "guard", text: "You coming to poker night?", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "mops-thumbs", half: 2, who: "mops", text: "You know I don't have opposable thumbs.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "mops-went", half: 2, who: "mops", text: "You went to the party.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "sq-except", half: 2, who: "sq", text: "Everyone except me.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  // After the hat, before the TV (Brian 2026-11-24, night: his own words, then his click "Shorter second Mops line").
+  // Mops answers only the first question, on purpose (docs/STORY-DECISIONS.md section 5: the Guardians).
+  { id: "sq-why-hide", half: 2, who: "sq", text: "But why do I have to hide from everyone but you?", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "sq-why-guardians", half: 2, who: "sq", text: "And why can't the Guardians and I be together?", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "mops-waiting", half: 2, who: "mops", text: "I've been waiting to show you this.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "mops-heres-why", half: 2, who: "mops", text: "Here's why you have to hide.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  // The flyer sneak (Brian 2026-11-24, night: "what if he just leaves one on the side of the stage ... and we have
+  // to sneak to get it and get back to the room"; his click "He wants to show Mops"; then, for getting home, "it
+  // should mention the party and wanting to dance").
+  // Removed 2026-11-25 (the row is kept so the sheet's numbers do not shift): "sq-show-mops" below replaced it.
+  { id: "sq-flyer", half: 1, who: "sq", text: "A robot flyer! I'll show Mops.", status: "approved", source: "Removed 2026-11-25: replaced by line 73 (it had Brian's yes of 2026-11-24)", removed: true },
+  { id: "chip-flyer", half: 1, who: "chip", text: "Squatch: grab the flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-grab-flyer", half: 1, who: "button", text: "GRAB · flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "sq-normal", half: 1, who: "sq", text: "I deserve one night of normal.", status: "approved", source: "Removed 2026-11-25: Brian dropped it (it had his yes of 2026-11-24)", removed: true },
+  { id: "sq-costume", half: 1, who: "sq", text: "Costume on. Then I dance!", status: "approved", source: "Removed 2026-11-25: Brian dropped it; line 81 replaced it (it had his yes of 2026-11-24)", removed: true },
+  { id: "sq-got-one", half: 2, who: "sq", text: "Got one!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: \"I like his own thought\"" },
+  { id: "button-leave-bar", half: 2, who: "button", text: "LEAVE · bar", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: a LEAVE · bar button always on screen" },
+  { id: "honor-snack-bandit", half: 2, who: "card", text: "Snack Bandit: took every snack at the party.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat: \"Snack Bandit (Recommended)\"" },
+  // The showing-4 notes (Brian 2026-11-25 morning, his clicks in Snack Quest Chat; asks/video-notes-2026-11-24/ANSWERS.md,
+  // "Round of notes on the showing-4 videos" and "The talk, reordered").
+  { id: "button-dance-again", half: 2, who: "button", text: "Dance again", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat; replaced 2026-11-26 by the speed words (lines 84 to 87)", removed: true },
+  { id: "sq-robots-job", half: 1, who: "sq", text: "Robots for the heavy work? That's Mops's job!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-show-mops", half: 1, who: "sq", text: "I have to show Mops.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "band-group-photo", half: 2, who: "band", text: "Group photo!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-robots-coming", half: 2, who: "sq", text: "But look. Robots are coming to do your job.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat", quiet: true },
+  { id: "mops-need-me", half: 2, who: "mops", text: "Nobody is replacing me. They need me here.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat", quiet: true },
+  // The showing-5 notes (Brian 2026-11-25, his notes on the video notes page, each decided in Snack Quest Chat).
+  { id: "sq-phew", half: 1, who: "sq", text: "Phew, made it!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "chip-save-flyer", half: 1, who: "chip", text: "Squatch: put the flyer on your bed for Mops", status: "needs-yes", source: "Brian 2026-11-25, Snack Quest Chat; \"under\" changed to \"on\" 2026-11-26 because Brian answered #42: he lays it on top of the bed" },
+  { id: "button-save-flyer", half: 1, who: "button", text: "SAVE · flyer", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-party-fun", half: 1, who: "sq", text: "That party looked so fun.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat; cut to its first sentence by Brian 2026-11-26 (#29)" },
+  { id: "sq-sneak-back", half: 1, who: "sq", text: "I'll sneak back in a costume and dance!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "chip-octopus", half: 2, who: "chip", text: "Squatch: get away from the octopus!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "chip-join-photo", half: 2, who: "chip", text: "Squatch: join the group photo", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "speed-0", half: 2, who: "button", text: "Dance!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "speed-1", half: 2, who: "button", text: "Faster!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "speed-2", half: 2, who: "button", text: "Super fast!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "speed-3", half: 2, who: "button", text: "Top speed!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "badge-super-dancer", half: 2, who: "badge", text: "Super dancer!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  // After the party: Mops cleans the empty hall, finds the proof, and at home Squatch tells the truth or fibs
+  // (Brian, story pass 28-52, section E2, decided 2026-11-26; party-cleanup.js, party-truth.js, party-talk.js).
+  { id: "pa-mops-hall", half: 2, who: "speaker", text: "Ganitor Mops to the party hall.", status: "approved", source: "Brian, chat 2026-11-26 (Ganitor B: approved words, ganitor.js pa-ganitor); placed after the party by the story pass 28-52, E2 (KEEP)" },
+  { id: "mops-stay-in", half: 2, who: "mops", text: "Stay in here.", status: "approved", source: "Approved words (morning-lines.js mops-stay: walkthrough beat 1, Nov 14; Q5 answer 2026-11-23); reused after the alarm by the story pass 28-52, E2 (KEEP)" },
+  { id: "switch-clean", half: 2, who: "card", text: "Mops cleans up the party hall.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "chip-mop", half: 2, who: "chip", text: "Mops: mop the party hall", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "chip-wring", half: 2, who: "chip", text: "Mops: wring your beard at the bucket", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "button-wring", half: 2, who: "button", text: "WRING \u00b7 beard", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-fur", half: 2, who: "mops", text: "Fur?", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-no-no", half: 2, who: "mops", text: "No, no, no.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "chip-fur", half: 2, who: "chip", text: "Mops: mop up the fur", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-oh-no", half: 2, who: "mops", text: "Oh no.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-nobody-saw", half: 2, who: "mops", text: "Nobody saw that.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "button-pick-photo", half: 2, who: "button", text: "PICK UP \u00b7 photo", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "button-pick-hat", half: 2, who: "button", text: "PICK UP \u00b7 hat", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "button-pick-fur", half: 2, who: "button", text: "PICK UP \u00b7 fur", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-my-shirt", half: 2, who: "mops", text: "That's MY shirt.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-weee", half: 2, who: "mops", text: "Weee...?!", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-squatch", half: 2, who: "mops", text: "Squatch.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4", quiet: true },
+  { id: "mops-my-hat", half: 2, who: "mops", text: "That's MY hat.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "badge-spotless", half: 2, who: "badge", text: "Spotless!", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "chip-mops-home", half: 2, who: "chip", text: "Mops: go home", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "switch-home", half: 2, who: "card", text: "Mops comes home.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-did-you-go", half: 2, who: "mops", text: "Did you go to the party?", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "button-tell", half: 2, who: "button", text: "TELL \u00b7 the truth", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "button-fib", half: 2, who: "button", text: "FIB \u00b7 \"I stayed in\"", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "sq-yes-went", half: 2, who: "sq", text: "Yes. I went.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "sq-just-dance", half: 2, who: "sq", text: "I just wanted to dance.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-i-know", half: 2, who: "mops", text: "I know.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4", quiet: true },
+  { id: "mops-nice-shirt", half: 2, who: "mops", text: "Nice shirt.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4", quiet: true },
+  { id: "sq-stayed-in", half: 2, who: "sq", text: "No. I stayed in here.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "sq-sorry-fib", half: 2, who: "sq", text: "...I'm sorry I fibbed.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4" },
+  { id: "mops-never-hide", half: 2, who: "mops", text: "You never have to hide from me.", status: "needs-yes", source: "Brian, story pass 28-52, E2/E4", quiet: true },
 ]);
+
+/** Whether this bubble is one of Mops's gentle lines, which never get his "meh" (morning-sound.js, through the bridge). */
+export function quietLine(b) {
+  return !!b && PARTY_LINES.some((l) => l.quiet && !l.removed && l.who === b.who && l.text === b.text);
+}
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */
 export function partyLine(id) {

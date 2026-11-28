@@ -1,13 +1,14 @@
 /**
  * Brian Nov 16: tappable calendar, subtle bite, invented months, sponsor and family plans.
  * Brian G 556 (2026-11-23): the bite is there from the start ("It should just have a bite out already"); touching
- * the printed Moon Pie takes no bite.
+ * the printed snack cake takes no bite. The sponsor line names the snack (snack-name.js; Brian 2026-11-26, question 86).
  * Brian 2026-11-23 (chat): "It's the calendar paw that doesn't make sense": no paw is drawn on the close-up, before or
  * after a touch (touching changes nothing anyway).
  * Uses the real picture taps and Space, not direct calls to the new feature.
  * CALENDAR_SHOTS=1 saves review stills outside the repository.
  */
 import { startGame, sleep, toEvening } from "./game-page.mjs";
+import { SNACK } from "../src/modules/snack-name.js";
 const g = await startGame({ port: 8947, name: "calendar-closeup" });
 for (const viewport of [
   { width: 1180, height: 820 },
@@ -50,8 +51,8 @@ for (const viewport of [
     const p = cv.getContext("2d").getImageData(140 * k, 110 * k, 1, 1).data;
     return p[0] > 180 && p[1] < 120 && p[2] < 100;
   }));
-  g.check(`${tag}: invented months and sponsor are actually printed`, await page.evaluate(() =>
-    ["MOONMUNCH", "FUZZUARY", "Sponsored by MOON PIES"].every(s => window.calendarPrinted.has(s))));
+  g.check(`${tag}: invented months and sponsor are actually printed`, await page.evaluate((sponsor) =>
+    ["MOONMUNCH", "FUZZUARY", sponsor].every(s => window.calendarPrinted.has(s)), `Sponsored by ${SNACK.NAME}`));
   g.check(`${tag}: family Olympics and scattered story-fitting plans are printed`, await page.evaluate(() =>
     ["family", "Olympics", "night", "Sock hunt", "Wash outside windows", "(remember space suit!)", "Blanket", "fort night"].every(s => window.calendarPrinted.has(s))));
   g.check(`${tag}: superseded months and routine homework/song reminders are absent`, await page.evaluate(() =>
@@ -108,11 +109,14 @@ for (const viewport of [
   await tap(592, 385);
   const pawAfter = (await pawPixels(530, 560, 660, 640)) + (await pawPixels(700, 590, 860, 640));
   g.check(`${tag}: no paw is drawn on the close-up, before, during a drag, or after a touch`, pawBefore === 0 && pawHeld === 0 && pawAfter === 0, { pawBefore, pawHeld, pawAfter });
-  g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, await page.evaluate(() => {
-    const cv = document.querySelector("canvas"), k = cv.width / 960;
-    const p = cv.getContext("2d").getImageData(819 * k, 390 * k, 1, 1).data;
-    return p[0] > 90 && p[1] > 90 && p[2] > 90;
-  }));
+  // (the bite shows what is behind the paper: the room beyond its edge, at night the night look's darker room,
+  // night-look.js; an ink line there would be near black)
+  const bite = await page.evaluate(() => {
+    const cv = document.querySelector("canvas"), k = cv.width / 960, x = cv.getContext("2d");
+    const p = x.getImageData(819 * k, 390 * k, 1, 1).data, q = x.getImageData(850 * k, 390 * k, 1, 1).data;
+    return { hole: [p[0], p[1], p[2]], beyond: [q[0], q[1], q[2]] };
+  });
+  g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, bite.hole.every((v, i) => Math.abs(v - bite.beyond[i]) < 30) && bite.hole[0] + bite.hole[1] + bite.hole[2] > 150, bite);
   g.check(`${tag}: touching the printed snack changes nothing: the dated grid and pie are the same`, await page.evaluate(() => {
     const cv = document.querySelector("canvas"), k = cv.width / 960;
     const after = cv.getContext("2d").getImageData(130 * k, 185 * k, 660 * k, 320 * k).data;
@@ -164,12 +168,13 @@ for (const viewport of [
   await page.evaluate(() => { window.__ss.op.wardrobe = "open"; });
   await tap(179, 214);
   g.check(`${tag}: open wardrobe does not expose calendar front`, await page.evaluate(() => !window.__ss.op.ch1Calendar));
-  // Day 2 must show the close-up, then still continue to the lunch.
+  // Day 2 must show the close-up, then still continue to the lunch (the home morning's calendar step,
+  // src/modules/home-morning.js: a tap on the glowing calendar does LOOK · calendar).
   await page.evaluate(() => {
     const n = window.__ss.op;
-    Object.assign(n, { q: [], cur: null, scene: "QB", room: "closet", wardrobe: "closed",
-      ch1Day2: true, ch1Step: "cal", ctrl: true });
-    n.sq.x = 230; n.sq.y = 392;
+    // (the party night is over by Day 2)
+    Object.assign(n, { q: [], cur: null, wardrobe: "closed", ch1PartyNow: null });
+    window.__ss.ch1JumpBeat(23);
   });
   await tap(179, 214);
   g.check(`${tag}: day-two calendar uses close-up`, await page.evaluate(() => !!window.__ss.op.ch1Calendar));
@@ -180,7 +185,7 @@ for (const viewport of [
   await sleep(350);
   g.check(`${tag}: visible NEXT button closes the day-two inspection`, await page.evaluate(() => !window.__ss.op.ch1Calendar));
   for (let i = 0; i < 6; i++) { await page.keyboard.press("Space"); await sleep(350); }
-  g.check(`${tag}: day-two close continues to lunch`, await page.evaluate(() => window.__ss.op.ch1Step === "lunch"));
+  g.check(`${tag}: day-two close continues to lunch`, await page.evaluate(() => window.__ss.op.ch1Step === "hm-lunch"));
   await page.evaluate(() => window.__ss.startOpening());
   g.check(`${tag}: a new game closes the overlay`, await page.evaluate(() => !window.__ss.op.ch1Calendar));
   g.check(`${tag}: seated Squatch is not offered a walking LOOK target`, await page.evaluate(() => {

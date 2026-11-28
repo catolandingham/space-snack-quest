@@ -20,6 +20,7 @@
 import { SOUNDS } from "./synth.js";
 import { MIX, buses } from "./sound-mix.js";
 import { line } from "./morning-lines.js";
+import { playSound } from "./music-picks.js";
 
 export const MORNING_SOUND = Object.freeze({
   breathEvery: 3.4, // seconds from one snore to the next
@@ -69,6 +70,11 @@ export function createMorningSound(getEngine) {
     } catch {
       return false;
     }
+  }
+  // The goat bleat, at the effects level (nothing while sound is off).
+  function bleat() {
+    const s = live();
+    s && playSound(s.ctx, s.out, "mops-bleat", s.ctx.currentTime + 0.05) && note("mops-bleat", 0);
   }
   function stopSnore() {
     if (!bus) return;
@@ -122,12 +128,16 @@ export function createMorningSound(getEngine) {
     /**
      * A speech bubble opens (the older program calls this for every bubble, src/game/00-core.js): a soft tick;
      * Mops's goat "meh" on his first line in a scene, or the grumpy "meh-EH!" under "Hey, stop that!". Sung
-     * lines get neither (Brian's recording plays under them), and no meh while his song plays.
+     * lines get neither (Brian's recording plays under them), and no meh while his song plays. A `quiet` line
+     * (one of his gentle ones, like "You have me.") gets the tick and never the meh, and does not use the
+     * scene's meh up.
      */
-    bubble(b, scene, songPlaying) {
+    bubble(b, scene, songPlaying, quiet) {
+      // Mops's bleat line in the song (a sung line): a real goat bleat (music-picks.js SOUND_PICKS, Brian 2026-11-26)
+      if (b && b.who === "mops" && b.text === line("mops-sing")) return void bleat();
       if (!b || b.style === "song") return;
       play("tick");
-      if (b.who !== "mops") return;
+      if (b.who !== "mops" || quiet) return;
       if (b.text === line("mops-stop")) return void play("grumpy", 0, MORNING_SOUND.mehAfter);
       // Heard once in a scene: a line said while sound was off does not use it up.
       if (mehScene === scene || songPlaying) return;

@@ -11,10 +11,10 @@
  *     a guard follows him home, HIDE · bed, "They lost you.", the calm seen from the door gap, back in his doorway.
  *   - The vent: too close, a tuft and the big warning; staying, the alarm "by the vent".
  *   - P3: Isfred's lines in order, everyone facing him, his bubble never over the banner; then the band and the
- *     pairs; his eyes in the plant, never at the vent. P4: a flyer on his back, home through his door, the flyer
+ *     pairs; his eyes in the plant, never at the vent. P4 (the flyer sneak, checked in full in tests/party-flyer.mjs): out of the plant, round to the flyer, GRAB · flyer, home through his door, the flyer
  *     on the floor. P5: the full-screen dress-up (stick and button hidden), pieces snap to the nearest body spot,
- *     a second piece swaps, the meter, GO · party, ↺ restarts with nothing on; out through the door into the
- *     older free play with no arrow dance and no "Cool hat!".
+ *     a second piece swaps, the meter (its ta-da chimes), GO · party, ↺ restarts with nothing on; out through the
+ *     door into the party in disguise (P6, tests/party-free.mjs), nobody jumping.
  *   - Every scene's ↺ restarts that scene; every room change is a walk through a door.
  * Stills of every warning at 375 x 812 go to tests/out/party-stills/.
  *   node tests/party-scenes.mjs
@@ -28,6 +28,7 @@ mkdirSync(OUT, { recursive: true });
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 const g = await startGame({ port: 8991, name: "party-scenes" });
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
+const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 const watch = await import(join(root, "src", "modules", "party-watch.js"));
 
 async function open(beat) {
@@ -171,40 +172,35 @@ const bubbleName = (page) => page.evaluate(() => (window.__ss.lastBubble ? Strin
 // ---------- P2: the cones ----------
 {
   const { page, errors } = await open("party:P2");
-  const res = await page.evaluate(
-    (spots) => {
-      const b = window.SSQ.beat("ch1-party"),
-        p = window.__ss.op.ch1PartyNow,
-        out = { doorHit: [], plantHit: [], laneCovered: 0, glanceLooks: 0, lengths: new Set() };
-      const lane = [];
-      for (let i = 0; i <= 20; i++) lane.push({ x: 477 + (396 - 477) * (i / 20), y: 590 + (552 - 590) * (i / 20) });
-      const inCone = (c, q) => {
-        const dx = q.x - c.ox,
-          dy = q.y - 20 - c.oy,
-          d = Math.hypot(dx, dy);
-        let a = Math.atan2(dy, dx) - c.a;
-        while (a > Math.PI) a -= 2 * Math.PI;
-        while (a < -Math.PI) a += 2 * Math.PI;
-        return d <= c.len && Math.abs(a) <= c.half;
-      };
-      for (let gt = 0; gt < 6.4; gt += 0.05) {
-        p.gt = gt;
-        for (const c of b.cones()) {
-          out.lengths.add(c.len);
-          inCone(c, spots.doorway) && out.doorHit.push([gt.toFixed(2), c.id]);
-          inCone(c, spots.plantMiddle) && out.plantHit.push([gt.toFixed(2), c.id]);
-          c.id === "backpack" && lane.some((q) => inCone(c, q)) && out.laneCovered++;
-        }
-        b.now().glance === "look" && out.glanceLooks++;
-      }
-      p.gt = 0;
-      out.lengths = [...out.lengths];
-      return out;
-    },
-    { doorway: hall.SPOTS.doorway, plantMiddle: hall.SPOTS.plantMiddle },
-  );
+  // (the cones over the glancer's whole rhythm, read from the game; sight tested here with the game's own rule,
+  // party-watch.js coneSees: his whole body)
+  const timeline = await page.evaluate(() => {
+    const b = window.SSQ.beat("ch1-party"),
+      p = window.__ss.op.ch1PartyNow,
+      out = [];
+    for (let gt = 0; gt < 6.4; gt += 0.05) {
+      p.gt = gt;
+      out.push({ gt, look: b.now().glance === "look", cones: b.cones().map((c) => ({ id: c.id, ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len })) });
+    }
+    p.gt = 0;
+    return out;
+  });
+  const res = { doorHit: [], plantHit: [], laneCovered: 0, glanceLooks: 0, lengths: new Set() };
+  const lane = [];
+  for (let i = 3; i <= 17; i++) lane.push({ x: 477 + (396 - 477) * (i / 20), y: 590 + (552 - 590) * (i / 20) });
+  for (const f of timeline) {
+    f.look && res.glanceLooks++;
+    for (const c of f.cones) {
+      res.lengths.add(c.len);
+      watch.coneSees(c, hall.SPOTS.doorway) && res.doorHit.push([f.gt.toFixed(2), c.id]);
+      // (the plant's front, where he steps in, may be in the glancer's look only: the dash is timed)
+      c.id !== "backpack" && watch.coneSees(c, hall.SPOTS.plantMiddle) && res.plantHit.push([f.gt.toFixed(2), c.id]);
+      c.id === "backpack" && lane.some((q) => watch.coneSees(c, q)) && res.laneCovered++;
+    }
+  }
+  res.lengths = [...res.lengths];
   g.check("his doorway is outside every cone at every moment", res.doorHit.length === 0, res.doorHit.slice(0, 5));
-  g.check("the plant's step-in spot is outside every cone at every moment", res.plantHit.length === 0, res.plantHit.slice(0, 5));
+  g.check("the plant's step-in spot is outside every cone but the glancer's look (the dash to it is timed)", res.plantHit.length === 0, res.plantHit.slice(0, 5));
   g.check("the glancer's look covers the lane between the door and the plant", res.laneCovered > 10, res.laneCovered);
   g.check("every cone is whole (full length, nothing cuts it short)", res.lengths.length === 1 && res.lengths[0] === 210, res.lengths);
   await sleep(300);
@@ -241,7 +237,9 @@ async function getSeen(page) {
   g.check("in the glancer's cone a \"?\" comes first (seenBy, no alarm yet)", !!s && !s.now.alarm, s && s.now);
   await sleep(200);
   const marks = await page.evaluate(() => ({ q: Math.max(0, ...window.__marks.filter((m) => m.t === "?").map((m) => m.px)), head: 25.5 * window.SSQ.engine().hallSizes().squatch }));
-  g.check("the \"?\" drawn over the watcher is at least as tall as Squatch's head", marks.q >= marks.head, marks);
+  // (Brian 2026-11-25: "The big question marks are a bit confusing" ; before, it was at least as tall as his head.
+  // Now it is small, and still readable: a third or more of his head's height)
+  g.check("the \"?\" drawn over the watcher is small: shorter than Squatch's head, a third of it or more", marks.q < marks.head && marks.q >= marks.head / 3, marks);
   await still(page, "p2-question-mark");
   s = await until(page, (q) => q.now && q.now.alarm === "shout", 3000);
   g.check("staying in sight starts the alarm: the witness shouts", !!s, s);
@@ -495,20 +493,23 @@ let p4Cast = null;
           b && b.x < banner.x1 && b.x + b.w > banner.x0 && b.y < banner.y1 && b.y + b.h > banner.y0 && (bubbleOverBanner = true);
           await still(page, "p3-isfred");
         }
-        q.text.startsWith("I've never") && (await still(page, "p3-eyes-on-pairs"));
+        q.text.startsWith("I have to show") && (await still(page, "p3-eyes-in-the-plant"));
         await sleep(450);
         await tap(page);
       }
     },
   );
-  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party."]), lines);
+  // (Brian 2026-11-25: the worry follows the robots line; 2026-11-26: the dance wish is back, watching the band)
+  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party."]), lines);
   g.check("everyone in the crowd looks at Isfred during his lines (their cones point at him)", facing);
-  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 5 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[3][1] === "Croc Boys", names);
+  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 7 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[5][1] === "Croc Boys", names);
   g.check("no wordless story wait in P3 (no yellow corner chevron)", waits === 0, waits);
   g.check("Isfred's bubble never covers the banner", !bubbleOverBanner);
   g.check("his eyes are in the middle plant, never at the vent", !!eyesAt && Math.hypot(eyesAt.x - 441, eyesAt.y - 486) < 6, eyesAt);
-  g.check("P4 starts with him in the plant, control back, the door the goal", !!s && s.ctrl && s.now.pose === "hidden", s);
-  // The pairs: partners stand side by side and look at each other; the two without partners watch the band.
+  g.check("P4 starts with him in the plant, control back, the flyer the goal", !!s && s.ctrl && s.now.pose === "hidden" && s.now.flyer === "stage" && s.chip === "Squatch: grab the flyer", s);
+  // The pairs stand side by side. By the stage's left they look at each other; the robot looks at the octopus, who
+  // has turned to eye the snack bar (the flyer sneak, Brian 2026-11-24: that turn leaves the one clear way to the
+  // flyer; before, all four looked at their partners).
   const pairs = await page.evaluate(() => {
     const b = window.SSQ.beat("ch1-party"),
       p = window.__ss.op.ch1PartyNow,
@@ -522,23 +523,59 @@ let p4Cast = null;
         while (d < -Math.PI) d += 2 * Math.PI;
         return Math.abs(d) < 0.1;
       };
-    return [
-      ["teal", "stilt"],
-      ["robot", "octopus-guest"],
-    ].map(([a, c]) => ({ a, c, apart: Math.hypot(at(a).x - at(c).x, at(a).y - at(c).y), face: looksAt(a, c) && looksAt(c, a) }));
+    const oc = cones.find((k) => k.id === "octopus-guest");
+    return {
+      pairs: [
+        ["teal", "stilt"],
+        ["robot", "octopus-guest"],
+      ].map(([a, c]) => ({ a, c, apart: Math.hypot(at(a).x - at(c).x, at(a).y - at(c).y), face: looksAt(a, c), back: looksAt(c, a) })),
+      // toward the bar: to his right and down
+      octopus: [Math.cos(oc.a), Math.sin(oc.a)],
+    };
   });
-  g.check("the guests dance in pairs: partners side by side, looking at each other", pairs.every((q) => q.apart < 90 && q.face), pairs);
+  // (Brian 2026-11-25, "End of the bar, moving cones": in P4 the pairs turn on the spot, so their cones sweep; before,
+  // they stood looking at each other. tests/party-flyer.mjs checks the way past them.)
+  const turns = await page.evaluate(() => {
+    const b = window.SSQ.beat("ch1-party"),
+      p = window.__ss.op.ch1PartyNow,
+      was = p.sweepT,
+      out = {};
+    for (const t of [0, 2, 4, 6]) {
+      p.sweepT = t;
+      for (const c of b.cones()) ["teal", "stilt", "robot", "octopus-guest"].includes(c.id) && (out[c.id] = (out[c.id] || []).concat(+c.a.toFixed(2)));
+    }
+    p.sweepT = was;
+    return out;
+  });
+  g.check("the guests dance in pairs, side by side, and in P4 each turns on the spot (his cone points a different way as P4's clock runs)", pairs.pairs.every((q) => q.apart < 90) && Object.values(turns).every((a) => Math.max(...a) - Math.min(...a) > 0.3), [pairs.pairs.map((q) => q.apart), turns]);
   p4Cast = await page.evaluate(() => {
     const p = window.__ss.op.ch1PartyNow;
     return { people: Object.fromEntries(Object.entries(p.people).map(([k, v]) => [k, [v.x, v.y]])), isfred: [p.isfred.x, p.isfred.y] };
   });
   await walk(page, 470, 600);
   s = await until(page, (q) => q.now && q.now.pose === "stand", 3000);
-  g.check("steering steps him out of the plant with a flyer stuck to his back", !!s && s.now.flyer === "back", s && s.now);
+  g.check("steering steps him out of the plant, and nothing sticks to his back (the one flyer is still on the counter)", !!s && s.now.flyer === "stage", s && s.now);
   await sleep(300);
-  await still(page, "p4-flyer-on-back");
-  s = await until(page, (q) => q.now && q.now.scene === "P5", 12000, async (q) => q.ctrl && q.room === "hall" && (await walk(page, 477, 600)));
-  g.check("through his door he walks home; the flyer drops on the floor; P5", !!s && s.now.flyer === "floor" && s.room === "closet", s && s.now);
+  await still(page, "p4-out-of-the-plant");
+  // timing the dancers' sweeping cones to the flyer (tests/party-sneak.mjs, as tests/party-flyer.mjs does), GRAB ·
+  // flyer, and home
+  let way = await sneak.sneakTo(page, hall.FLYER.reach);
+  await sneak.resume(page);
+  s = await until(page, (q) => q.act === "GRAB · flyer", 3000);
+  g.check("at the bar counter's end the button is GRAB · flyer (the way there timed, unseen)", !!s && !!way.plan && !way.walked.seen, s && [s.act, way.walked]);
+  await press(page);
+  s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
+  g.check("he takes it: the flyer is in his paw, and the chip sends him home", !!s && s.chip === "Squatch: sneak home for a disguise", s && [s.now.flyer, s.chip]);
+  way = await sneak.sneakTo(page, { x: 477, y: 540, r: 30 });
+  await sneak.resume(page);
+  const homeLines = [];
+  s = await until(page, (q) => q.now && q.now.scene === "P5", 20000, async (q) => {
+    q.ctrl && q.room === "hall" && (await walk(page, 477, 600));
+    // at home: SAVE · flyer at his bed (Brian 2026-11-25)
+    q.ctrl && q.room === "closet" && q.act === "SAVE · flyer" && (await press(page), await sleep(300));
+    q.cur === "bub" && (homeLines.includes(q.text) || homeLines.push(q.text), await sleep(450), await tap(page));
+  });
+  g.check("through his door he walks home with it: \"Phew, made it!\", SAVE · flyer lays it on his bed, his two thoughts; P5 with the flyer on the bed", !!s && s.now.flyer === "bed" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["Phew, made it!", "That party looked so fun.", "I'll sneak back in a costume and dance!"]), [s && s.now.flyer, homeLines]);
   await still(page, "p5-home-flyer");
   const p3Trail = await trailJumps(page);
   g.check("from P3 to P5 nobody teleports: Squatch never jumps over 60 inside a room", p3Trail.jumps.length === 0, p3Trail.jumps.slice(0, 3));
@@ -589,8 +626,14 @@ let p4Cast = null;
     await drag(piece, d.spots[spot]);
     d = await page.evaluate(() => window.SSQ.beat("ch1-party").dressTargets());
   }
-  g.check("four covered spots fill the meter and bring GO · party", !!d.go && Object.values(d.outfit).every(Boolean), d);
+  // Brian 2026-11-26 (showing 7, 1:05): "he probably has to put on the shirt or it's not disguised enough"
+  g.check("four covered spots without the shirt are not disguised enough: no GO · party, the meter at three quarters, the shirt glows", !d.go && Object.values(d.outfit).every(Boolean) && d.meter === 0.75 && d.shirtGlows, d);
+  await still(page, "p5-dress-no-shirt");
+  await drag(d.pieces.find((p) => p.id === "shirt"), d.spots.body);
+  d = await page.evaluate(() => window.SSQ.beat("ch1-party").dressTargets());
+  g.check("the shirt on his body (the tutu back in the closet) fills the meter and brings GO · party; the shirt stops glowing", !!d.go && d.outfit.body === "shirt" && Object.values(d.outfit).every(Boolean) && d.meter === 1 && !d.shirtGlows, d);
   await sleep(400);
+  g.check("the full outfit's ta-da is not silent (the ta-da plays)", (await page.evaluate(() => window.SSQ.beat("ch1-party").now().sound.played)).includes("tada"));
   await still(page, "p5-dress-full");
   // ↺ in the middle of the dress-up restarts P5 with nothing on: the view's own ↺ (the page's is under it),
   // held with a finger as long as the page's.
@@ -630,23 +673,15 @@ let p4Cast = null;
   s = await st(page);
   g.check("GO · party: back in the room in his outfit, control back, the door the goal", s.now && s.now.phase === "out" && s.ctrl && JSON.stringify(s.now.outfit) === JSON.stringify({ head: "boots", face: "stache", body: "shirt", legs: "shades" }), s.now);
   await still(page, "p5-dressed-at-home");
-  s = await until(page, (q) => !q.now && q.party, 15000, async (q) => q.ctrl && q.room === "closet" && (await walk(page, 858, 470)));
-  g.check("he walks out through his door into the older free play", !!s && s.room === "hall", s);
-  const free = await page.evaluate(() => ({ spots: window.__ss.placedSpots().map((p) => p.verb), outfit: window.SSQ.beat("ch1-party").outfit() }));
-  g.check("the free play offers no arrow dance (DANCE · circle is off)", !free.spots.includes("DANCE"), free.spots);
-  g.check("he keeps the outfit he chose in the free play", free.outfit && free.outfit.head === "boots", free.outfit);
+  s = await until(page, (q) => q.now && q.now.scene === "P6", 15000, async (q) => q.ctrl && q.room === "closet" && (await walk(page, 858, 470)));
+  g.check("he walks out through his door into the party in disguise (P6)", !!s && s.room === "hall", s && s.now);
+  g.check("he keeps the outfit he chose in P6", s && s.now.worn.head === "boots", s && s.now.worn);
   // Nobody jumps on the way in: everyone where P4 left them (Isfred at the bar, the octopus at his dance spot).
-  const freeCast = await page.evaluate(() => {
-    const ss = window.__ss,
-      out = {};
-    for (const [x, y, kind] of ss.CH1_GUESTS) out[window.SSQ.guestId(kind)] = [x, y];
-    out["octopus-guest"] = [ss.op.ch1Oct.x, ss.op.ch1Oct.y];
-    return { people: out, isfred: ss.CH1_PARTY_CAST.isfred };
-  });
+  const freeCast = { people: Object.fromEntries(Object.entries(s.now.people).map(([id, q]) => [id, [q.x, q.y]])), isfred: [s.now.isfred.x, s.now.isfred.y] };
   const moved = [];
   for (const [id, [x, y]] of Object.entries(p4Cast.people)) Math.hypot(freeCast.people[id][0] - x, freeCast.people[id][1] - y) > 60 && moved.push([id, [x, y], freeCast.people[id]]);
   Math.hypot(freeCast.isfred[0] - p4Cast.isfred[0], freeCast.isfred[1] - p4Cast.isfred[1]) > 60 && moved.push(["isfred", p4Cast.isfred, freeCast.isfred]);
-  g.check("into the free play nobody jumps over 60: everyone stands where P4 left them", moved.length === 0, moved);
+  g.check("into P6 nobody jumps over 60: everyone stands where P4 left them", moved.length === 0, moved);
   await sleep(500);
   await still(page, "p6-free-play-outfit");
   g.check("no script errors in P5", errors.length === 0, errors.slice(0, 3));
@@ -666,15 +701,16 @@ for (const [scene, room, pose] of [
   g.check(`↺ in ${scene} restarts ${scene}`, s.now && s.now.scene === scene && s.room === room && s.now.pose === pose && s.ctrl, s);
 }
 
-// ---------- the source: no "Cool hat!" in the free play, and the time pin unchanged ----------
-const redesign = readFileSync(join(root, "src", "game", "12-ch1-redesign.js"), "utf8");
-g.check("the older free play never says \"Cool hat!\"", !redesign.includes('"Cool hat!"'));
-g.check("COOL_HAT_SECONDS is still the pinned 180", redesign.includes("COOL_HAT_SECONDS = 180"));
+// ---------- the source: no "Cool hat!" anywhere, and the time pin unchanged ----------
+const { COOL_HAT_SECONDS } = await import(join(root, "src", "modules", "party-free.js"));
+const allGame = ["12-ch1-redesign.js", "14-ch1-day1.js", "15-ch1-scene1.js"].map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
+g.check("the game never says \"Cool hat!\" (the old free play is gone)", !allGame.includes('"Cool hat!"'));
+g.check("COOL_HAT_SECONDS is still the pinned 180", COOL_HAT_SECONDS === 180);
 // The marks' size is measured where they are drawn (P2, "?" over the glancer), not read from the source.
 // The capture rule's numbers are Brian's pinned ones (docs/TUNING-PINS.json): a pin change must change both.
 const { ALARM } = await import(join(root, "src", "modules", "party-alarm.js"));
 const pins = JSON.parse(readFileSync(join(root, "docs", "TUNING-PINS.json"), "utf8")).pins;
-const pin = (id) => +(((pins.find((p) => p.id === id) || {}).snippet || "").match(/(?:>=|=|<)\s*([\d.]+)/) || [])[1];
+const pin = (id) => +(((pins.find((p) => p.id === id) || {}).snippet || "").match(/(?:>=|=|<|:)\s*([\d.]+)/) || [])[1];
 g.check(
   "the party's guard speed, reach, feet circle and home delay equal the pinned numbers",
   ALARM.guard === pin("guard-speed") && ALARM.reach === pin("guard-catch") && ALARM.feet === pin("cone-feet") && ALARM.homeDelay === pin("home-search-delay"),

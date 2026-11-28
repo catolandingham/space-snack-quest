@@ -64,8 +64,16 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       return p.slice(0, 3);
     };
     const note = function (text, x, y) {
+      // words painted into a room picture's layer (src/modules/crate-stamp.js: the crate bed's stamp), in the picture's
+      // own pixels, are part of the picture, not words at these positions on the game canvas
+      if (this.canvas && this.canvas.pictureLayer) return;
       const s = String(text ?? "");
       if (!s.trim()) return;
+      // Words drawn after the picture was moved (ctx.translate, as a "?" over a watcher is) are measured where they
+      // really land: the move is added to x and y (game positions; the game picture is drawn 960 wide).
+      const tr = this.getTransform ? this.getTransform() : null,
+        k0 = this.canvas.width / 960;
+      if (tr && (Math.abs(tr.e) > 0.5 || Math.abs(tr.f) > 0.5)) ((x += tr.e / (tr.a || k0)), (y += tr.f / (tr.d || k0)));
       const m = this.measureText(s);
       const px = Number((/(\d+(?:\.\d+)?)px/.exec(this.font) || [])[1] || 0);
       const ascent = m.actualBoundingBoxAscent || px * 0.8;
@@ -116,7 +124,6 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     const shot = (name, setup) => {
       window.__textLog = [];
       n.ch1PartyNow = null;
-      n.ch1Cut = null;
       n.ch1Mini = "";
       n.ch1Morning = null;
       n.cur = null;
@@ -133,29 +140,21 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         seen.add(key);
         texts.push(t);
       }
-      return { name, css, texts, canvas: { w: 960, h: 640 } };
+      const pn = window.SSQ.beat("ch1-party").now();
+      const party = pn ? { scene: pn.scene, snack: !!pn.snack, line: n.cur && n.cur.b ? n.cur.b.text : "" } : null;
+      return { name, css, texts, party, canvas: { w: 960, h: 640 } };
     };
+    // The party in disguise (P6, src/modules/party-free.js), opened as ?beat=party:P6 opens it.
     const party = () => {
-      n.scene = "QA";
-      n.room = "hall";
-      n.ch1Party = true;
-      n.ch1Day2 = false;
-      n.ch1Office = false;
-      n.ch1D = false;
-      n.ctrl = true;
       n.q = [];
       n.cur = null;
-      n.sqPose = "stand";
-      n.sq.x = 400;
-      n.sq.y = 530;
+      window.SSQ.beat("ch1-party").jump("P6");
       n.moPose = "hidden";
-      ss.hall.camX = 0;
     };
     return [
       shot("opening card", () => {
         n.scene = "O1";
         n.room = "closet";
-        n.ch1Party = false;
         n.ch1Day2 = false;
         n.ctrl = false;
         n.q = [];
@@ -166,7 +165,6 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       shot("morning speaker", () => {
         n.scene = "Q1";
         n.room = "closet";
-        n.ch1Party = false;
         n.ch1Day2 = false;
         n.ch1Morning = { step: "waking", t: 1, notes: false };
         n.sqPose = "sit";
@@ -192,8 +190,10 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         n.ctrl = true;
         n.cur = { k: "bub", b: { who: "mops", text: "\u266A Weeee-eenn-nnttt! \u266A", style: "song" } };
         n.moPose = "stand";
-        n.mo.x = 800;
-        n.mo.y = 470;
+        // where Mops stands in the morning (morning.js MORNING_PLACES.mops). At home his bubble sits over his real
+        // head now (drawn at wl, 3; round 8's room table), so the old spot under the speaker put it in the notes.
+        n.mo.x = 690;
+        n.mo.y = 560;
         n.sq.x = 600;
         n.sq.y = 470;
       }),
@@ -207,19 +207,24 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       shot("office cutscene", () => ss.ch1JumpBeat(59)),
       shot("tape review", () => ss.ch1JumpBeat(60)),
       shot("party", party),
-      // (The arrow dance screen was deleted with the party rebuild, half one; the free dance comes in half two.)
-      shot("karaoke", () => {
+      // (The karaoke and the old snack cut-in were deleted with the party rebuild; the free dance is its own
+      // full-screen canvas.) The snack close-up: at the bar the action button (GRAB · snacks) opens it.
+      shot("snack close-up", () => {
         party();
-        n.ch1Disguise = true;
-        n.ch1Flyer = true;
-        n.ch1Mini = "karaoke";
-        n.ch1Kara = { t: 1, howls: 1 };
+        const b = window.SSQ.beat("ch1-party"),
+          L = b.snackLayout();
+        n.sq.x = L.spot.x - 10;
+        n.sq.y = L.spot.y + 10;
+        for (let i = 0; i < 3; i++) ss.tick(0.05);
+        ss.actionDown();
+        ss.actionUp();
+        for (let i = 0; i < 20; i++) ss.tick(0.05);
       }),
-      shot("snack cut-in", () => {
-        party();
-        n.ch1Disguise = true;
-        n.ch1Flyer = true;
-        n.ch1Cut = { id: "bar", zoom: 1, paw: { x: 480, y: 520 }, held: "", bag: 0, back: 5, glance: 0, face: 0, catches: 0, drag: false };
+      // Closing time (P8b): the wall speaker's line.
+      // (since 2026-11-26 the cheer, the band's bow and the lights dim first, about 4.6 s: ticked through to the line)
+      shot("closing time", () => {
+        window.SSQ.beat("ch1-party").jump("P8b");
+        for (let i = 0; i < 120 && !(n.cur && n.cur.k === "bub"); i++) ss.tick(0.05);
       }),
       shot("lockup card", () => {
         party();
@@ -230,11 +235,19 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         n.scene = "Q9";
         n.room = "office";
         n.ch1Office = true;
+        n.ch1Pickup = null; // (the chapter's end: pickup day is over)
         n.ctrl = false;
         n.cur = { k: "panel", id: "tally" };
       }),
     ];
   });
+  // The party screens really show what they are named for.
+  const by = (name) => screens.find((x) => x.name === name) || {};
+  g.check(
+    sizeName + ": the party screens show the free play, the snack close-up and the closing line",
+    (by("party").party || {}).scene === "P6" && (by("snack close-up").party || {}).snack && (by("closing time").party || {}).scene === "P8b" && !!(by("closing time").party || {}).line,
+    ["party", "snack close-up", "closing time"].map((k) => by(k).party),
+  );
   for (const screen of screens) {
     const texts = screen.texts.filter((t) => t.w > 1 && t.h > 1);
     for (const t of texts) {
@@ -243,6 +256,10 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       if (!t.ink || !t.behind) unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "color behind the text could not be read" });
       else if (t.text === "♪" || t.text === "♫")
         unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "a floating note; the background moves, so contrast is not a fixed check" });
+      else if (t.text === "?" || t.text === "!")
+        // A watcher's mark: one big symbol in its own white bubble with a dark edge (Brian's approved look), not
+        // words. Its contrast as text is reported here, not judged.
+        unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "a watcher's mark in its white bubble (a symbol, not words): " + ratio(t.ink, t.behind).toFixed(2) + ":1" });
       else if (ratio(t.ink, t.behind) < CONTRAST)
         failures.push({ size: sizeName, screen: screen.name, text: t.text, reason: "contrast", detail: ratio(t.ink, t.behind).toFixed(2) + ":1" });
       const off = t.x < -2 || t.y < -2 || t.x + t.w > screen.canvas.w + 2 || t.y + t.h > screen.canvas.h + 2;
@@ -269,12 +286,13 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       const ss = window.__ss;
       ss.ch1JumpBeat(59);
       ss.op.ch1PartyNow = null;
-      ss.op.ch1Cut = null;
       ss.drawFrame();
       const c = document.querySelector("canvas");
       const g = c.getContext("2d");
       const at = (x, y) => Array.from(g.getImageData(x, y, 1, 1).data);
-      return { robot: at(280, 460), isfred: at(430, 450), bottom: at(280, 630), alien: ss.alienScale("office"), robotScale: ss.adultPxFor("office") / 47 };
+      // the robot's white body, 18 of its units above its feet (280, 500), at the office's size (the room table)
+      const k = ss.adultPxFor("office") / 47;
+      return { robot: at(280, Math.round(500 - 18 * k)), isfred: at(430, 450), bottom: at(280, 630), alien: ss.alienScale("office"), robotScale: k };
     });
     const blueCutOff = office.bottom[2] > 200 && office.bottom[0] < 100 && office.bottom[1] < 160;
     g.check(

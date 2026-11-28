@@ -8,7 +8,10 @@
  * grown-up: head about a fifth of the height). The six approved guests themselves are pictures (guests.js).
  * Words come only from party-lines.js.
  */
+import { highlightLine, highlightBox } from "./outline.js";
+import { questionLook } from "./party-question.js";
 import { partyLine } from "./party-lines.js";
+import { drawShirt, drawShirtSleeves } from "./party-shirt-art.js";
 
 export const INK = "#1e2430";
 const TAU = Math.PI * 2;
@@ -49,7 +52,9 @@ export function words(ctx, text, x, y, size, color, align = "center", weight = 9
 /**
  * A person with feet at (x, y), `h` game pixels tall, facing us (`f` -1 turns them). `look` picks the colours and
  * the extras: { skin, shirt, pants, shoes, hair, cap, apron, badge, crocs, croc (a crocodile head), instrument,
- * armUp (0 to 1, one arm raised: dancing or pulling) }.
+ * armUp (0 to 1, one arm raised: dancing or pulling), lean (radians: his upper body leans forward from the hips),
+ * headTurn (-1 to 1: his eyes, mouth and cap peak turn back or forward), torch (he holds a flashlight at his chest,
+ * pointing the way he faces: TORCH) }.
  */
 export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   const k = h / 100,
@@ -87,16 +92,23 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   oval(ctx, -6, -1, 7, 3.5, shoe, ow);
   oval(ctx, 6, -1, 7, 3.5, shoe, ow);
   if (look.crocs) for (const sx of [-8, -4, 4, 8]) oval(ctx, sx, -1.5, 0.9, 0.9, "#1e5a25");
+  // leaning in to look: everything above the hips tips forward (the way he faces)
+  const lean = look.lean || 0,
+    turn = (look.headTurn || 0) * 4;
+  ctx.save();
+  if (lean) (ctx.translate(0, -34), ctx.rotate(lean), ctx.translate(0, 34));
   // arms (behind the body), body
   const up = look.armUp || 0;
   rr(ctx, -21, -70, 7, 30, 3, look.sleeve || look.shirt, ow);
   oval(ctx, -17.5, -38, 3.6, 3.6, look.skin, ow);
-  ctx.save();
-  ctx.translate(17.5, -68);
-  ctx.rotate(-up * 2.6);
-  rr(ctx, -3.5, -2, 7, 30, 3, look.sleeve || look.shirt, ow);
-  oval(ctx, 0, 30, 3.6, 3.6, look.skin, ow);
-  ctx.restore();
+  if (!look.torch) {
+    ctx.save();
+    ctx.translate(17.5, -68);
+    ctx.rotate(-up * 2.6);
+    rr(ctx, -3.5, -2, 7, 30, 3, look.sleeve || look.shirt, ow);
+    oval(ctx, 0, 30, 3.6, 3.6, look.skin, ow);
+    ctx.restore();
+  }
   rr(ctx, -15, -72, 30, 40, 7, look.shirt, ow);
   if (look.croc) for (let i = 0; i < 4; i++) oval(ctx, -15, -68 + i * 9, 2.2, 3, "#2a7a33", ow * 0.6); // ridges down his back
   if (look.bandShirt) {
@@ -122,6 +134,18 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   } else if (look.instrument === "keytar") {
     rr(ctx, -20, -52, 40, 9, 2, "#e5533d", ow);
     for (let i = -16; i <= 14; i += 5) rr(ctx, i, -50, 3, 5, 0.5, "#fffdf8");
+  }
+  if (look.torch) {
+    // his near arm bent across his chest, the flashlight in his hand (a grey barrel, a wide head, a lit lens)
+    ctx.save();
+    ctx.translate(15, -66);
+    ctx.rotate(0.55);
+    rr(ctx, -3.5, -2, 7, 19, 3, look.sleeve || look.shirt, ow);
+    ctx.restore();
+    rr(ctx, TORCH.x - 13, TORCH.y - 2.2, 9, 4.4, 1.5, "#8a93a3", ow);
+    rr(ctx, TORCH.x - 5, TORCH.y - 3.6, 5, 7.2, 1.5, "#5c6472", ow);
+    oval(ctx, TORCH.x, TORCH.y, 1.6, 3.4, "#fff3a8", ow * 0.8);
+    oval(ctx, TORCH.x - 10, TORCH.y + 0.5, 3.4, 3.4, look.skin, ow);
   }
   // head
   const hy = -84,
@@ -179,21 +203,27 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
       line(ctx, [-4, hy - hr, -5, hy - hr - 8], INK, ow);
       line(ctx, [4, hy - hr, 5, hy - hr - 8], INK, ow);
     }
-    oval(ctx, -4, hy + 1, 1.8, 1.8, INK);
-    oval(ctx, 4, hy + 1, 1.8, 1.8, INK);
+    // his face: turned with `headTurn` (the eyes, the mouth, the cap's peak and its badge slide the way he looks)
+    oval(ctx, -4 + turn, hy + 1, 1.8, 1.8, INK);
+    oval(ctx, 4 + turn, hy + 1, 1.8, 1.8, INK);
     ctx.beginPath();
-    ctx.arc(0, hy + 4, 3.5, 0.3, Math.PI - 0.3);
+    ctx.arc(turn * 0.7, hy + 4, 3.5, 0.3, Math.PI - 0.3);
     ctx.lineWidth = ow * 0.8;
     ctx.strokeStyle = INK;
     ctx.stroke();
     if (look.cap) {
       rr(ctx, -12, hy - hr - 1, 24, 7, 3, look.cap, ow);
-      rr(ctx, -2, hy - hr + 3, 17, 3.5, 1.5, look.cap, ow);
-      oval(ctx, 0, hy - hr + 2, 2, 2, "#ffcf33");
+      rr(ctx, -2 + turn * 1.2, hy - hr + 3, 17, 3.5, 1.5, look.cap, ow);
+      oval(ctx, turn, hy - hr + 2, 2, 2, "#ffcf33");
     }
   }
   ctx.restore();
+  ctx.restore();
 }
+
+// The flashlight a guard holds at his chest (drawPerson `torch`): where its front is, in the person's own units
+// (feet at 0, up negative, x the way he faces). His search cone is drawn as its beam from here.
+export const TORCH = Object.freeze({ x: 15, y: -52 });
 
 // The new cast's looks (party plan V3 and V4).
 export const LOOKS = Object.freeze({
@@ -207,6 +237,22 @@ export const LOOKS = Object.freeze({
   ],
 });
 
+/**
+ * The mic stand (a PLACEHOLDER drawing, Brian 2026-11-26): a thin grey pole on a round foot at (x, y), with the mic
+ * at about a grown-up's mouth height (`h` tall). `carried`: tipped over in Isfred's hand as he walks it over.
+ */
+export function drawMicStand(ctx, x, y, h, carried) {
+  const k = h / 100;
+  ctx.save();
+  ctx.translate(x, y);
+  carried && ctx.rotate(-0.35);
+  ctx.scale(k, k);
+  oval(ctx, 0, 0, 9, 2.6, "#4a505c", 1.2);
+  line(ctx, [0, 0, 0, -62], "#4a505c", 3);
+  line(ctx, [0, -62, 6, -70], "#4a505c", 2.6);
+  rr(ctx, 4, -78, 6, 10, 3, "#2b2f3c", 1.2);
+  ctx.restore();
+}
 /** A small drum on a stand in front of the third band member. */
 export function drawDrum(ctx, x, y, h) {
   const k = h / 100;
@@ -217,12 +263,28 @@ export function drawDrum(ctx, x, y, h) {
 }
 
 /** The three Croc Boys standing at their spots; `playing` makes them bob and strum. `looks` is for the picture sheet. */
-export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band) {
+export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null, pose = false, beat = null) {
   spots.forEach((s, i) => {
-    const jump = playing ? Math.abs(Math.sin(t * 6 + i)) * h * 0.04 : 0;
-    drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp: playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0 }, 1, playing ? t : 0);
+    if (gone && gone[i]) return;
+    // `beat`: beats since their song began (the song's bpm): all three bob together, up on each beat (Brian
+    // 2026-11-26, showing 7 at 0:18: "I don't think it's super obvious that the music's coming from the Croc Boys")
+    const jump = !playing ? 0 : beat != null ? Math.abs(Math.cos(Math.PI * beat)) ** 3 * h * 0.06 : Math.abs(Math.sin(t * 6 + i)) * h * 0.04;
+    // `pose`: the song is over and they pose for the crowd, an arm up high (the group photo's first step)
+    const armUp = pose ? 0.95 : playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0;
+    drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp }, 1, playing ? t : 0);
     looks[i].instrument === "drum" && drawDrum(ctx, s.x, s.y, h);
   });
+}
+
+/** The gap in the photo's front row, outlined on the floor where Squatch's feet go (`r` across), pulsing gently. */
+export function drawGapGlow(ctx, x, y, r, t) {
+  // the one highlight (outline.js): a dashed gold ellipse round the place on the floor, no glow (Brian 2026-11-26)
+  ctx.save();
+  highlightLine(ctx, t);
+  ctx.beginPath();
+  ctx.ellipse(x, y, r * 1.3, r * 0.5, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 }
 
 // ---------- the banner (V1) ----------
@@ -234,10 +296,6 @@ export function drawBanner(ctx, box, glow, t = 0) {
   line(ctx, [x0 + 14, 0, x0 + 14, y0 + 4], INK, 2);
   line(ctx, [x1 - 14, 0, x1 - 14, y0 + 4], INK, 2);
   ctx.save();
-  if (glow > 0) {
-    ctx.shadowColor = "rgba(255,207,51," + (0.6 + 0.4 * Math.sin(t * 6)) * glow + ")";
-    ctx.shadowBlur = 26 * glow;
-  }
   // The cloth: a gentle sag along the bottom edge.
   ctx.beginPath();
   ctx.moveTo(x0, y0);
@@ -247,11 +305,12 @@ export function drawBanner(ctx, box, glow, t = 0) {
   ctx.closePath();
   ctx.fillStyle = "#3478f6";
   ctx.fill();
-  ctx.shadowBlur = 0;
   ctx.lineWidth = 3;
   ctx.strokeStyle = INK;
   ctx.stroke();
   ctx.restore();
+  // while a line names it: the one highlight round it (outline.js), no glow (Brian 2026-11-26)
+  glow > 0 && highlightBox(ctx, { x0, y0, x1, y1: y1 + sag }, t, 6);
   const mid = y0 + (y1 - y0) * 0.33,
     low = y0 + (y1 - y0) * 0.72;
   rr(ctx, x0 + 34, low - 12, w - 68, 24, 4, "#fffdf8");
@@ -270,21 +329,28 @@ export function drawBanner(ctx, box, glow, t = 0) {
 }
 
 // ---------- the door at home (V2) ----------
-/** Music notes drifting in under (and round) Squatch's home door, and the door's edge thumping to the beat. */
-export function drawDoorNotes(ctx, door, t) {
-  const cx = (door.x0 + door.x1) / 2,
+/**
+ * Music notes drifting in under (and round) Squatch's home door, and the door's edge thumping to the beat. `faint`:
+ * the band heard next door (Brian 2026-11-26, "We should see music notes floating in from the door"): three paler,
+ * smaller notes drifting in low under the door, and no thump.
+ */
+export function drawDoorNotes(ctx, door, t, opts) {
+  const faint = !!(opts && opts.faint),
+    cx = (door.x0 + door.x1) / 2,
     beat = Math.max(0, Math.sin(t * Math.PI * 2 * 2)) ** 6;
   // thump lines at the door edge
-  for (const s of [-1, 1]) line(ctx, [door.x0 - 4 - beat * 8, (door.y0 + door.y1) / 2 + s * 20, door.x0 - 12 - beat * 14, (door.y0 + door.y1) / 2 + s * 30], "rgba(30,36,48," + (0.25 + 0.6 * beat) + ")", 3);
-  const colors = ["#ff5fa8", "#3478f6", "#e07b00", "#2bc48a"];
-  for (let i = 0; i < 4; i++) {
-    const k = (t * 0.45 + i / 4) % 1,
-      x = cx - k * 150,
-      y = door.y1 - 18 - k * 60 + Math.sin(k * 9 + i) * 8,
+  if (!faint)
+    for (const s of [-1, 1]) line(ctx, [door.x0 - 4 - beat * 8, (door.y0 + door.y1) / 2 + s * 20, door.x0 - 12 - beat * 14, (door.y0 + door.y1) / 2 + s * 30], "rgba(30,36,48," + (0.25 + 0.6 * beat) + ")", 3);
+  const colors = ["#ff5fa8", "#3478f6", "#e07b00", "#2bc48a"],
+    n = faint ? 3 : 4;
+  for (let i = 0; i < n; i++) {
+    const k = (t * (faint ? 0.3 : 0.45) + i / n) % 1,
+      x = cx - k * (faint ? 110 : 150),
+      y = door.y1 - (faint ? 8 : 18) - k * (faint ? 30 : 60) + Math.sin(k * 9 + i) * (faint ? 5 : 8),
       a = k < 0.15 ? k / 0.15 : k > 0.75 ? (1 - k) / 0.25 : 1;
     ctx.save();
-    ctx.globalAlpha = a;
-    drawNote(ctx, x, y, 9, colors[i]);
+    ctx.globalAlpha = a * (faint ? 0.5 : 1);
+    drawNote(ctx, x, y, faint ? 7 : 9, colors[i]);
     ctx.restore();
   }
 }
@@ -384,7 +450,25 @@ export function drawWarning(ctx, x, y, s, inside, k = 1, t = 0) {
   ctx.restore();
 }
 /** "?" or "!" over a watcher: at least as tall as Squatch's head, in a white bubble so it reads on any floor. */
-export function drawMark(ctx, x, y, mark, size, t = 0) {
+export function drawMark(ctx, x, y, mark, size, t = 0, q = null) {
+  // a "?" that fills in (party-question.js): no white bubble, small and pale growing to full and dark
+  if (mark === "?" && q) {
+    const L = questionLook(q.k),
+      fs = size * 0.85 * L.scale;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, q.a));
+    ctx.font = `900 ${fs}px system-ui, -apple-system, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = Math.max(1.5, fs * 0.12);
+    ctx.strokeStyle = INK;
+    ctx.strokeText("?", x, y + size * 0.04);
+    ctx.fillStyle = L.color;
+    ctx.fillText("?", x, y + size * 0.04);
+    ctx.restore();
+    return;
+  }
   const s = size,
     wob = mark === "!" ? Math.sin(t * 18) * s * 0.05 : 0;
   ctx.save();
@@ -476,19 +560,21 @@ export function drawAlarmCloseUp(ctx, w, h, picture, src, k, t) {
 }
 
 // ---------- lights (V10) ----------
-// The room's light while the band plays its first song: a soft pink tint over the hall (the other two songs' colours
-// come with half two).
+// The room's light while the band plays its first song: a soft pink tint over the hall (the three songs' colours are
+// party-dance.js SONG_LIGHTS).
 export const SONG_LIGHT = "rgba(255,95,168,.16)";
 /** The lights dimmed, the dance spotlight on the floor at `spot`, the song's colour over the room. */
-export function drawPartyLights(ctx, spot, t, dim = 1) {
+export function drawPartyLights(ctx, spot, t, dim = 1, color = SONG_LIGHT) {
   ctx.save();
   ctx.fillStyle = `rgba(12,16,32,${0.32 * dim})`;
   ctx.beginPath();
   ctx.rect(0, 0, 960, 640);
   ctx.ellipse(spot.x, spot.y, spot.rx, spot.ry, 0, 0, TAU, true);
   ctx.fill("evenodd");
-  ctx.fillStyle = SONG_LIGHT;
+  ctx.globalAlpha = Math.min(1, dim);
+  ctx.fillStyle = color;
   ctx.fillRect(0, 0, 960, 640);
+  ctx.globalAlpha = 1;
   const g = ctx.createRadialGradient(spot.x, spot.y, 4, spot.x, spot.y, spot.rx);
   g.addColorStop(0, "rgba(255,250,210,.38)");
   g.addColorStop(1, "rgba(255,250,210,0)");
@@ -509,14 +595,22 @@ export function drawPartyLights(ctx, spot, t, dim = 1) {
 }
 
 // ---------- the camera (V14) ----------
+// The camera's body sits this far above the tripod's feet; its lens is this far out along the way it points.
+const CAMERA = Object.freeze({ up: 40, aimUp: 46, lens: 17 });
+const cameraAngle = (x, y, aim) => Math.atan2(aim.y - (y - CAMERA.aimUp), aim.x - x);
+/** The front of the camera's lens (game position), for a tripod standing at `tripod` and pointing at `aim`. */
+export function cameraLens(tripod, aim) {
+  const a = cameraAngle(tripod.x, tripod.y, aim);
+  return { x: tripod.x + Math.cos(a) * CAMERA.lens, y: tripod.y - CAMERA.up + Math.sin(a) * CAMERA.lens };
+}
 /** The camera on its tripod, standing at (x, y) and pointing at `aim`. */
 export function drawTripod(ctx, x, y, aim) {
-  const a = Math.atan2(aim.y - (y - 46), aim.x - x);
+  const a = cameraAngle(x, y, aim);
   line(ctx, [x, y - 34, x - 14, y], "#6b6256", 3);
   line(ctx, [x, y - 34, x + 13, y], "#6b6256", 3);
   line(ctx, [x, y - 34, x + 1, y + 4], "#6b6256", 3);
   ctx.save();
-  ctx.translate(x, y - 40);
+  ctx.translate(x, y - CAMERA.up);
   ctx.rotate(a);
   rr(ctx, -12, -8, 22, 15, 3, "#1e2430", 2);
   rr(ctx, 9, -5, 8, 9, 2, "#8fdcff", 2);
@@ -538,7 +632,11 @@ export const PIECES = Object.freeze([
   { id: "stache", h: 0.35 },
   { id: "tutu", h: 0.48 },
 ]);
-export function drawPiece(ctx, id, x, y, w, rot = 0) {
+/**
+ * One piece, centred at (x, y), `w` across, turned by `rot`. `onBody`: the shirt is on his body, so its long
+ * sleeves are drawn along his arms by drawOutfit (party-shirt-art.js); on its own it hangs with its sleeves down.
+ */
+export function drawPiece(ctx, id, x, y, w, rot = 0, onBody = false) {
   const p = PIECES.find((q) => q.id === id);
   if (!p) return;
   const h = w * p.h,
@@ -557,31 +655,7 @@ export function drawPiece(ctx, id, x, y, w, rot = 0) {
     line(ctx, [-w * 0.36, -h * 0.1, -w * 0.24, h * 0.05], "#8a93a3", lw);
     line(ctx, [w * 0.18, -h * 0.1, w * 0.3, h * 0.05], "#8a93a3", lw);
   } else if (id === "shirt") {
-    ctx.beginPath();
-    ctx.moveTo(-w * 0.22, -h * 0.5);
-    ctx.lineTo(-w * 0.5, -h * 0.28);
-    ctx.lineTo(-w * 0.38, -h * 0.05);
-    ctx.lineTo(-w * 0.3, -h * 0.12);
-    ctx.lineTo(-w * 0.3, h * 0.5);
-    ctx.lineTo(w * 0.3, h * 0.5);
-    ctx.lineTo(w * 0.3, -h * 0.12);
-    ctx.lineTo(w * 0.38, -h * 0.05);
-    ctx.lineTo(w * 0.5, -h * 0.28);
-    ctx.lineTo(w * 0.22, -h * 0.5);
-    ctx.quadraticCurveTo(0, -h * 0.3, -w * 0.22, -h * 0.5);
-    ctx.closePath();
-    ctx.fillStyle = "#ff8a3d";
-    ctx.fill();
-    ctx.lineWidth = lw;
-    ctx.strokeStyle = INK;
-    ctx.stroke();
-    for (const [fx, fy, c] of [
-      [-0.15, -0.05, "#2bc48a"],
-      [0.14, 0.18, "#3478f6"],
-      [-0.1, 0.32, "#ffcf33"],
-      [0.16, -0.2, "#ff5fa8"],
-    ])
-      oval(ctx, w * fx, h * fy, w * 0.07, w * 0.07, c);
+    drawShirt(ctx, w, h, lw, onBody);
   } else if (id === "boots") {
     for (const s of [-1, 1]) {
       rr(ctx, s * w * 0.27 - w * 0.17, -h * 0.5, w * 0.3, h * 0.8, w * 0.04, "#ffcf33", lw);
@@ -650,9 +724,11 @@ export const BODY_SPOTS = Object.freeze({
 });
 /**
  * Draws the outfit on Squatch standing at feet (x, y), `scale` game pixels to his unit, facing `f`. `outfit` is
- * { head, face, body, legs } -> piece id or "". `tip` is { spot, a } to draw one piece tipping (the vent's tug).
+ * { head, face, body, legs } -> piece id or "". The shirt on his body has long sleeves down his arms, drawn last
+ * (over what he wears, as his arms are): `opts.arms` is how his arms are drawn (squatch-art.js armEnds; left out,
+ * at rest; walkArms for the room's walking Squatch), `opts.pawLine` and `opts.pawR` his paws' outline and size.
  */
-export function drawOutfit(ctx, x, y, scale, outfit, f = 1, tip = null) {
+export function drawOutfit(ctx, x, y, scale, outfit, f = 1, opts = {}) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale * (f < 0 ? -1 : 1), scale);
@@ -661,9 +737,11 @@ export function drawOutfit(ctx, x, y, scale, outfit, f = 1, tip = null) {
     if (!id) continue;
     const s = BODY_SPOTS[spot],
       p = PIECES.find((q) => q.id === id),
-      h = s.w * (p ? p.h : 0.5),
-      a = tip && tip.spot === spot ? tip.a : 0;
-    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, a);
+      h = s.w * (p ? p.h : 0.5);
+    // (`hatTip`: the piece on his head tipped over, radians; the octopus's first hug knocks it askew)
+    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, spot === "head" ? (opts && opts.hatTip) || 0 : 0, spot === "body");
   }
+  const o = opts || {};
+  outfit && outfit.body === "shirt" && drawShirtSleeves(ctx, o.arms || null, Math.max(1, BODY_SPOTS.body.w * 0.045), o);
   ctx.restore();
 }

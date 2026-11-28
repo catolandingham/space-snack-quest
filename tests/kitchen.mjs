@@ -35,7 +35,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { "content-type": "text/html" });
   res.end(html);
 });
-await new Promise((r) => server.listen(8768, "127.0.0.1", r));
+await new Promise((r) => server.listen(8768 + Number(process.env.SSQ_PORT_OFFSET || 0), "127.0.0.1", r));
 let browser;
 try {
   browser = await puppeteer.launch({ executablePath: chrome, headless: "new", args: ["--no-sandbox", "--disable-gpu"] });
@@ -51,7 +51,7 @@ const check = (name, ok, detail) => {
   if (!ok) fails.push(name);
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-await page.goto("http://127.0.0.1:8768/index.html", { waitUntil: "domcontentloaded" });
+await page.goto(`http://127.0.0.1:${8768 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html`, { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.__ss);
 
 function px(x, y) {

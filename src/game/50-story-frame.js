@@ -10,7 +10,7 @@
             n.room !== "duct" && R0(s),
             (s.walk += l * 11),
             (s.moving = !0),
-            Math.abs(o.x) > 0.1 && (s.f = o.x > 0 ? 1 : -1));
+            Math.abs(o.x) > 0.1 && (s.f = o.x > 0 ? 1 : -1), window.SSQ && window.SSQ.afterMove && window.SSQ.afterMove("mops")); // (after his step and turn: room-model.js)
         } else n.mo.moving = !1;
       }
       if (
@@ -507,7 +507,7 @@
           r("#59657d", 5),
           m(-120, -190, 240, 70, 8),
           r("#1e2430", 3),
-          g("4 7 2 3", 0, -155, 40, "#2bc48a", "center", 900));
+          g("1 6 9 5 5 6", 0, -155, 40, "#2bc48a", "center", 900));
         for (let o = 0; o < 9; o++) {
           let i = -80 + (o % 3) * 80,
             s = -70 + Math.floor(o / 3) * 70;
@@ -534,10 +534,11 @@
         ? ((e.fillStyle = "#1e2430"),
           e.fillRect(0, 0, c, b),
           g("Chapter 1 \xB7 Stormtop", c / 2, 90, 40, "#ffffff", "center", 900),
+          // (An eighth line, the party's Snack Bandit honor, closes the rows up so the last one stays on the card.)
           jh().forEach((o, i, all) =>
             i === all.length - 1
-              ? g(o, c / 2, 180 + i * 64, 40, "#ffcf33", "center", 900)
-              : tallyLine(o, c / 2, 180 + i * 64, 30, 820, i >= 4 ? "#8fdcff" : "#ffffff"),
+              ? g(o, c / 2, 180 + i * Math.min(64, 420 / (all.length - 1)), 40, "#ffcf33", "center", 900)
+              : tallyLine(o, c / 2, 180 + i * Math.min(64, 420 / (all.length - 1)), 30, 820, i >= 4 ? "#8fdcff" : "#ffffff"),
           ),
           !0)
         : !1;
@@ -567,7 +568,7 @@
         r("#a8380b", 0),
         X(-128, 8, 4, 2),
         r("#a8380b", 0),
-        g("MARS PANCAKES!", 22, 2, 27, "#fff3d6", "center", 900),
+        g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("FAMILY") : "CAKES") + "!", 22, 2, 27, "#fff3d6", "center", 900),
         e.restore());
     }
     function w2(l, o, i, s) {
@@ -980,7 +981,7 @@
                 Xn(o, i, 150, 84, "\xD7500"),
                 m(o + 6, i - 22, 138, 20, 3),
                 r("#fffdf3", 2),
-                g("FOR THE MANAGER \xB7 EXTRA MOON PIES", o + 75, i - 12, 6.5, "#7a2e1d", "center", 900),
+                g("FOR THE MANAGER \xB7 EXTRA " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), o + 75, i - 12, 6.5, "#7a2e1d", "center", 900),
                 le.dolly &&
                   (m(o - 4, i + 82, 158, 8, 3),
                   r("#59657d", 2),
@@ -1019,28 +1020,26 @@
       for (let o of B.jans) o.on && l.push({ y: o.y, d: () => u5(o) });
       if (
         (W6(l),
-        n.ch1BalloonRest && !n.ch1Party && (n.scene || "")[0] === "Q" && l.push({ y: 530, d: drawCh1BalloonLeft }),
         n.scene === "Q3" &&
           l.push({
             y: 520,
             d: () => {
-              Qt(640, 520, "#e8a87c", QT_ADULT, 1);
+              Qt(640, 520, "#e8a87c", qtHere(), 1);
             },
           }),
         n.ch1Office &&
           l.push({
             y: 490,
             d: () => {
-              (Qt(220, 470, "#c9b6f2", QT_ADULT, 0.3), dq(360, 490, !1));
+              (Qt(220, 470, "#c9b6f2", qtHere(), 0.3), dq(360, 490, !1));
             },
           }),
         !n.ch1Office &&
-          !n.ch1Party &&
           n.mo.x > -50 &&
           l.push({
           y: n.mo.y,
           d: () => {
-            (Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q" }),
+            (Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q", ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) }),
               B.gave && n.scene === "S2" && (m(n.mo.x + 22 * n.mo.f - 9, n.mo.y - 50, 18, 20, 2), r("#cdbb98", 1.5)));
           },
         }),
@@ -1052,12 +1051,6 @@
                 walk: n.sq.moving ? n.sq.walk : 0,
                 f: n.sq.f,
                 carry: n.lunch === "held",
-                leap: (n.ch1JumpT || 0) > 0,
-                hat: !!n.ch1Disguise,
-                hatAskew: !!n.ch1HatAskew,
-                shades: !!n.ch1Disguise,
-                hawaiian: !!n.ch1Disguise,
-                paper: !!n.ch1Flyer,
                 jacket: !!n.costumeOn,
                 goatBeard: !!n.costumeOn,
                 horns: !!n.costumeOn,

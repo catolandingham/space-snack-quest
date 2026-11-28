@@ -228,9 +228,9 @@ g.check("sound on: the morning was played to the \"That evening…\" card", R.en
 }
 // Levels (sound plan section 8).
 {
-  const lv = await on.page.evaluate(async (skip, end) => {
+  const lv = await on.page.evaluate(async (skip, end, url) => {
     const e = window.SSQ.engine();
-    const data = await (await fetch("music/floating-in-space.mp3")).arrayBuffer();
+    const data = await (await fetch(url)).arrayBuffer();
     const ac = new OfflineAudioContext(1, 22050, 22050);
     const b = await ac.decodeAudioData(data);
     const ch = b.getChannelData(0);
@@ -244,11 +244,11 @@ g.check("sound on: the morning was played to the \"That evening…\" card", R.en
       songRms: Math.sqrt(sum / k),
       tick: await window.SSQ.morningSound.measure("tick"),
     };
-  }, HOME_MUSIC.skip, HOME_MUSIC.loopEnd);
+  }, HOME_MUSIC.skip, HOME_MUSIC.loopEnd, HOME_MUSIC.url);
   g.check("music and sound effects each have their own level under the master", lv.distinct && Math.abs(lv.music - MIX.music) < 1e-6 && Math.abs(lv.fx - MIX.effects) < 1e-6, lv);
-  const bg = lv.songRms * HOME_MUSIC.background * MIX.floatingMatch * MIX.music,
+  const bg = lv.songRms * HOME_MUSIC.background * HOME_MUSIC.match * MIX.music,
     db = 20 * Math.log10(bg / lv.tick.rms);
-  g.check("a bubble tick sits well under Brian's recording at its background level (6 dB or more)", db >= 6, { db: Math.round(db * 10) / 10, tickRms: lv.tick.rms, songBg: bg });
+  g.check("a bubble tick sits well under the morning's music at its background level (6 dB or more)", db >= 6, { db: Math.round(db * 10) / 10, tickRms: lv.tick.rms, songBg: bg });
 }
 g.check("no page errors (sound on)", on.errors.length === 0, on.errors);
 await on.ctx.close();

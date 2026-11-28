@@ -32,7 +32,7 @@
         Cs();
         return;
       }
-      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut)) {
+      if (p.state === "op" && (n.ch1Zoom || partyCutOpen())) {
         // A bubble or a card still goes away on a tap. The snack bar used to swallow that tap.
         if (de()) return void nf();
         ch1SlicePointer("down", l, o);
@@ -45,7 +45,7 @@
           hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
           return;
         }
-        if (p.state === "op" && n.ch1Cut) {
+        if (p.state === "op" && partyCutOpen()) {
           ch1SlicePointer("down", l, o);
           return;
         }
@@ -54,6 +54,7 @@
           return;
         }
         if (p.state === "title") {
+          if (window.SSQ && window.SSQ.credits && window.SSQ.credits.tap(l, o)) return;
           for (let s = 0; s < 4; s++) {
             let q = 40 + s * 225;
             if (l >= q && l <= q + 205 && o >= 466 && o <= 616) {
@@ -72,6 +73,10 @@
     //   ?beat=42            on a preview host only, open that Chapter 1 beat
     //   ?beat=day2          on localhost or a preview host, open Day 2 at the gift in the closet. The live site ignores it.
     //   ?beat=party         on localhost or a preview host, open the party night at P1 (party:P3 opens P3). Ignored live.
+    //   ?beat=bay:hide      on localhost or a preview host, open the loading bay (beats 28 to 36) at that part. Ignored live.
+    //   ?beat=evening:38    on localhost or a preview host, open Day 2's evening at that beat (37 to 42; 142 the bin). Ignored live.
+    //   ?beat=escape        on localhost or a preview host, open the escape after night one (escape:pad opens the keypad...).
+    //   ?beat=pickup        the same, pickup day (pickup:push opens the push to the mail room...).
     //   &debug=1            show the state strip under the game; the backtick key hides and shows it
     function debugLink() {
       let q;
@@ -87,7 +92,11 @@
         linkBeatRaw = q.get("beat") || "",
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
         linkDay2 = linkBeatRaw === "day2",
-        linkParty = /^party(:P[1-5])?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
+        linkParty = /^party(:P([1-7]|8a|8b|8c|9|9b))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "",
+        linkBay = /^bay(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(4) || "pa" : "",
+        linkEvening = /^evening(:\d+)?$/.test(linkBeatRaw) ? +linkBeatRaw.slice(8) || 37 : 0,
+        linkEscape = /^escape(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(7) || "start" : "",
+        linkPickup = /^pickup(:[a-z0-9]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(7) || "start" : "";
       let previewBeat = !1,
         day2Jump = !1,
         partyJump = !1;
@@ -97,7 +106,7 @@
           local = host === "localhost" || host === "127.0.0.1" || host === "";
         previewBeat = !!linkBeat && !live && !local;
         day2Jump = linkDay2 && !live;
-        partyJump = !!linkParty && !live;
+        partyJump = !!(linkParty || linkBay || linkEvening || linkEscape || linkPickup) && !live;
       } catch {}
       if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat && !day2Jump && !partyJump) return;
       !linkCh && linkPhase && (linkCh = 2);
@@ -114,8 +123,12 @@
         }
         linkDebug && debugStrip();
         previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
-        day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin());
-        partyJump && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
+        day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin(!0));
+        partyJump && linkParty && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
+        partyJump && linkBay && bayBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(28), linkBay !== "pa" && ((n.q = []), (n.cur = null), bayBeat().jump(linkBay)));
+        partyJump && linkEvening && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), ch1JumpBeat(linkEvening));
+        partyJump && linkEscape && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.ch1Day2 = !0), esBeat() && esBeat().jump(linkEscape));
+        partyJump && linkPickup && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.ch1Day2 = !0), pkBeat() && pkBeat().jump(linkPickup));
       }, 0);
     }
     function roomLine(text) {
@@ -219,11 +232,10 @@
         game: p,
         SFX: D,
         playSong: co,
-        wookVoice: _i,
         babyBreath: z1,
         follow: () => Bt,
         transit: () => ({ fadeA: Ka, walkIn: fa, lastRoom: Mf }),
-        voiceCount: () => [O1, R1, N1],
+        voiceCount: () => [0, R1, N1],
         audio: () => ({ state: S ? S.state : "none", vol: z, muted: G, music: !!warmEl }),
         soundState: () => soundState(),
         soundRefused: () => soundRefused(),
@@ -265,7 +277,6 @@
           ch1SlicePointer(kind, x, y);
           ch1Day2Pointer(kind, x, y);
         },
-        ch1PadPress,
         ch1JumpBeat,
         shown: () => Array.from(p.shown),
         op: n,
@@ -301,10 +312,6 @@
           inCrate: !!n.ch1InCrate,
           climbed: !!n.ch1Climbed,
           siteRoom: n.ch1SiteRoom || "",
-          balloonRest: n.ch1BalloonRest || "",
-          balloonPopped: !!n.ch1BalloonPopped,
-          balloonPops: n.ch1BalloonPops || 0,
-          balloonSave: n.ch1Save || null,
         }),
         ballNotice,
         ballNoticeReset,
@@ -313,8 +320,6 @@
         ch1NightLook,
         BALL_NOTICE_RADIUS,
         BALL_NOTICE_SECONDS,
-        COOL_HAT_SECONDS,
-        BALLOON_GRAB_SECONDS,
         ADULT_PX,
         adultPxFor,
         alienScale,
@@ -323,13 +328,6 @@
         QT_ADULT,
         SQ_ADULT,
         CH1_OFFICE_DOOR,
-        CH1_HOME_DOOR,
-        CH1_GUESTS,
-        CH1_PARTY_CAST,
-        PHOTO_BONUS,
-        SNACK_LOOK_SECONDS,
-        CH1_CAM,
-        CH1_FRAME,
         CH1_BIN,
         CH1_ROBOT,
         CH1_MAIL,
@@ -431,6 +429,8 @@
         methodLine: () => methodLine(),
         stallT: () => stall.t,
         conesDrawn: () => conesDrawn.slice(),
+        // Why the warm (home) music would play now, or "" (the party night keeps it off).
+        warmWhy: () => warmWhy(),
         // One game update of dt seconds, run inside the caller's own task (no frame can run in between).
         tick: (dt) => ep(dt),
         METHOD_LINES: [...new Set(Object.values(METHOD_LINES))],

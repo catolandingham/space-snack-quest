@@ -2,7 +2,10 @@
  * If the module script (src/modules/, bundled into the first <script> of index.html) fails to load, the game
  * must still play (CLAUDE.md: the older program guards every use of window.SSQ). The morning is a module now,
  * so without it Chapter 1 skips from the opening cards to "That evening…". The party night is a module too
- * (src/modules/party.js), so without it the evening goes on to Day 2, which still plays.
+ * (src/modules/party.js), so without it the evening goes on to Day 2. Day 2's home morning is a module too
+ * (src/modules/home-morning.js), and so are the lunch sneak (src/modules/lunch-sneak.js), the loading bay
+ * (src/modules/loading-bay.js), the evening (src/modules/evening.js) and the escape (src/modules/escape.js), so without
+ * them, and pickup day (src/modules/pickup.js), Day 2 goes on from TAKE · lunch straight to the chapter's end.
  *   node tests/morning-fallback.mjs
  */
 import { readFileSync } from "node:fs";
@@ -27,7 +30,7 @@ page.on("request", (req) => {
   else req.continue();
 });
 await page.setViewport({ width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
-await page.goto("http://127.0.0.1:8973/index.html?ch=1", { waitUntil: "domcontentloaded" });
+await page.goto(`http://127.0.0.1:${8973 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html?ch=1`, { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.__ss && window.__ss.op, { timeout: 15000 });
 await sleep(300);
 g.check("no bridge on the page", await page.evaluate(() => !window.SSQ));
@@ -46,7 +49,15 @@ for (let i = 0; i < 20 && !(s.ctrl && s.chip); i++) {
   s = await st();
 }
 g.check("without the module the cards still play, then \"That evening…\"", seen.length >= 3 && /^card:Stormtop/.test(seen[0]) && seen.some((t) => /^card:That evening/.test(t)), seen);
-g.check("then the game goes on: without the party module, Day 2 starts with a goal", s.ctrl && /pick up the gift/.test(s.chip), s);
+// (with no module, Day 2's lines come up at once: tap through them to its goal)
+for (let i = 0; i < 12 && !(s.ctrl && s.chip); i++) {
+  await page.touchscreen.tap(187, 300);
+  await sleep(400);
+  s = await st();
+}
+// (pickup day is a module too, pickup.js, and the older program's packing is gone: without the modules Day 2 goes on to
+// the chapter's end, ch1ChapterEnd: the tally card, then Chapter 2's first goal at the Gas Stop)
+g.check("then the game goes on: without the party, home morning, lunch, loading bay, evening, escape and pickup day modules, Day 2 goes on to the chapter's end and Chapter 2's first goal", s.ctrl && /crate by the pump/.test(s.chip), s);
 g.check("no page errors without the module", errors.length === 0, errors);
 await ctx.close();
 await g.finish("morning-fallback");

@@ -7,6 +7,8 @@
  * not a whole-chapter replay and not a further jail minigame.
  * Pump bots call that same security loop.
  */
+import { FAMILY } from "../src/modules/snack-name.js";
+const FAMILY_NAME = FAMILY.name;
 import http from "node:http";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -35,7 +37,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(req.url === "/" || req.url.startsWith("/index.html") ? 200 : 404, { "content-type": "text/html" });
   res.end(req.url === "/" || req.url.startsWith("/index.html") ? html : "");
 });
-await new Promise((r) => server.listen(8767, "127.0.0.1", r));
+await new Promise((r) => server.listen(8767 + Number(process.env.SSQ_PORT_OFFSET || 0), "127.0.0.1", r));
 let browser;
 try {
   browser = await puppeteer.launch({ executablePath: chrome, headless: "new", args: ["--no-sandbox", "--disable-gpu"] });
@@ -56,7 +58,7 @@ async function keys(codes) {
   for (const c of [...held]) if (!codes.includes(c)) { await page.keyboard.up(c); held.delete(c); }
   for (const c of codes) if (!held.has(c)) { await page.keyboard.down(c); held.add(c); }
 }
-await page.goto("http://127.0.0.1:8767/index.html", { waitUntil: "domcontentloaded" });
+await page.goto(`http://127.0.0.1:${8767 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html`, { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.__ss);
 
 await page.evaluate(() => {
@@ -308,8 +310,8 @@ const pumpPen = await page.evaluate(() => {
   return { by: n.cur && n.cur.by, q: n.q.map((row) => (row.b && row.b.text) || "").join("|"), nozzle: at(420, 470), body: at(355, 515) };
 });
 check(
-  "the pump lockup shows the nozzle and the pancake line",
-  pumpPen.by === "pump" && pumpPen.q.includes("Pancakes. Park the nozzle.") && pumpPen.nozzle[0] > 200 && pumpPen.nozzle[1] > 160 && pumpPen.nozzle[2] < 120 && pumpPen.body[0] > 180 && pumpPen.body[1] < 120,
+  "the pump lockup shows the nozzle and his line about the family's cakes (round 7, question 120)",
+  pumpPen.by === "pump" && pumpPen.q.includes(FAMILY_NAME + ". Park the nozzle.") && pumpPen.nozzle[0] > 200 && pumpPen.nozzle[1] > 160 && pumpPen.nozzle[2] < 120 && pumpPen.body[0] > 180 && pumpPen.body[1] < 120,
   pumpPen,
 );
 await sleep(450);

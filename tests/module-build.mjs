@@ -44,7 +44,7 @@ const bridge = await page.evaluate(() => {
   return out;
 });
 g.check("window.SSQ is the bridge: frozen, not replaceable, version 1", !!bridge && bridge.version === 1 && bridge.frozen && bridge.locked, bridge);
-g.check("the rebuilt beats are the morning and the party night", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party"]) && bridge.unknown === null, bridge);
+g.check("the rebuilt beats are the morning, the party night, the TV story, the bedtime story, the home morning, the lunch sneak, the loading bay, the evening, the escape and pickup day", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party", "ch1-tv-story", "ch1-bedtime-story", "ch1-home-morning", "ch1-lunch", "ch1-bay", "ch1-evening", "ch1-escape", "ch1-pickup"]) && bridge.unknown === null, bridge);
 g.check("a beat registers once by id; registering it twice throws", !!bridge && bridge.registered === "test" && bridge.twice === "throws", bridge);
 g.check("the older program still starts (Chapter 1 state is there)", await page.evaluate(() => !!(window.__ss && window.__ss.op)));
 g.check("the older program handed the engine over to the bridge", await page.evaluate(() => !!window.SSQ.engine()));
@@ -67,6 +67,46 @@ const partySrc = readdirSync(join(root, "src", "modules"))
 const partySets = [...partySrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
 g.check("the party night writes only named fields", partySets.length > 0 && partySets.every((k) => (BEAT_WRITES || []).includes(k)), partySets.filter((k) => !(BEAT_WRITES || []).includes(k)));
 g.check("the party night never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(partySrc));
+// The bedtime story (bedtime-story.js) writes through the same engine, only named fields.
+const bedSrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^bedtime-story/.test(f))
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const bedSets = [...bedSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the bedtime story writes only named fields", bedSets.length > 0 && bedSets.every((k) => (BEAT_WRITES || []).includes(k)), bedSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the bedtime story never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(bedSrc));
+// The home morning (home-morning.js, Day 2's beats 22 to 24) writes through the same engine, only named fields.
+const hmSrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^home-morning/.test(f))
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const hmSets = [...hmSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the home morning writes only named fields", hmSets.length > 0 && hmSets.every((k) => (BEAT_WRITES || []).includes(k)), hmSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the home morning never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(hmSrc));
+// The lunch sneak (lunch-sneak.js, Day 2's beats 25 to 27) writes through the same engine, only named fields.
+const luSrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^lunch-sneak/.test(f))
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const luSets = [...luSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the lunch sneak writes only named fields", luSets.length > 0 && luSets.every((k) => (BEAT_WRITES || []).includes(k)), luSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the lunch sneak never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(luSrc));
+// The evening (evening.js, Day 2's beats 37 to 42) too.
+const evSrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^evening/.test(f))
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const evSets = [...evSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the evening writes only named fields", evSets.length > 0 && evSets.every((k) => (BEAT_WRITES || []).includes(k)), evSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the evening never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(evSrc));
+// The escape (escape.js, beats 43 to 52) writes through the same engine, only named fields.
+const esSrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^escape/.test(f))
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const esSets = [...esSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the escape writes only named fields", esSets.length > 0 && esSets.every((k) => (BEAT_WRITES || []).includes(k)), esSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the escape never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(esSrc));
 const writes = await page.evaluate(() => window.SSQ.beatWrites());
 g.check("in the browser the morning wrote only named fields", Array.isArray(writes) && writes.every((k) => (BEAT_WRITES || []).includes(k)), writes);
 const game = readdirSync(join(root, "src", "game"))
@@ -81,5 +121,11 @@ g.check("the calendar and the made-up tune (used elsewhere) stay", kept.every((n
 // The old party peek, sneak and dress-up (party plan P1 to P5) are gone from src/game/: party.js replaced them.
 const partyGone = ["function ch1PeekSpots", "function ch1PeekGo", "function ch1PeekLook", "CH1_PEEK_AT", "function ch1SneakStart", "function ch1SneakTick", "function ch1SneakHide", "ch1PlantSneak", "function ch1DressOpen", "function drawCh1Dress", "CH1_DRESS_ITEMS", "function ch1PartyPeek", "drawCh1SliceParty", "ch1Veil"];
 g.check("the old party peek, sneak and dress-up code is gone from src/game/", partyGone.every((name) => !game.includes(name)), partyGone.filter((name) => game.includes(name)));
+// The old party free play, alarm, home search and homecoming (party plan P6 to P8) are gone from src/game/ too:
+// party-free.js, party-toys.js, party-snacks.js, party-dance.js and party-endings.js replaced them.
+const freeGone = ["ch1FreePlayStart", "ch1PartySpots", "ch1Raid", "ch1Cut", "COOL_HAT_SECONDS", "CH1_PARTY_CAST", "CH1_GUESTS", "PHOTO_BONUS", "ch1Homecoming", "ch1Search", "n.guard", "ch1PartyCones", "ch1Cones", "askOnly", '"ch1photo"', '"ch1fur"', "ch1Disguise", "ch1HatOff", "ch1PartyTimeUp", "ch1Photo", "ch1Oct", "BALLOON_GRAB", "ch1PartyOver", "ch1PartyDid", "ch1Kara", '"SNAG"', '"SUCK"', '"STAND"'];
+g.check("the old party free play, raid, home search and homecoming code is gone from src/game/", freeGone.every((name) => !game.includes(name)), freeGone.filter((name) => game.includes(name)));
+const exported = await page.evaluate(() => ["COOL_HAT_SECONDS", "CH1_PARTY_CAST", "CH1_GUESTS", "PHOTO_BONUS", "BALLOON_GRAB_SECONDS", "ch1FreePlayStart"].filter((k) => k in window.__ss));
+g.check("the old party's numbers and hooks are gone from window.__ss", exported.length === 0, exported);
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("module-build");

@@ -4,7 +4,7 @@
  * - Once Mops is gone the kid has control (no "That evening…" yet); the chip reads "Squatch: do your homework"
  *   and only the desk gets the yellow outline. Nothing moves on by itself (40 seconds later, still home alone).
  * - The calendar (LOOK · calendar) opens already bitten: the nibble is out of the paper before any tap, and
- *   touching the printed Moon Pie changes nothing.
+ *   touching the printed snack cake changes nothing.
  * - OPEN · closet: the door opens (the locked open-closet picture, unchanged) with the small blue G box on the
  *   closet floor, drawn like Brian's approved picture (docs/approved-art/closet/); Squatch stands clear of it
  *   and says "Mops's costumes. And my Guardian Box."; the line waits for a tap; the tap shuts the door and the
@@ -206,8 +206,13 @@ for (const [id, thing] of [
     box = l && l.cap && l.cap.box;
   const sq = l && { x0: l.sq[0] - 56, x1: l.sq[0] + 56, y0: l.sq[1] - 150, y1: l.sq[1] + 6 };
   const covers = box ? Object.entries(HOME).filter(([k, b]) => hit(box, b)).map(([k]) => k) : ["no label"];
-  g.check(`the ${l && l.act} label covers neither Squatch nor ${thing} nor another home object`, !!box && !hit(box, sq) && covers.length === 0, { box, sq, covers });
-  g.check(`the ${l && l.act} label sits next to the ${thing} (within 40)`, !!box && gap(box, HOME[thing]) <= 40, { box, thing: HOME[thing] });
+  // (Brian #110, 2026-11-27: no "VERB · thing" words beside things in Chapter 1; the dashed gold line alone, cap-place.js THING_WORDS)
+  g.check(`${l && l.act}: no words are drawn beside the ${thing} (the gold line alone, #110)`, !!l && !!l.act && !box, { act: l && l.act, box });
+}
+{
+  // (the control: the rule is Chapter 1's alone; Chapter 2's scenes still get words beside things)
+  const rule = await page.evaluate(() => ({ home: window.SSQ.noThingWords(window.__ss.op.scene), ch2: window.SSQ.noThingWords("G1"), ch3: window.SSQ.noThingWords("P1") }));
+  g.check("#110 applies in Chapter 1 and not in Chapters 2 and 3 (outside the party)", rule.home === true && rule.ch2 === false && rule.ch3 === false, rule);
 }
 // Brian: "The dash outline drawing over him doesn't work." Squatch at the desk: no outline yellow on him.
 const overHim = await page.evaluate(() => {
@@ -255,7 +260,7 @@ const biteBefore = await page.evaluate(() => {
   const cv = document.querySelector("canvas"),
     k = cv.width / 960,
     ctx = cv.getContext("2d");
-  // The nibble out of the paper's right edge, beside the Moon Pie row (the same spots tests/calendar-closeup.mjs uses).
+  // The nibble out of the paper's right edge, beside the snack cake row (the same spots tests/calendar-closeup.mjs uses).
   const px = (x, y) => [...ctx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data].slice(0, 3);
   return { edge: px(808, 390), deep: px(798, 391), pie: [...ctx.getImageData(Math.round(560 * k), Math.round(350 * k), Math.round(64 * k), Math.round(70 * k)).data] };
 });
@@ -271,7 +276,7 @@ const pieAfter = await page.evaluate(() => {
 });
 // The paw follows the finger, so compare once it has gone back: count pixels that changed a lot.
 const changed = pieAfter.reduce((a, v, i) => a + (Math.abs(v - biteBefore.pie[i]) > 40 ? 1 : 0), 0);
-g.check("touching the printed Moon Pie takes no bite (nothing on the calendar changes)", changed < 40, changed);
+g.check("touching the printed snack cake takes no bite (nothing on the calendar changes)", changed < 40, changed);
 await tapAt(880, 540);
 await sleep(400);
 s = await st();

@@ -16,7 +16,7 @@ const walk = (c) =>
   page.evaluate((c) => {
     const ss = window.__ss,
       n = ss.op;
-    Object.assign(n, { scene: c.scene, room: c.room, q: [], cur: null, ctrl: true, act: null, sqPose: "stand", ch1Party: false, ch1D: c.room === "hangar", walkTo: null });
+    Object.assign(n, { scene: c.scene, room: c.room, q: [], cur: null, ctrl: true, act: null, sqPose: "stand", ch1PartyNow: null, ch1D: c.room === "hangar", walkTo: null });
     ss.ch.mops = false;
     if (c.mops) Object.assign(n.mo, { x: c.mops[0], y: c.mops[1] }), (n.moPose = "stand"), (n.mo.walking = false);
     else ((n.mo.x = -500), (n.moPose = "hidden"));

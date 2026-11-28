@@ -16,7 +16,7 @@ const outlined = await page.evaluate(() => {
   const ss = window.__ss, n = ss.op;
   ((n.q = []), (n.cur = null), ss.ch1JumpBeat(25));
   // The beat shortcut does not set the step's words; the game does it through ch1Ready.
-  n.ch1Chip = "Squatch: take Mops his lunch";
+  n.ch1Chip = "Squatch: take Mops his lunch in the hallway";
   const words = (t) => {
     for (let i = 0; i < Math.round(t * 30); i++) ss.tick(1 / 30);
     ss.drawFrame();

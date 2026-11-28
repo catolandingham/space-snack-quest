@@ -15,13 +15,24 @@
  * on the floor, and Mops says "Hey, stop that!" (morning.js), then the picture goes on.
  *
  * Squatch's homework on the home-alone morning is the second user: its two pictures are in
- * homework-cutaway.js.
+ * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js. The
+ * party's Croc Boy close-up (P3) is the fourth: croc-cutaway.js. The bedtime story (beat 21) is the fifth: its crate
+ * story pictures are in bedtime-story-art.js.
  *
  * Drawn here in the game's style (dark outlines, flat colours). Mops is drawn by this file too, from the same
  * shapes as the engine's drawMops but with outlines as thin as in Brian's approved picture (see "Mops in the
  * close-up"), and his beard so it can dunk and twist.
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
+import { WOOKIEE_PANELS } from "./tv-story-art.js";
+import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO, LASTCAKE_PANELS } from "./bedtime-story-art.js";
+import { GBOX_PANELS, NOTE_PANELS, drawLunchBag, MORNING_SIZES } from "./home-morning-art.js";
+import { drawGanitorTag } from "./ganitor.js";
+import { ESCAPE_PANELS } from "./escape-art.js";
+import { VENT_PANELS } from "./escape-vent-art.js";
+import { OFFICE_PANELS } from "./escape-office-art.js";
+import { CROC_PANELS } from "./croc-cutaway.js";
+import { TAPE_PANELS } from "./tv-tape-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -40,14 +51,24 @@ const MOPS = { x: 300, y: 640, scale: 12 };
 const BUCKET_AT = { x: 655, rim: 520, bottom: 690, top: 165, base: 140 };
 
 let last = null;
+let tagDrew = null; // Mops's name tag in the picture just drawn (tests)
+
+/**
+ * Beat 26 (lunch-sneak.js): Mops eats his lunch, then the empty paper bag, in one wordless picture that plays by
+ * itself (Brian 30a). Seconds: three bites of the sandwich (`bites`), a look at the empty bag, the bag lifted to his
+ * mouth, three bites of the bag, then chewing with nothing in his hoof (the clear last frame). PLACEHOLDER timing.
+ */
+// (2026-11-26: the first bite waits 0.8 s, so the whole hay sandwich is seen first)
+export const LUNCH_EAT = Object.freeze({ length: 3.8, bites: Object.freeze([0.8, 1.2, 1.6]), bagUp: 2.1, bagBites: Object.freeze([2.4, 2.8, 3.2]) });
 
 /**
  * Brian 30a: seconds a wordless picture with nothing to tap plays before the game goes on by itself (0: it waits
  * for NEXT). The dunk is two whole dunks (1.8 s each), ending with Mops upright and his beard dripping; the
  * homework desk is one whole loop (3 s), ending with all three lines written. The wringing picture has a beard
- * to tap (31a) and the homework sheet has words to read, so they wait.
+ * to tap (31a) and the homework sheet has words to read, so they wait. The Croc Boy close-up (croc-cutaway.js, P3,
+ * Brian 2026-11-26) plays 2.6 s by itself: his head bops on the band's first notes.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0] });
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], lunch: [LUNCH_EAT.length], croc: [2.6], tvtape: [2.4, 0], moonpie: BEDTIME_AUTO }); // (moonpie: the tourists peeking in, 2026-11-26)
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
@@ -340,7 +361,16 @@ function mopsBody(ctx, lean, lifted) {
     SHIRT,
     FINE,
   );
-  shape(ctx, lean, (c) => c.ellipse(6, -19.4, 2.3, 1.1, 0, 0, Math.PI * 2), WHITE, FINE);
+  // His GANITOR name tag on the pocket (Brian 2026-11-26; ganitor.js), in place of the old name patch: big enough
+  // here for its word to read.
+  ctx.save();
+  ctx.translate(MOPS.x, MOPS.y);
+  ctx.scale(S, S);
+  ctx.translate(PIVOT.x, PIVOT.y);
+  ctx.rotate(lean);
+  ctx.translate(-PIVOT.x, -PIVOT.y);
+  tagDrew = drawGanitorTag(ctx, S, FINE / S);
+  ctx.restore();
   ctx.restore();
 }
 
@@ -635,9 +665,193 @@ function wring(ctx, t, engine, extra) {
   return { bucket, lean, glow: glow > 0, splat };
 }
 
+// ---------- beat 26: Mops eats his lunch, then the bag (LUNCH_EAT) ----------
+const BREAD = "#f3d9a4",
+  CRUST = "#c98d4a",
+  HAY = "#f2c230",
+  HAY_DARK = "#b8912a",
+  CRUMB = "#d9a865";
+// A hay sandwich (Brian 2026-11-26: "hay between two slices of bread"): two slices with a thick layer of hay between,
+// its straws sticking out at both ends. Its middle at (x, y), `left` of it still there (0 to 1): each bite takes a
+// round chunk off its left end, toward his mouth. PLACEHOLDER drawing.
+function sandwich(ctx, x, y, left) {
+  if (left <= 0) return;
+  const w = 190,
+    h = 90;
+  ctx.save();
+  // drawn a third bigger round its middle, so the hay reads on a phone
+  ctx.translate(x, y);
+  ctx.scale(1.35, 1.35);
+  ctx.translate(-x, -y);
+  ctx.beginPath();
+  // (room for the straws at the ends; once bitten, the left edge is the bite)
+  const pad = left < 1 ? 6 : 36;
+  ctx.rect(x - w / 2 + w * (1 - left) - pad, y - h, w * left + pad + 36, h * 2);
+  ctx.clip();
+  // the bitten edge: a bite shape cut out of the left end
+  if (left < 1) {
+    const bx = x - w / 2 + w * (1 - left);
+    ctx.beginPath();
+    ctx.rect(x - w, y - h, w * 2, h * 2);
+    for (const dy of [-30, 0, 30]) ctx.moveTo(bx + 20, y + dy), ctx.arc(bx, y + dy, 20, 0, Math.PI * 2);
+    ctx.clip("evenodd");
+  }
+  const slice = (yy) => {
+    ctx.beginPath();
+    ctx.roundRect(x - w / 2, yy - 15, w, 30, 13);
+    ctx.fillStyle = BREAD;
+    ctx.fill();
+    ctx.lineWidth = LINE;
+    ctx.strokeStyle = CRUST;
+    ctx.stroke();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  };
+  slice(y + 30);
+  // the hay: a thick yellow layer between the slices, ragged, its straws poking out past the bread at both ends
+  ctx.beginPath();
+  ctx.moveTo(x - w / 2 - 4, y + 18);
+  for (let i = 0; i <= 14; i++) ctx.lineTo(x - w / 2 - 4 + (i * (w + 8)) / 14, y - 18 + (i % 2 ? -5 : 3));
+  ctx.lineTo(x + w / 2 + 4, y + 18);
+  ctx.closePath();
+  ctx.fillStyle = HAY;
+  ctx.fill();
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = INK;
+  ctx.stroke();
+  ctx.lineCap = "round";
+  const straw = (x0, y0, x1, y1) => {
+    ctx.beginPath();
+    ctx.moveTo(x + x0, y + y0);
+    ctx.lineTo(x + x1, y + y1);
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = HAY;
+    ctx.stroke();
+  };
+  for (const [y0, dx, dy] of [
+    [-10, -30, -12],
+    [-2, -34, 0],
+    [6, -26, 12],
+    [12, -18, 20],
+  ]) {
+    straw(-w / 2 + 2, y0, -w / 2 + dx, y0 + dy);
+    straw(w / 2 - 2, y0, w / 2 - dx, y0 + dy);
+  }
+  // darker straws all through the layer
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = HAY_DARK;
+  for (let i = 0; i < 12; i++) {
+    const sx = x - w / 2 + 6 + (i * (w - 12)) / 11;
+    ctx.beginPath();
+    ctx.moveTo(sx, y - 12 + (i % 3) * 5);
+    ctx.lineTo(sx + 16, y + 6 - (i % 2) * 8);
+    ctx.stroke();
+  }
+  slice(y - 30);
+  ctx.restore();
+}
+// A few crumbs falling from his mouth, `age` seconds after a bite.
+function eatCrumbs(ctx, x, y, age) {
+  if (age < 0 || age > 0.7) return;
+  for (let i = 0; i < 5; i++) {
+    const cx = x + (i - 2) * 11 + Math.sin(i * 2.3) * 6,
+      cy = y + age * (180 + i * 30);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = CRUMB;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  }
+}
+function lunchEat(ctx, t) {
+  const E = LUNCH_EAT,
+    bitesDone = E.bites.filter((b) => t >= b).length,
+    bagDone = E.bagBites.filter((b) => t >= b).length,
+    lastBite = [...E.bites, ...E.bagBites].filter((b) => t >= b).pop(),
+    sinceBite = lastBite == null ? 9 : t - lastBite,
+    chew = sinceBite < 0.35 ? Math.sin((sinceBite / 0.35) * Math.PI) : t > E.bagBites[2] ? 0.5 * Math.abs(Math.sin(t * 9)) : 0;
+  const lean = 0.03 + chew * 0.03;
+  room(ctx);
+  mopsBody(ctx, lean, true);
+  const c = chin(lean);
+  beard(ctx, c, 560 - chew * 10, Math.sin(t * 3) * 4, null, 0);
+  mopsHead(ctx, lean);
+  // his cheek full while he chews
+  if (chew > 0.05) {
+    const ch = at(19, -25, lean);
+    ctx.beginPath();
+    ctx.ellipse(ch.x, ch.y, 24 + chew * 8, 18 + chew * 6, 0, 0, Math.PI * 2);
+    ctx.fillStyle = WHITE;
+    ctx.fill();
+    ctx.lineWidth = FINE;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  }
+  // His near front leg comes up from under the shirt; the hoof holds the bag up to his mouth.
+  const mouth = at(25.5, -24.8, lean),
+    lift = Math.min(1, Math.max(0, (t - E.bagUp + 0.4) / 0.4)),
+    bagX = mouth.x + 96 - lift * 16,
+    bagBottom = 560 - lift * 40,
+    bagK = 3.6 * (52 / MORNING_SIZES.bag.h), // (the same height in the picture as before the bag grew)
+    bagH = MORNING_SIZES.bag.h * bagK,
+    eaten = bagDone / 3;
+  const shoulder = at(12, -13, lean),
+    hoof = { x: bagX, y: bagBottom - bagH * 0.1 }; // (holding it low, so MOPS on it shows)
+  band(ctx, [shoulder, { cx: shoulder.x + 60, cy: hoof.y + 70, x: hoof.x - 30, y: hoof.y + 6 }], 3.4 * S, WHITE);
+  // the paper bag, bitten from the top down once he eats it
+  if (bagDone < 3) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, bagBottom - bagH * (1 - eaten) - 4, 960, 640);
+    ctx.clip();
+    drawLunchBag(ctx, bagX, bagBottom, bagK);
+    ctx.restore();
+  }
+  // the sandwich sticks up out of the bag's top, at his mouth, until it is eaten
+  bitesDone < 3 && sandwich(ctx, mouth.x + 70, mouth.y + 10, 1 - bitesDone / 3);
+  // the hoof round it (or empty, once it is gone)
+  ctx.beginPath();
+  ctx.ellipse(hoof.x - 26, hoof.y + 4, 26, 20, 0.3, 0, Math.PI * 2);
+  ctx.fillStyle = HOOF;
+  ctx.fill();
+  ctx.lineWidth = LINE;
+  ctx.strokeStyle = INK;
+  ctx.stroke();
+  lastBite != null && eatCrumbs(ctx, mouth.x + 10, mouth.y + 20, t - lastBite);
+  return { lunch: { sandwich: Math.max(0, 1 - bitesDone / 3), filling: "hay", bag: bagDone < 3 ? 1 - eaten : 0, chewing: chew > 0.05, bagBox: { x0: bagX - (MORNING_SIZES.bag.w * bagK) / 2, x1: bagX + (MORNING_SIZES.bag.w * bagK) / 2, y0: bagBottom - bagH, y1: bagBottom }, hoof } };
+}
+
 const PANELS = {
+  // beat 26, the lunch sneak (lunch-sneak.js): Mops eats his lunch, then the bag
+  lunch: [lunchEat],
   beard: [dunk, wring],
   homework: HOMEWORK_PANELS,
+  // beat 20, the TV story (tv-story.js): the old Wookiee pictures, each drawing itself full screen
+  wookiee: WOOKIEE_PANELS,
+  // beat 21, the bedtime story (bedtime-story.js): the old crate story's pictures
+  moonpie: BEDTIME_PANELS,
+  // and its last picture, after Mops's bedtime line: Squatch's crayon drawing of the Guardians, Mops's Guardians line
+  guardians: GUARDIANS_PANELS,
+  // beats 22 to 24, the home morning (home-morning.js): the gift drops into the Guardian Box
+  gbox: GBOX_PANELS,
+  // beats 48, 50 and 52, the escape (escape.js): the detective wall, the Mars letter, the new Guardian note, the pink
+  // slip in his paw, the Guardian Box (each has words: each waits for NEXT)
+  ...ESCAPE_PANELS,
+  ...VENT_PANELS,
+  ...OFFICE_PANELS,
+  // and the note tied to the gift, read as he picks it up (Brian 2026-11-26, video note 0:24)
+  note: NOTE_PANELS,
+  lastcake: LASTCAKE_PANELS,
+  // P3, the band's first notes: a Croc Boy bopping, close up (croc-cutaway.js)
+  croc: CROC_PANELS,
+  // beat 20's start: the tape going in, then the news report's title card (tv-tape-art.js)
+  tvtape: TAPE_PANELS,
 };
 
 /**
@@ -654,9 +868,10 @@ export function drawCutaway(ctx, engine, step, extra) {
   ctx.fillStyle = WALL;
   ctx.fillRect(0, 0, 960, 640);
   widest = 0;
+  tagDrew = null;
   const drew = panels[step.panel](ctx, t, engine, extra) || {};
   ctx.restore();
-  last = { id: step.id, panel: step.panel, full: true, t, auto: step.auto || 0 };
+  last = { id: step.id, panel: step.panel, full: true, t, auto: step.auto || 0, ...(tagDrew ? { tag: tagDrew } : {}) };
   if (drew.bucket) {
     // The beard pictures: how big Mops and the bucket are, his outlines, and where his nose is (tests).
     const m = mopsBox();

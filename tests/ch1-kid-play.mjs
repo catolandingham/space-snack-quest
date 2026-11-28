@@ -3,38 +3,65 @@
  * The robot taps through speech, presses whatever the action button offers, taps the floor to walk
  * to the next spot, and keeps out of the cones it can see. It reads the game only to steer.
  * While it plays it measures what a kid would see: the action button changing size, the page
- * jumping, Squatch standing inside furniture, a tap that stops at furniture, a goal ring on
+ * jumping, Squatch standing inside furniture (or anyone else the room model checks: Mops, the pushed crate, the
+ * robots, Isfred and the workers), a tap that stops at furniture, a goal ring on
  * Squatch himself, and errors. Each problem it meets is checked against KNOWN below: a problem
  * on that list passes with a note, a problem not on it fails.
+ * The party night (src/modules/party.js) is played the same way: the sneak, the dress-up (dragging the pieces),
+ * then the party in disguise (P6) until it ends, by closing time or by a FUR alarm and the run home; in the dance
+ * it taps the screen, and at closing time it walks Squatch to Mops. Every party button is pressed.
  * The run ends at the Chapter 1 tally card (about 8 minutes). Not getting there fails the suite.
  *   npm run kid-video   plays it and saves tests/out/kid-play/chapter-1.mp4 for Brian to watch
  *   KID_MAX_S  most seconds to play (default 900)   KID_OUT  folder for kid-play.json and the log
  *   KID_SHOTS=1  saves pictures while playing and joins them into chapter-1.mp4 (needs ffmpeg)
- *   KID_AVOID=   (empty) lets the robot press every button, the party ones included
+ *   KID_AVOID=HIDE,DANCE  buttons (verbs) the robot leaves alone (default: none)
+ *   KID_URL=?beat=party:P7  start somewhere else (for looking into one place; the run then cannot reach the tally)
+ *   KID_START=evening:37  start from that debug link (localhost): the rest of Chapter 1 from there, to the tally
+ *   KID_PART=day1|day2|escape|pickup  play one part (see PARTS below); npm test plays the four in turn
  */
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { root, startGame, sleep } from "./game-page.mjs";
+const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 
 // Problems Brian knows about. Take one off this list in the change that fixes it.
 const KNOWN = {};
-// Party buttons that get Squatch caught. A catch at the party leaves the game stuck in the bedroom
-// (docs/CHAPTER-1-PROBLEMS.md, problem 1), so the robot leaves them alone. The change that fixes problem 1
-// should empty this list, so the robot presses them and proves the fix.
-const LEAVE_ALONE = ["SNAG", "SUCK", "STAND"];
 
-const MAX_S = +(process.env.KID_MAX_S || 900);
+// KID_PART=day1|day2|escape|pickup plays one part, each with its own time (2026-11-27, the join: the whole chapter is
+// longer than one run's time). day1: from the chapter's start until Day 2's morning begins; day2: from Day 2's morning
+// (?beat=day2) until the escape begins; escape: from the escape (?beat=escape) until pickup day begins; pickup: from
+// pickup day (?beat=pickup:start) to the tally card. With no KID_PART, KID_START or KID_URL, this file plays the four
+// parts one after another (each in its own run) and fails if any part fails.
+const PART = process.env.KID_PART || "";
+// (Day 2 and its night are two parts since 2026-11-27: played at a kid's speed, the day to the end of night one took
+// about 470 s and the escape night about 300 s more, so one 600 s run could never reach pickup day. day2 ends where the
+// escape begins; escape: from ?beat=escape, after night one, until pickup day begins.)
+const PARTS = { day1: { url: "?ch=1", until: "day2On" }, day2: { url: "?beat=day2", until: "escapeOn" }, escape: { url: "?beat=escape", until: "pickupOn" }, pickup: { url: "?beat=pickup:start", until: "" } };
+if (!PART && !process.env.KID_START && !process.env.KID_URL) {
+  let failed = 0;
+  for (const part of Object.keys(PARTS)) {
+    console.log(`\n--- ch1-kid-play, part ${part} ---`);
+    const r = spawnSync(process.execPath, [process.argv[1]], { stdio: "inherit", env: { ...process.env, KID_PART: part, KID_OUT: join(process.env.KID_OUT || join(root, "tests", "out", "kid-play"), part) } });
+    r.status !== 0 && failed++;
+  }
+  console.log(failed ? `ch1-kid-play: ${failed} of ${Object.keys(PARTS).length} parts failed` : `ch1-kid-play: all ${Object.keys(PARTS).length} parts passed`);
+  process.exit(failed ? 1 : 0);
+}
+if (PART && !PARTS[PART]) throw new Error("KID_PART must be day1, day2, escape or pickup");
+const MAX_S = +(process.env.KID_MAX_S || (PART ? 600 : 900));
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
 const SHOTS = process.env.KID_SHOTS === "1";
-const AVOID = process.env.KID_AVOID === undefined ? LEAVE_ALONE : process.env.KID_AVOID.split(",").filter(Boolean);
-const SLIP_CODE = "4723"; // what the pink slip says
+const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
+// what the pink slip says: Isfred's office code, as the game has it (src/modules/office-code.js)
+const { OFFICE_CODE: SLIP_CODE } = await import(join(root, "src", "modules", "office-code.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));
 
 const g = await startGame({ port: 8902, name: "ch1-kid-play" });
-const { page, errors } = await g.open("?ch=1", PHONE);
+// KID_START=evening:37 starts from a debug link (localhost) instead of the chapter's start: the rest of Chapter 1 from there.
+const { page, errors } = await g.open(process.env.KID_URL || (process.env.KID_START ? "?beat=" + process.env.KID_START : PART ? PARTS[PART].url : "?ch=1"), PHONE);
 const tap = async (x, y) => {
   await page.touchscreen.touchStart(x, y);
   await sleep(40);
@@ -79,18 +106,61 @@ const st = () =>
       mops: !!ss.ch.mops,
       pose: n.sqPose,
       mini: n.ch1Mini || "",
-      raid: !!n.ch1Raid,
-      pad: !!n.ch1PadOn && !!n.ch1Zoom && n.ch1Zoom.zoom >= 1,
-      padHave: n.ch1Pad || "",
+      // The party night (src/modules/party.js): its scene, the FUR alarm, the dance, and Mops at closing time.
+      party: (() => {
+        const b = window.SSQ && window.SSQ.beat("ch1-party"),
+          p = b && b.now();
+        return p ? { scene: p.scene, alarm: p.alarm || "", song: p.song == null ? -1 : p.song, dance: !!p.dance, done: p.done ? Object.keys(p.done).length : 0, close: p.close ? p.close.phase : "", bag: p.snacks ? p.snacks.bag : 0, card: p.card ? b.cardTargets() : null, clean: p.scene === "P9" ? p.clean : null, truth: b.truthTargets ? b.truthTargets() : null, mo: { x: Math.round(n.mo.x), y: Math.round(n.mo.y) }, mops: p.mops && p.mops.heart > 0 ? { x: Math.round(p.mops.x), y: Math.round(p.mops.y) } : null } : null;
+      })(),
+      // The party's snack close-up (drawn in the game picture): the bartender's turn, his paw, the pile, and where
+      // each snack and LEAVE · bar are (game positions). And the group photo's Polaroid, which fills the screen.
+      snack: (() => {
+        const p = n.ch1PartyNow,
+          c = p && p.snack;
+        if (!c || !(c.zoom >= 1)) return null;
+        const L = window.SSQ.beat("ch1-party").snackLayout().cut;
+        return { phase: c.phase, t: c.t, busy: !!c.reach || c.fall >= 0, slots: (p.snacks.slots || []).slice(), at: L.snacks.map((q) => [q[1], q[2]]), leave: [L.close.x, L.close.y] };
+      })(),
+      polaroid: !!document.querySelector('canvas[aria-label="group photo"]'),
+      // The evening's full-screen close-ups (src/modules/evening.js): the photo wall, the brochure, the order papers.
+      evening: window.SSQ && window.SSQ.beat("ch1-evening") ? window.SSQ.beat("ch1-evening").viewTargets() : null,
+      // The escape's close-ups (src/modules/escape.js): the keypad, the snack site, the snack counter.
+      esc: (() => {
+        const b = window.SSQ && window.SSQ.beat("ch1-escape"),
+          e = b && b.active() && b.debug().state;
+        if (!e || !e.cu) return null;
+        const P = b.place;
+        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1], P.SITE.to[0]][e.sitePage || 0], snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
+      })(),
+      // what a press can change on screen without the goal words changing (the plan drawn one picture a press, the walls
+      // taken one thing a press): counted as something new, so the robot presses again (2026-11-27: it pressed DRAW ·
+      // plan twice, saw nothing new, and wandered 20 s; TAKE · brochure the same)
+      pressKey: (() => {
+        const es = window.SSQ && window.SSQ.beat("ch1-escape"),
+          e = es && es.active() && es.debug().state,
+          p = n.ch1Pickup;
+        return [e ? [e.step, e.cu || "", e.plan ? Object.keys(e.plan.has).length : 0].join(",") : "", p ? [p.step, Object.keys(p.walls || {}).length].join(",") : ""].join("|");
+      })(),
+      // everyone else the room model checks this frame (src/modules/room-model.js physicsNow): Mops, the pushed crate,
+      // the modules' robots, Isfred and the workers, standing in a solid
+      others: window.SSQ && window.SSQ.physicsNow ? window.SSQ.physicsNow().filter((q) => q.who !== "sq") : [],
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
       jailBy: n.jailBy || "",
       step: n.ch1Step || "",
+      // (which day's beat is running, for KID_PART: Day 2's home morning, pickup day)
+      day2On: !!(window.SSQ && window.SSQ.beat("ch1-home-morning") && window.SSQ.beat("ch1-home-morning").active()),
+      escapeOn: !!(window.SSQ && window.SSQ.beat("ch1-escape") && window.SSQ.beat("ch1-escape").active()),
+      pickupOn: !!(window.SSQ && window.SSQ.beat("ch1-pickup") && window.SSQ.beat("ch1-pickup").active()),
       // The party's full-screen dress-up (src/modules/party.js): the pieces in the closet and the body spots.
       dress: window.SSQ && window.SSQ.beat("ch1-party") ? window.SSQ.beat("ch1-party").dressTargets() : null,
       placed: ss.placedSpots().map((s) => ({ id: s.id || "", verb: s.verb || "", cap: s.cap || "", x: Math.round(s.x || 0), y: Math.round(s.y || 0), r: s.r || 0 })),
-      // Furniture, plus Mops: the game does not let Squatch walk through him.
-      solids: ss.solids().concat(!ss.ch.mops && n.moPose !== "hidden" && n.moPose !== "sleep" && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
+      // Furniture, plus Mops: the game does not let Squatch walk through him. (Not in the party hall: the party draws
+      // that room itself, Mops is not in it until closing time, and then he is one of the party's own solids. A Mops who
+      // is walking (following Squatch) is not solid in the game either (00-core.js walkSolids): until 2026-11-27 the robot
+      // kept his box anyway and found itself boxed in at the big vent, Mops beside it, and wandered. Before,
+      // the robot kept a box where Mops last stood at home, and would not cross it on the way back from the flyer.)
+      solids: ss.solids().concat(!ss.ch.mops && !(window.SSQ && window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").ownsRoom()) && n.moPose !== "hidden" && n.moPose !== "sleep" && !n.mo.walking && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
       bounds: ss.walkBounds(),
       cones: ss.conesDrawn().filter((k) => !k.room || k.room === n.room),
       // The goal ring the game really drew this frame (drawGoalMark keeps n.lastRing). A ring drawn on
@@ -101,11 +171,18 @@ const st = () =>
 
 // What the robot can see of danger: any cone on screen, with a little room to spare.
 const inDanger = (s, x, y) => {
+  // While the player is Mops nobody's look can catch him (the one capture rule is Squatch's): pickup day's robots work
+  // round him in the bay. Before 2026-11-27 the robot kept Mops out of their cones too, found no safe way to Squatch's
+  // crate (beat 55, "Mops: get to Squatch's crate") and wandered until its time ran out.
+  if (s.mops) return false;
   for (const c of s.cones) {
-    // A party guest's cone in disguise only brings a "?" (no catch); a kid who has seen that walks through it.
-    if (c.askOnly) continue;
-    // Close to a watcher is never safe, whichever way it faces.
-    if (Math.hypot(x - c.ox, y - (c.oy + 28)) < 96) return true;
+    // Mops's cone of hearts at closing time is not someone who could catch him.
+    if (c.heart) continue;
+    // Close to a watcher is never safe, whichever way it faces: a guard notices him this close (the pinned cone-feet
+    // rule), and the robot keeps the same distance from any watcher it cannot name. A party guest or Isfred only sees
+    // along their cone, so a kid can creep up behind them (the flyer on the counter's end, behind Isfred's back).
+    const named = c.id && !/^guard/.test(c.id);
+    if (!named && Math.hypot(x - c.ox, y - (c.oy + 28)) < 96) return true;
     for (const py of [y, y - 20]) {
       const d = Math.hypot(x - c.ox, py - c.oy);
       if (c.circle) {
@@ -229,7 +306,7 @@ const say = (s, what) => {
   console.log(line);
 };
 const rects = { btn: new Map(), pic: new Map(), joy: new Map() };
-const seen = { inSolid: [], blocked: new Set(), selfRing: new Set(), caught: [], scenes: [], silent: [] };
+const seen = { others: new Map(), inSolid: [], blocked: new Set(), selfRing: new Set(), caught: [], scenes: [], silent: [] };
 const firstChip = new Map();
 let lastChip = "",
   lastScene = "",
@@ -247,7 +324,10 @@ let lastKey = "",
   shooting = SHOTS,
   jailUp = false,
   waitSince = 0,
-  hidAt = 0;
+  hidAt = 0,
+  stillAt = "",
+  stillTaps = 0;
+let cardSeen = 0;
 (async () => {
   while (shooting) {
     try {
@@ -266,6 +346,13 @@ while (now() < MAX_S) {
   ])
     if (r) rects[k].has(r.join("x")) || rects[k].set(r.join("x"), `${now().toFixed(1)}s ${s.scene} "${s.btn}"`);
   if (s.ctrl && !s.mops && !s.zoom && s.pose === "stand" && inSolid(s, s.x, s.y, -6)) seen.inSolid.push(`${now().toFixed(1)}s ${s.scene} at ${s.x},${s.y}`);
+  for (const q of s.others || []) {
+    // (more than 6 px in, as for Squatch below: feet brushing an edge are not standing in it)
+    const b = q.solid;
+    if (Math.min(q.x - b.x0, b.x1 - q.x, q.y - b.y0, b.y1 - q.y) <= 6) continue;
+    const k = `${s.scene}/${q.room}: ${q.who} in ${q.solid.id || [q.solid.x0, q.solid.y0, q.solid.x1, q.solid.y1].join(",")}`;
+    seen.others.has(k) || seen.others.set(k, `${now().toFixed(1)}s ${k} at ${q.x},${q.y} (${s.step || s.chip})`);
+  }
   if (s.ctrl && s.selfSpot) seen.selfRing.add(`${s.scene}: ${s.chip}`);
   if (s.by && !jailUp) {
     seen.caught.push(`${now().toFixed(1)}s ${s.scene} by ${s.by}`);
@@ -286,6 +373,12 @@ while (now() < MAX_S) {
   }
   const tag = s.scene + ": " + s.chip;
   if (!seen.scenes.length || seen.scenes[seen.scenes.length - 1][1] !== tag) seen.scenes.push([Math.round(now()), tag]);
+  // (one day at a time: the part ends when the next day's beat begins)
+  if (PART && PARTS[PART].until && s[PARTS[PART].until]) {
+    end = "tally";
+    say(s, `PART ${PART} done: the next day has begun`);
+    break;
+  }
   if (s.curId === "tally") {
     end = "tally";
     say(s, "TALLY CARD: Chapter 1 finished");
@@ -301,7 +394,8 @@ while (now() < MAX_S) {
     break;
   }
   loopScene = s.scene;
-  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : ""].join("|");
+  const pk = s.party ? [s.party.scene, s.party.alarm, s.party.song, s.party.done, s.party.close, s.party.bag, !!s.party.card, s.polaroid].join(":") : "";
+  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, s.pressKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : "", pk].join("|");
   if (key !== lastKey) ((lastKey = key), (lastChange = Date.now()), progress++);
   if (Date.now() - lastChange > 75000) {
     end = "stuck";
@@ -330,9 +424,137 @@ while (now() < MAX_S) {
     }
     continue;
   }
+  // The party's dance fills the screen: he taps the spot that glows on Squatch (the dance notes where it is).
+  if (s.party && s.party.dance) {
+    const gl = await page.evaluate(() => ((d) => (d && d.live && d.seen && d.seen.glow) || null)(window.__ss.op.ch1PartyNow && window.__ss.op.ch1PartyNow.dance));
+    gl && (await tap(gl.x, gl.y));
+    // One routine a visit (Brian 2026-11-25): then two buttons. A kid dances once more, faster, then goes back.
+    const end = await page.evaluate(() => ((d) => (d && d.over && d.seen && d.seen.end ? { ...d.seen.end, level: d.level } : null))(window.__ss.op.ch1PartyNow && window.__ss.op.ch1PartyNow.dance));
+    if (end) {
+      const b = end.level >= 1 ? end.back : end.again;
+      say(s, end.level >= 1 ? "TAP Back to the party" : "TAP Dance again");
+      await sleep(700);
+      await tap(b.x, b.y);
+    }
+    await sleep(400);
+    continue;
+  }
+  // The evening's close-ups fill the screen: a kid looks, then taps what it shows. In the gallery he lifts the crooked
+  // photo #4 and taps on through the photos; on the brochure he taps its X; on the order papers he puts his paw on
+  // the box.
+  if (s.evening) {
+    const v = s.evening;
+    if (!v.ready) {
+      await sleep(200);
+      continue;
+    }
+    await sleep(900);
+    if (v.kind === "gallery") {
+      const lift = v.i === 3 && !v.lifted;
+      say(s, lift ? "HOLD LIFT · photo" : "TAP next photo");
+      if (lift) (await page.touchscreen.touchStart(v.lift.x, v.lift.y), await sleep(1400), await page.touchscreen.touchEnd());
+      else await tap(v.next.x, v.next.y);
+    } else if (v.kind === "brochure" || v.kind === "crate") {
+      // (round 7: the brochure in Mops's keeping, and the brochure beside the crate's stamp: each waits for a tap)
+      say(s, "TAP the close-up's X");
+      await tap(v.close.x, v.close.y);
+    } else if (v.kind === "order") {
+      // the choice: a kid picks MARK · box (the story goes on; PUT BACK · bin is the short ending, tested elsewhere)
+      if (v.choose) (say(s, "TAP MARK · box"), await tap(v.mark.x, v.mark.y));
+      else if (v.ending) (say(s, "TAP the ending"), await tap(v.ending === "last" ? v.goBack.x : v.tap.x, v.ending === "last" ? v.goBack.y : v.tap.y));
+      else {
+        say(s, "PAW on the order box");
+        await page.touchscreen.touchStart(v.box.x, v.box.y);
+        await sleep(500);
+        await page.touchscreen.touchEnd();
+      }
+    }
+    await sleep(500);
+    continue;
+  }
+  // The group photo's Polaroid fills the screen until it is tapped: a kid looks, then taps it.
+  if (s.polaroid) {
+    say(s, "TAP the Polaroid");
+    await sleep(1500);
+    await tap(187, 430);
+    await sleep(600);
+    continue;
+  }
+  // Truth or fib at home after the cleanup (story pass 28-52, E2): two big buttons on the whole screen; a kid tells.
+  if (s.party && s.party.truth) {
+    say(s, "TAP TELL · the truth");
+    await sleep(1200);
+    await tap(s.party.truth.tell.x, s.party.truth.tell.y);
+    await sleep(600);
+    continue;
+  }
+  // The "more to find" card after an alarm: a finger on one of its two big buttons. The first time a kid goes back
+  // to the party; the next time he keeps going.
+  if (s.party && s.party.card) {
+    const want = cardSeen++ ? "keep" : "back",
+      b = s.party.card[want] || s.party.card.keep;
+    say(s, "CARD: " + (s.party.card[want] ? want : "keep"));
+    await sleep(1200);
+    await tap(b.x, b.y);
+    await sleep(700);
+    continue;
+  }
   if (s.up) {
     await tapGame(s, 480, 320);
     await sleep(220);
+    continue;
+  }
+  // The cleanup after the party (story pass 28-52, E2): the player is Mops. A kid mops about until something is
+  // outlined (the bucket, a tuft, the find, the doorway home), goes to it, presses what the button offers, and in the
+  // Polaroid close-up taps what is outlined. Nobody watches him here.
+  // (in the close-up he has no walking control: only the taps)
+  if (s.party && s.party.scene === "P9" && s.party.clean && (s.ctrl || s.party.clean.close)) {
+    const c = s.party.clean,
+      m = s.party.mo;
+    if (c.close) {
+      const b = c.close === "shirt" ? c.targets.shirt : c.close === "feet" ? c.targets.feet : null;
+      b && (say(s, "TAP the outlined " + c.close + " in the Polaroid"), await tapGame(s, b.x, b.y));
+      await sleep(600);
+      continue;
+    }
+    if (s.btn && s.btn !== "ACTION") {
+      say(s, "PRESS " + s.btn);
+      await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
+      await sleep(500);
+      continue;
+    }
+    // (a tuft is mopped by the beard, which hangs in front of him: come at it from the left)
+    const t = c.beard >= 1 ? { x: c.bucket.x, y: c.bucket.y } : c.found ? { x: 477, y: 625 } : c.phase === "find" ? { x: c.find.x, y: c.find.y + 30 } : c.lit ? { x: (c.lit.x0 + c.lit.x1) / 2 - 30, y: (c.lit.y0 + c.lit.y1) / 2 + 4 } : { x: [90, 760][wander % 2], y: 320 + ((wander * 53) % 260) };
+    c.lit && !c.found && c.beard < 1 && c.phase !== "find" && m.x > t.x - 10 && (await tapGame(s, t.x - 60, t.y), await sleep(700));
+    c.lit || c.beard >= 1 || c.found || c.phase === "find" || wander++;
+    say(s, `MOPS toward ${Math.round(t.x)},${Math.round(t.y)}`);
+    await tapGame(s, t.x, t.y);
+    await sleep(c.lit ? 1200 : 1500);
+    continue;
+  }
+  // The snack close-up: a tap on the top snack left (nothing stands on it) while the bartender's back is turned
+  // and stays turned a while; with three in the bag, LEAVE · bar. (A kid who pulls from the middle brings the pile
+  // down: tools/party-robot.mjs plays that.)
+  if (s.snack) {
+    if (s.party.bag >= 3 && !s.snack.busy) {
+      say(s, "TAP LEAVE · bar");
+      await tapGame(s, s.snack.leave[0], s.snack.leave[1]);
+      await sleep(500);
+      continue;
+    }
+    const top = s.snack.slots.findIndex((id) => id >= 0);
+    if (top >= 0 && !s.snack.busy && s.snack.phase === "back" && s.snack.t > 0.5 && s.snack.t < 2.4) {
+      say(s, "TAP a snack (slot " + top + ")");
+      await tapGame(s, s.snack.at[top][0], s.snack.at[top][1]);
+      await sleep(900);
+      continue;
+    }
+    if (top < 0 && !s.snack.busy) {
+      await tapGame(s, s.snack.leave[0], s.snack.leave[1]);
+      await sleep(500);
+      continue;
+    }
+    await sleep(150);
     continue;
   }
   // A visible NEXT closes an inspection even while walking controls are paused.
@@ -347,32 +569,187 @@ while (now() < MAX_S) {
     await sleep(200);
     continue;
   }
-  const avoid = (v) => AVOID.some((a) => v.startsWith(a));
-  // The door keypad: type the number printed on the pink slip beside it, one key at a time.
-  if (s.pad) {
-    const d = SLIP_CODE[s.padHave.length] || SLIP_CODE[0];
-    const i = +d - 1;
-    say(s, "KEY " + d);
-    await tapGame(s, d === "0" ? 480 : 480 + ((i % 3) - 1) * 88, d === "0" ? 514 : 250 + Math.floor(i / 3) * 88);
+  // (ROLL · ball works anywhere in the lunch sneak and the night's loading bay, so it is on the button nearly all the
+  // time; a kid who has a hiding place to go to goes there: the robot leaves the ball alone, except where rolling up
+  // is the goal itself: ROLL_STEPS)
+  // (the steps where rolling up is the goal: behind the bay's cargo, the hairball in the hallway, the evening's robot
+  // in the hallway, the escape night's wait by the vent)
+  // (and pickup day's climb-out, 55, where he comes out of his crate beside the robots: rolled up he waits for them to
+  // carry crate two to the ramp, as the showing tool does; before 2026-11-27 the robot never rolled there and was caught
+  // the moment it stepped away)
+  const ROLL_STEPS = ["bay-cargo", "bay-walkby", "ev-dodge", "es-ball", "pk-sneak"];
+  // (and wherever the game offers the ball because he has just been seen, its hot ROLL · ball: the escape's bay at night,
+  // "es-ball-any". Before 2026-11-27 the robot left that alone too, so in beat 47 every sighting ran on to the guard and
+  // the LOCKUP card: caught 39 times from KID_START=bay:pa)
+  const seenBall = s.placed.some((p) => /ball-any$/.test(p.id));
+  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && !ROLL_STEPS.includes(s.step) && !seenBall);
+  // The lunch sneak's hall (src/modules/lunch-sneak.js): the glowing hallway doorway is the goal, offered whenever no
+  // alarm is on; the plant and the crates are cover a kid uses when someone looks his way, not things to do. Before
+  // 2026-11-27 the robot pressed every HIDE it stood by first and then held still 20 s while the guests' cones were on
+  // screen (they always are), plant, crate, plant, crate, until its 75 s without progress ran out: the stall at "take
+  // Mops his lunch in the hallway". It now walks for the doorway (its path keeps out of the cones and waits for them),
+  // and hides only in an alarm, when the doorway is not offered.
+  const luDoor = s.placed.some((p) => p.id === "lu-door");
+  const coverOnly = (v) => luDoor && (v.startsWith("HIDE") || v === "ROLL · ball");
+  // The escape's close-ups: the office keypad (type the number on the pink slip beside it, one key at a time), the
+  // snack site (its big button), the snack counter (each snack in turn).
+  // (when the step has moved on with its close-up still open, the booked crate's TAKE · label, the button is pressed
+  // as anywhere: before 2026-11-27 the robot waited here for a tap it had no rule for, 75 s, and stopped)
+  const escTap = s.esc && (s.esc.step === "pad" || s.esc.step === "note" || s.esc.step === "site" || ((s.esc.step === "snacks" || s.esc.step === "food") && !s.esc.carry && s.esc.snacks.length));
+  if (s.esc && (escTap || !s.btn || s.btn === "ACTION")) {
+    const E = s.esc;
+    if (E.step === "pad") {
+      const d = SLIP_CODE[E.typed.length] || SLIP_CODE[0];
+      say(s, "KEY " + d);
+      await tapGame(s, E.keys[d].x, E.keys[d].y);
+    } else if (E.step === "note") {
+      // the Guardian note's close-up (48): each tap writes a line (before 2026-11-27 the robot left it, and stood 75 s)
+      say(s, "TAP the note");
+      await tapGame(s, 480, 320);
+    } else if (E.step === "site") {
+      say(s, "TAP the outlined choice on the pickup page");
+      await tapGame(s, (E.ret.x0 + E.ret.x1) / 2, (E.ret.y0 + E.ret.y1) / 2);
+    } else if ((E.step === "snacks" || E.step === "food") && !E.carry && E.snacks.length) {
+      say(s, "TAP a snack");
+      await tapGame(s, E.snacks[0].x, E.snacks[0].y);
+    }
     await sleep(450);
     continue;
   }
-  // Hidden with a cone on screen: stay put, the way a kid holds still while someone is looking.
-  if ((s.pose === "hidden" || s.pose === "under") && (s.cones.length || s.raid) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
+  // The flyer sneak (party P4; Brian 2026-11-25, "End of the bar, moving cones"): the cones sweep on a fixed
+  // rhythm, the same every play, which a kid learns by watching; the robot knows that rhythm (the game's own cones
+  // over time, tests/party-sneak.mjs) and times its way: it waits where no cone reaches, then goes. Its finger is on
+  // the planned place for the moment it is, every tenth of a second.
+  const p4 = s.party && s.party.scene === "P4" && s.room === "hall" && !s.party.alarm ? await page.evaluate(() => window.__ss.op.ch1PartyNow.flyer) : "";
+  if ((p4 === "stage" || p4 === "paw") && (p4 === "paw" || s.btn !== "GRAB · flyer")) {
+    const H = await import(join(root, "src", "modules", "party-hall.js"));
+    const to = p4 === "stage" ? H.FLYER.reach : { x: H.HALL_DOOR.x, y: H.HALL_DOOR.y - 50, r: 30 };
+    const t0p = await page.evaluate(() => window.__ss.op.ch1PartyNow.sweepT || 0),
+      tl = await sneak.coneTimeline(page, t0p + 75),
+      plan = sneak.planSneak(tl, { x: s.x, y: s.y }, t0p + 0.3, to, { hidden: s.pose === "hidden" });
+    say(s, plan ? `TIME the cones to the ${p4 === "stage" ? "flyer" : "door"} (${(plan[plan.length - 1].t - t0p).toFixed(1)} s)` : "NO timed way now");
+    if (plan)
+      for (let k = 0; k < 900; k++) {
+        const q = await page.evaluate(() => { const n = window.__ss.op, p = n.ch1PartyNow; return p ? { t: p.sweepT || 0, x: n.sq.x, y: n.sq.y, alarm: !!p.alarm, ctrl: !!n.ctrl, room: n.room } : null; });
+        if (!q || q.alarm || q.room !== "hall" || q.t > plan[plan.length - 1].t + 1.5) break;
+        const at = plan.find((w) => w.t >= q.t + 0.1) || plan[plan.length - 1];
+        Math.hypot(at.x - q.x, at.y - q.y) > 6 && q.ctrl && (await tapGame(s, at.x, at.y));
+        if (at === plan[plan.length - 1] && Math.hypot(q.x - at.x, q.y - at.y) < 14) break;
+        await sleep(90);
+      }
+    p4 === "paw" && (await tapGame(s, H.HALL_DOOR.x, H.HALL_DOOR.y + 12));
+    await sleep(300);
+    continue;
+  }
+  // Night one's loading bay (src/modules/evening.js): the night robot's look is the same every play (down 2 s, at the
+  // back wall 4 s, R64), which a kid learns by watching. Seen, he rolls up at once where he is (ROLL · ball) and holds
+  // still. To cross the robot's column he waits on its far side, at the front, until it has just turned to the back
+  // wall, then walks along the front.
+  const night = s.room === "hangar" ? await page.evaluate(() => ((b, n) => (b && n ? { step: n.step, alarm: !!n.alarm, look: b.place.nightLook(n.nightT || 0).phase, t: n.nightT || 0 } : null))(window.SSQ.beat("ch1-evening"), window.__ss.op.ch1Evening)) : null;
+  if (night && night.alarm && s.btn === "ROLL · ball" && s.pose === "stand") {
+    say(s, "PRESS ROLL · ball (seen in the bay)");
+    await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
+    await sleep(400);
+    continue;
+  }
+  if (night && !night.alarm && (night.step === "post" || night.step === "back") && s.pose === "stand") {
+    const west = night.step === "back", // going home: from the mail room's side to the door's side
+      far = west ? s.x > 560 : s.x < 400;
+    if (far) {
+      const wait = west ? { x: 650, y: 585 } : { x: 330, y: 585 };
+      if (Math.hypot(s.x - wait.x, s.y - wait.y) > 20) {
+        say(s, `WALK to the corner by the robot's column (${wait.x},${wait.y})`);
+        const st2 = nextStep(s, wait.x, wait.y, 12);
+        await tapGame(s, st2.wait ? wait.x : st2.x, st2.wait ? wait.y : st2.y);
+        await sleep(500);
+        continue;
+      }
+      // wait for the turn to the back wall, then along the front
+      const q = await page.evaluate(() => ((b, n) => b.place.nightLook(n.nightT).phase)(window.SSQ.beat("ch1-evening"), window.__ss.op.ch1Evening));
+      if (q !== "turn") {
+        await sleep(60);
+        continue;
+      }
+      say(s, "CROSS the robot's column along the front (it looks at the back wall)");
+      const to = west ? { x: 300, y: 585 } : { x: 640, y: 585 };
+      await tapGame(s, to.x, to.y);
+      for (let i = 0; i < 40; i++) {
+        await sleep(100);
+        const q2 = await st();
+        if (west ? q2.x < 330 : q2.x > 610) break;
+      }
+      continue;
+    }
+  }
+  // The escape's bay at night (47, "sneak to the big vent"): the night robot patrols in front of the walkway, looking up
+  // at the vent while it goes right and the way it goes while it goes left (escape-place.js ES_BAY.patrol), the same
+  // every play, which a kid learns by watching. The way to the vent is round the walkway's right end, through the gap
+  // by the mail room, then along the back wall. The robot waits at the front by that gap until the robot goes left
+  // past the middle, then goes up the gap and along. To get to the gap it goes along the front while the robot looks
+  // up. (Until 2026-11-27 it walked straight for the vent and the robot saw it every time, roll, wait, wander, until
+  // its time ran out.)
+  const esc47 = s.room === "hangar" && s.pose === "stand" && s.ctrl && s.placed.some((p) => p.id === "es-vent") ? await page.evaluate(() => { const r = window.__ss.op.ch1Escape && window.__ss.op.ch1Escape.robot; return r ? { x: r.x, f: r.f, phase: r.phase } : null; }) : null;
+  if (esc47 && esc47.phase === "patrol") {
+    const GAP = { x: 636, y: 585 },
+      atGap = Math.abs(s.x - GAP.x) < 24 && s.y > 560,
+      inGap = s.x > 600 && s.x < 660 && s.y < 560;
+    if (inGap || (atGap && esc47.f < 0 && esc47.x < 480)) {
+      say(s, "UP the gap by the mail room and along the back wall to the vent (the robot looks the other way)");
+      await tapGame(s, GAP.x, 330);
+      for (let i = 0; i < 30; i++) {
+        await sleep(100);
+        const q = await st();
+        if (q.y < 345 || q.room !== s.room) break;
+      }
+      await tapGame(s, 846, 322);
+      await sleep(1500);
+      continue;
+    }
+    if (!atGap) {
+      if (s.y < 570 && !(s.x > 560 && s.x < 660)) {
+        // first down to the front edge, while the robot looks up at the vent
+        if (esc47.f > 0 && esc47.x < 420) (say(s, "DOWN to the front while the robot looks up"), await tapGame(s, s.x, 585), await sleep(1200));
+        else await sleep(150);
+        continue;
+      }
+      say(s, "ALONG the front to the gap by the mail room");
+      await tapGame(s, GAP.x, GAP.y);
+      await sleep(900);
+      continue;
+    }
+    await sleep(150);
+    continue;
+  }
+  // Hidden (or rolled up) with a cone on screen: stay put, the way a kid holds still while someone is looking.
+  if ((s.pose === "hidden" || s.pose === "under" || s.pose === "ball") && (s.cones.length || (s.party && s.party.alarm)) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
     await sleep(250);
     continue;
   }
-  if (s.pose !== "hidden" && s.pose !== "under") hidAt = 0;
-  const verb = s.btn && s.btn !== "ACTION" && !avoid(s.btn) ? s.btn : "";
+  if (s.pose !== "hidden" && s.pose !== "under" && s.pose !== "ball") hidAt = 0;
+  // (with three snacks in his bag he has had enough of the snack bar: he does not open it again)
+  const verb = s.btn && s.btn !== "ACTION" && !avoid(s.btn) && !coverOnly(s.btn) && !(s.btn === "GRAB · snacks" && s.party && s.party.bag >= 3) ? s.btn : "";
   const vkey = s.scene + "|" + verb;
   // Press what is offered, but not the same thing over and over when nothing new came of it.
   const pr = presses.get(vkey) || { count: 0, at: -1 };
   if (verb && (pr.count < 2 || pr.at !== progress)) {
     presses.set(vkey, { count: pr.count + 1, at: progress });
-    for (const p of s.placed) if (verb.startsWith(p.verb)) done.add(s.scene + "|" + (p.id || p.verb + p.cap));
+    // (a place with no button, a walk-through doorway, is never done by pressing something else: "".startsWith is
+    // always true, so before 2026-11-26 every HIDE or ROLL press marked the doorways done (the party's way home, the
+    // lunch sneak's hallway), and the robot hid in a plant over and over until its time ran out)
+    for (const p of s.placed) if (p.verb && verb.startsWith(p.verb)) done.add(s.scene + "|" + (p.id || p.verb + p.cap));
     say(s, "PRESS " + verb);
     await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
     await sleep(500);
+    continue;
+  }
+  // Closing time: Mops has come in mopping and his hearts point at Squatch; a kid walks Squatch over to him.
+  if (s.party && s.party.mops && !s.placed.length) {
+    const m = s.party.mops;
+    say(s, `WALK to Mops (${m.x},${m.y})`);
+    const step = nextStep(s, m.x, Math.max(s.bounds.y0, Math.min(s.bounds.y1, m.y)), 40);
+    if (!step.wait) await tapGame(s, step.x, step.y);
+    else await tapGame(s, m.x, m.y);
+    await sleep(600);
     continue;
   }
   const open = s.placed.filter((p) => p.x && !avoid(p.verb) && !done.has(s.scene + "|" + (p.id || p.verb + p.cap)));
@@ -386,6 +763,24 @@ while (now() < MAX_S) {
       for (let i = 0; i <= k; i++) if (v.risky(v.cell(x0 + ((x1 - x0) * i) / k, y0 + ((y1 - y0) * i) / k))) return false;
       return true;
     };
+    // Pushing his crate (pickup day, 53), Mops is a crate longer than the robot's own map of the room knows: a kid taps
+    // the doorway and lets the game's walk take him round the tables, and taps it again when he stops. (Until 2026-11-27
+    // the robot's own short steps, a new one every fifth of a second, each started the game's way round afresh, and
+    // he stood shuffling by the hall's table for 75 s.)
+    if (s.mops && s.step === "pk-push" && !p.verb) {
+      say(s, `TAP the doorway and let him walk (${p.x},${p.y})`);
+      await tapGame(s, p.x, p.y);
+      let prev = "";
+      for (let i = 0; i < 40; i++) {
+        await sleep(250);
+        const s2 = await st();
+        if (s2.room !== s.room || s2.step !== s.step || !s2.ctrl) break;
+        const pos = s2.x + "," + s2.y;
+        if (pos === prev) break;
+        prev = pos;
+      }
+      continue;
+    }
     const py = Math.max(p.y, s.bounds.y0);
     if (!directTried.has(pk) && lineOk(s, s.x, s.y, p.x, py, false) && calm(s.x, s.y, p.x, py)) {
       directTried.add(pk);
@@ -398,8 +793,13 @@ while (now() < MAX_S) {
       for (let i = 0; i < 40 && still < 4; i++) {
         await sleep(150);
         s2 = await st();
-        if (!s2.ctrl || s2.up || s2.scene !== s.scene) { got = true; break; }
-        if (s2.btn.startsWith(p.verb) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
+        // (or the step moved on: the vent's tunnel ends where its far end is reached, into the room, 48)
+        // (or he went through the doorway he was sent to: the room changed; until 2026-11-27 the robot then read his
+        // place in the next room, the hallway's (860, 332), as stopped short of the bay's doorway)
+        if (!s2.ctrl || s2.up || s2.scene !== s.scene || s2.step !== s.step || s2.room !== s.room) { got = true; break; }
+        // (a doorway with no button is reached only by walking into it: "".startsWith is always true, so it waits for
+        // the walk; stepping in before it ended stopped him short of the lunch sneak's hallway doorway every time)
+        if ((p.verb && s2.btn.startsWith(p.verb)) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
         const pos = s2.x + "," + s2.y;
         still = pos === prev ? still + 1 : 0;
         prev = pos;
@@ -408,6 +808,14 @@ while (now() < MAX_S) {
       continue;
     }
     const step = nextStep(s, p.x, Math.max(s.bounds.y0, Math.min(s.bounds.y1, p.y)), Math.max(28, (p.r || 70) - 30));
+    // A doorway with no button right beside him (his feet a step from its opening) that no safe way leads into (the
+    // grid keeps clear of the walls round it): a kid just taps the doorway.
+    if (step.wait && !p.verb && Math.hypot(p.x - s.x, p.y - s.y) < 110) {
+      say(s, `TAP the doorway beside him (${p.x},${p.y})`);
+      await tapGame(s, p.x, p.y);
+      await sleep(900);
+      continue;
+    }
     if (step.wait) {
       waitSince = waitSince || Date.now();
       if (Date.now() - waitSince > 12000) {
@@ -419,6 +827,20 @@ while (now() < MAX_S) {
       continue;
     }
     waitSince = 0;
+    // A step that does not move him (a tap right beside him can be too short to walk), again and again: a kid taps the
+    // place itself.
+    const here = s.x + "," + s.y + "|" + pk;
+    stillTaps = here === stillAt ? stillTaps + 1 : 0;
+    stillAt = here;
+    if (stillTaps >= 12) {
+      stillTaps = 0;
+      say(s, `NOT MOVING: tap ${p.verb} · ${p.cap} itself (${p.x},${p.y})`);
+      // KID_DEBUG=1: what the game has for the walk when he does not move
+      process.env.KID_DEBUG && console.log("  debug", await page.evaluate(() => { const n = window.__ss.op; return JSON.stringify({ sq: [n.sq.x, n.sq.y], mo: [n.mo.x, n.mo.y, n.mo.f], walkTo: n.walkTo, cur: n.cur && n.cur.k, ctrl: n.ctrl, mops: window.__ss.ch.mops, pose: [n.sqPose, n.moPose] }); }));
+      await tapGame(s, p.x, p.y);
+      await sleep(600);
+      continue;
+    }
     await tapGame(s, step.x, step.y);
     await sleep(step.last ? 350 : 220);
     continue;
@@ -431,7 +853,8 @@ while (now() < MAX_S) {
     await sleep(300);
     continue;
   }
-  const pts = [[760, 470], [480, 540], [240, 560], [820, 560], [600, 420]];
+  // At the party in disguise, the spotlight on the dance floor (drawn on the floor) is somewhere a kid goes to see.
+  const pts = s.party && s.party.scene === "P6" ? [[470, 372], [760, 470], [480, 540], [240, 560], [470, 372], [600, 420]] : [[760, 470], [480, 540], [240, 560], [820, 560], [600, 420]];
   const w = pts[wander++ % pts.length];
   const step = nextStep(s, w[0], w[1], 30);
   say(s, `WANDER toward ${w}`);
@@ -445,6 +868,7 @@ const found = {
   "button-size": rects.btn.size > 1 ? [...rects.btn].map(([k, v]) => `${k} at ${v}`) : [],
   "page-jump": rects.pic.size > 1 || rects.joy.size > 1 ? [...rects.pic].map(([k, v]) => `picture top ${k} at ${v}`) : [],
   "squatch-in-furniture": seen.inSolid.slice(0, 20),
+  "someone-else-in-furniture": [...seen.others.values()].slice(0, 20),
   "tap-stops-at-furniture": [...seen.blocked],
   "ring-on-squatch": [...seen.selfRing],
   "start-over-without-card": seen.silent,

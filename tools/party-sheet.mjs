@@ -33,14 +33,12 @@ const CAPTIONS = {
   v06_dress_computer: "V6. Dress-up on a computer, halfway dressed.",
   v07_outfit_hall: "V7. The outfit he chose, on him in the hall, at the spots he chose.",
   v07_outfit_zoom: "V7, close. The absurd outfit, and a sensible one.",
-  v08_beard: "V8. Mops's long white beard swishing past the hallway doorway (half two).",
   v09_vent_tuft: "V9. The vent: swirls always turning slowly inward. Too close without a disguise: a tuft drifts in, a big fur sign over him, and he shakes.",
-  v09_vent_tug: "V9. In disguise (half two): the vent tugs a piece; the piece tips, drawn big over him.",
   v10_lights_song1: "V10. The dance spotlight in front of the stage, and the light for song 1.",
   v10_lights_song2: "V10. Song 2's light.",
   v10_lights_song3: "V10. Song 3's light.",
-  v11_flyer_back: "V11. Walking home: a flyer stuck to his back fur.",
-  v11_flyer_floor: "V11. At home the flyer drops on the floor by the door.",
+  v11_flyer_back: "V11. Walking home: the flyer in his paw.",
+  v11_flyer_floor: "V11. At home he puts the flyer down on the floor by the door.",
   v12_alarm_phone: "V12. The fur-alarm close-up, full phone screen: the locked hall's own alarm, enlarged, a hand pulling it, the light flashing.",
   v12_alarm_computer: "V12. The same on a computer, mid-pull.",
   v12_alarm_hall: "V12. In the hall: whoever saw him shouts FUR! under the alarm, its light flashes, guards come in from the hallway with cones.",
@@ -49,10 +47,23 @@ const CAPTIONS = {
   v15_warnings: "V15. A guest's \"?\" when Squatch is in his cone (here the glancer looking across the lane).",
   v15_caught_mark: "V15. \"!\" when he stays in sight too long: the alarm starts.",
   v15_eyes_plant: "V15. Hidden in the plant: only his eyes in the leaves, watching the pairs dance.",
+  h2_conga: "Half two, new. The conga line (three guests) on its loop round the floor, Squatch towed on its end, in his outfit.",
+  h2_camera_count: "Half two. The camera's red lights counting 3-2-1, only during the group photo (the Polaroid of the group fills the whole screen: see the round-four stills).",
+  h2_flash: "Half two. The camera's flash: a small bright burst at the lens (the room never goes white).",
+  h2_pyramid: "Half two. The snack pyramid on the bar's counter. Standing at the bar, the action button reads GRAB · snacks (no ring and no little picture over the pyramid, Brian 2026-11-24).",
+  h2_pyramid_topple: "Half two, new. The pyramid toppling in a chain (a cup rolls, the tray slides, the snack tin falls), a flying cup, and a piece of his outfit knocked off.",
+  h2_snack_closeup_back: "Half two, new. The snack close-up: the bartender's back turned (her apron bow and hair bun), his paw taking a snack, the bag with what he took, the close button (a cross, no words).",
+  h2_snack_closeup_glance: "Half two, new. The same, as she glances: her face turns to the side (the warning).",
+  h2_snack_closeup_face: "Half two, new. The same, facing the room: a paw in the snacks now is caught.",
+  h2_piece_fly: "Half two. A piece knocked off in a big moment (the pyramid's crash, the octopus's second hug) flies away, and he shakes. Nothing tips first (Brian 2026-11-24).",
+  h2_clap_and_hiccups: "Half two, new. Clapping over the guests after the dance, and hiccup bubbles over the octopus.",
+  h2_closing_speaker: "Half two, new. Closing time: the wall speaker's ring lines while it speaks.",
+  h2_leaving_in_pairs: "Half two, new. Closing time: the guests walking out through the hallway doorway two by two (the two who came alone leave together).",
+  h2_mops_mopping_in: "Half two, new. The empty hall: Mops comes in mopping with his beard, head down, leaving a wet streak.",
 };
 const FULL = { v05_dance_phone: "phone", v05_dance_computer: "computer", v06_dress_phone_start: "phone", v06_dress_phone_absurd: "phone", v06_dress_computer: "computer", v12_alarm_phone: "phone", v12_alarm_computer: "computer" };
 
-const g = await startGame({ port: 8994, name: "party-sheet" });
+const g = await startGame({ port: +(process.env.PARTY_SHEET_PORT || 8994), name: "party-sheet" });
 const { page } = await g.open("?ch=1", { width: 1280, height: 800, deviceScaleFactor: 1 });
 await sleep(1500);
 await page.addScriptTag({ content: script });
@@ -68,7 +79,7 @@ const card = (id) => {
 };
 const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Party pictures</title><style>body{margin:0;padding:12px;font:16px/1.4 system-ui,sans-serif;color:#1e2430;background:#f4f1ea}h1{font-size:22px}figure{margin:0 0 22px;background:#fff;border-radius:10px;padding:8px}img{display:block;border-radius:6px}figcaption{padding:6px 4px 0}</style></head>
-<body><h1>Party night: every new picture (showing 1)</h1><p>Drawn by the game on top of the locked hall picture, which is unchanged. On a phone the hall pictures show at this width (375). Full-screen pictures fill the phone.</p>
+<body><h1>Party night: every new picture (showing 3: half two added at the end)</h1><p>Drawn by the game on top of the locked hall picture, which is unchanged. On a phone the hall pictures show at this width (375). Full-screen pictures fill the phone.</p>
 ${ids.map(card).join("\n")}</body></html>`;
 writeFileSync(join(OUT, "sheet.html"), html);
 for (const [name, width] of [

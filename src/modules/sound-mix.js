@@ -7,13 +7,15 @@
  * how loud each is (the engine reads MIX through the bridge when it makes them); nothing else types them.
  *
  * Measured with ffmpeg (ebur128, whole file) on 2026-11-24: Joe's theme is -17.1 LUFS, Brian's Floating in
- * Space -27.1 LUFS, so his recording is 10 dB quieter. `floatingMatch` turns it up by those 10 dB, so at the
- * same level the two sound equally loud (home-music.js).
+ * Space -27.1 LUFS, so his recording is 10 dB quieter. Since 2026-11-26 every music file's loudness match
+ * is in music-picks.js (MUSIC_FILES), and Floating in Space is no longer played.
  */
 export const MIX = Object.freeze({
   music: 0.8, // music sits a little under the effects, so an effect is always easy to hear over it
   effects: 1,
-  floatingMatch: 3.16, // 10 dB: Brian's Floating in Space up to the loudness of Joe's theme
+  // the "wah-wah" voices under speech bubbles (speech-voice.js), under the effects level: well below the music
+  // (Brian 2026-11-26: the Charlie Brown teacher noise "anytime there's someone speaking"). A placeholder.
+  voices: 0.35,
 });
 
 /**

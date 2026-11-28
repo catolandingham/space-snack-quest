@@ -25,6 +25,7 @@ import { cutawaySteps, drawCutaway, soundsBetween, beardTarget, closeUpSpeaker, 
 import { createHomeAlone } from "./home-alone.js";
 import { MORNING_SOUND } from "./morning-sound.js";
 import { createMopLoop, drawWet } from "./mop-loop.js";
+import { mopsBeardLook } from "./mops-beard.js";
 
 // The wooden speaker in the locked home picture v6 (x 1141 to 1191, y 210 to 263 of 1280 x 830), in game
 // positions. Nothing else types these numbers: the bubble placement asks for them through the bridge.
@@ -277,7 +278,7 @@ export function createMorning(bridge) {
       const m = live(),
         e = E();
       // Left the morning some other way (another chapter, a debug jump): the recording fades out.
-      if (!m) return void (bridge.homeMusic.stop(), sound.snore(false));
+      if (!m) return void (bridge.homeMusic.stop("morning"), sound.snore(false));
       m.t = (m.t || 0) + (dt || 0);
       sound.snore(snoring(m));
       stepSounds(m, dt || 0);
@@ -399,7 +400,7 @@ export function createMorning(bridge) {
     /** How Mops's head and beard are drawn while he mops or wrings (the engine's drawMops options), or null. */
     mopsLook() {
       const m = live();
-      return m ? loop.look(m) : null;
+      return (m && loop.look(m)) || mopsBeardLook();
     },
     /** True while Mops walks out (the goal chip hides). */
     leaving() {

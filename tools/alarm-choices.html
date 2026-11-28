@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alarm choices</title>
+<!--
+  Five made-up alarm sounds for the FUR alarm, for Brian to pick one (Brian 2026-11-25, showing-5 note 8). The one he
+  picks becomes the one alarm everywhere in Chapter 1. Brian picked option 1, the red alert whoop (2026-11-26): the
+  game plays it (src/modules/party-board-sounds.js BOARD.alarm). Every sound is
+  made in the page by the browser (Web Audio), like the game's own sounds: nothing is downloaded. Open this file in a
+  browser (double-click it, or on a phone open it from the pull request) and tap a button to hear it.
+-->
+<style>
+  :root { --bg: #f6f3ea; --ink: #1e2430; --card: #fffdf8; --line: #d8d2c2; --red: #e5533d; --mute: #59657d; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161a24; --ink: #f1ede2; --card: #202636; --line: #39415a; --mute: #a9b2c6; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.4 system-ui, -apple-system, sans-serif; }
+  main { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  p { margin: 0 0 18px; color: var(--mute); }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  button { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; padding: 14px 16px; min-height: 64px;
+    border: 2px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink); font: inherit; cursor: pointer; }
+  button:active, button.playing { border-color: var(--red); }
+  .n { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--red); color: #fff; font-weight: 800;
+    display: grid; place-items: center; }
+  .name { font-weight: 800; font-size: 19px; }
+  .how { display: block; color: var(--mute); font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Which FUR alarm?</h1>
+  <p>Tap one to hear it (about two seconds each). Tell the chat its number. The one you pick will be the only alarm in Chapter 1.</p>
+  <ol id="list"></ol>
+</main>
+<script>
+// Each option: its short name, how it sounds in a few words, and how it is made (seconds from `t`, into `out`).
+const OPTIONS = [
+  { name: "Red alert whoop", how: "a rising whoop, three times", play: whoop },
+  { name: "Two-tone siren", how: "high, low, high, low", play: twoTone },
+  { name: "Ah-ooga horn", how: "an old car horn, twice", play: ahooga },
+  { name: "Fast bell", how: "a school bell ringing fast", play: bell },
+  { name: "Beeping alert", how: "quick beeps in threes", play: beeps },
+];
+let ctx = null;
+function audio() {
+  ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+  ctx.state === "suspended" && ctx.resume();
+  return ctx;
+}
+function env(g, t, a, peak, d) {
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(peak, t + a);
+  g.gain.setValueAtTime(peak, t + d - 0.04);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+}
+function tone(c, out, type, t, d, f0, f1, peak = 0.25) {
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(f0, t);
+  f1 && o.frequency.exponentialRampToValueAtTime(f1, t + d);
+  env(g, t, 0.01, peak, d);
+  o.connect(g).connect(out);
+  o.start(t);
+  o.stop(t + d + 0.02);
+  return o;
+}
+function whoop(c, out, t) {
+  for (let i = 0; i < 3; i++) tone(c, out, "sawtooth", t + i * 0.62, 0.55, 380, 1250, 0.18);
+}
+function twoTone(c, out, t) {
+  for (let i = 0; i < 4; i++) tone(c, out, "square", t + i * 0.45, 0.43, i % 2 ? 660 : 880, 0, 0.12);
+}
+function ahooga(c, out, t) {
+  for (let i = 0; i < 2; i++) {
+    const s = t + i * 0.9;
+    tone(c, out, "sawtooth", s, 0.22, 170, 260, 0.22);
+    tone(c, out, "sawtooth", s + 0.22, 0.5, 300, 240, 0.22);
+    tone(c, out, "square", s + 0.22, 0.5, 450, 360, 0.06);
+  }
+}
+function bell(c, out, t) {
+  // a clapper hitting a bell 16 times a second: each hit two bright partials that ring and die fast
+  for (let i = 0; i < 30; i++) {
+    const s = t + i / 16;
+    for (const [f, p] of [[1180, 0.12], [2650, 0.05]]) {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = "sine";
+      o.frequency.value = f;
+      g.gain.setValueAtTime(p, s);
+      g.gain.exponentialRampToValueAtTime(0.0001, s + 0.12);
+      o.connect(g).connect(out);
+      o.start(s);
+      o.stop(s + 0.13);
+    }
+  }
+}
+function beeps(c, out, t) {
+  for (let k = 0; k < 3; k++) for (let i = 0; i < 3; i++) tone(c, out, "square", t + k * 0.62 + i * 0.13, 0.09, 1500, 0, 0.12);
+}
+const list = document.getElementById("list");
+OPTIONS.forEach((o, i) => {
+  const li = document.createElement("li"), b = document.createElement("button");
+  b.innerHTML = `<span class="n">${i + 1}</span><span><span class="name">${o.name}</span><span class="how">${o.how}</span></span>`;
+  b.addEventListener("click", () => {
+    const c = audio(), out = c.createGain();
+    out.gain.value = 0.9;
+    out.connect(c.destination);
+    o.play(c, out, c.currentTime + 0.05);
+    b.classList.add("playing");
+    setTimeout(() => b.classList.remove("playing"), 2000);
+  });
+  li.appendChild(b);
+  list.appendChild(li);
+});
+</script>
+</body>
+</html>

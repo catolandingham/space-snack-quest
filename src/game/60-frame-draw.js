@@ -16,6 +16,12 @@
         // The party night (src/modules/party.js): its scenes, sight, the alarm and the vent.
         let party = partyBeat();
         party && party.tick(l);
+        hmBeat() && hmBeat().tick(l);
+        luBeat() && luBeat().tick(l);
+        bayBeat() && bayBeat().tick(l);
+        evBeat() && evBeat().tick(l);
+        esBeat() && esBeat().tick(l);
+        pkBeat() && pkBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -361,7 +367,6 @@
       p.state === "op" &&
         n.room !== "closet" &&
         (n.scene || "")[0] !== "Q" &&
-        !n.ch1Party &&
         i >= he * 0.9 &&
         s.eyes !== "closed" &&
         n.moPose !== "sleep" &&
@@ -400,8 +405,8 @@
         ].forEach(([a, b, c2, d2, f2, g2]) => (e.beginPath(), e.moveTo(a, b), e.lineTo(c2, d2), e.lineTo(f2, g2), e.closePath(), r("#3478f6", 1))),
         m(3, -19, 6, 6, 1.5),
         r("#3478f6", 1),
-        X(6, -19, 2.2, 1.1),
-        r("#ffffff", 0.8));
+        // His GANITOR name tag on the pocket (Brian 2026-11-26; src/modules/ganitor.js); without it, the old name patch.
+        window.SSQ && window.SSQ.drawGanitorTag ? window.SSQ.drawGanitorTag(e, i) : (X(6, -19, 2.2, 1.1), r("#ffffff", 0.8)));
       // headDrop lowers his head (the morning cutaway); sweep swings the beard's ragged end (mopping);
       // noBeard leaves the beard to the caller (the cutaway draws it dunking and twisting).
       let A = s.headDrop != null ? s.headDrop : s.headDown ? 6 : 0,
@@ -479,28 +484,8 @@
       (St(l, o - 120, l + 14, o, 6, "#b8a07e", 2.5), XV(l + 16, o + 2, 16, 8, 9, 4, 0), wV("#8fdcff", 2.5));
     }
     function rq(l, o, i) {
-      (e.save(),
-        e.translate(l, o),
-        e.scale(i, i),
-        m(-62, -15, 124, 30, 15),
-        r("#2b3a67", 2.5),
-        L(-47, 0, 10),
-        r("#8b5a3c", 2),
-        C([-56, 0, -38, 0], "#fff3d6", 2.5),
-        e.beginPath(),
-        e.arc(-32, 0, 7, -1.2, 1.2, !0),
-        (e.strokeStyle = "#ffcf33"),
-        (e.lineWidth = 0),
-        e.beginPath(),
-        e.arc(50, -3, 6, 0, 7),
-        (e.fillStyle = "#ffcf33"),
-        e.fill(),
-        e.beginPath(),
-        e.arc(53, -5, 5, 0, 7),
-        (e.fillStyle = "#2b3a67"),
-        e.fill(),
-        g("MOON PIES", 1, 1, 14, "#ffcf33", "center", 900),
-        e.restore());
+      // the station's stamp: a blue star and the snack's name in thin blue letters (src/modules/crate-stamp.js)
+      window.SSQ && window.SSQ.drawSnackStamp ? window.SSQ.drawSnackStamp(e, l, o, i) : (e.save(), e.translate(l, o), e.scale(i, i), m(-62, -15, 124, 30, 15), r("#2b3a67", 2.5), e.restore());
     }
     function p5(l, o, i) {
       (e.save(), e.translate(l, o), e.scale(i, i), m(-46, -40, 92, 80, 10), r("#7b3fe4", 3));
@@ -674,40 +659,40 @@
       (m(318, 478, 64, 44, 6), r("#3478f6", 4), g("G", 350, 501, 22, "#ffffff"));
     }
     // Scene 1 and the rest of chapter 1 at home use the locked room picture. Only then.
-    // The Guardian Box stays in the closet until Day 2, when Squatch takes it out to put the gift in (Brian, 2026-11-16).
+    // The Guardian Box is in the closet; on Day 2 it is out only while Squatch puts the gift in (Brian, 2026-11-26).
     function gboxOut() {
-      return !!n.ch1Day2 && n.ch1Step !== "gift" && n.ch1Step !== "box";
+      return !!n.ch1Day2 && !(hmBeat() && hmBeat().boxInCloset());
     }
     function homePicture() {
       let k = n.scene || "";
       return k[0] === "Q" || k === "O1";
     }
-    // With the picture, the bucket and bed are already drawn in it. When Squatch stands behind
-    // one, paint that piece of the picture again over him, so nothing is drawn twice.
+    // With the picture, the bucket and bed are already drawn in it. Someone behind one gets that piece of the picture
+    // painted again over him: at its floor line in X2's back-to-front list (room-model.js), or without the module when Squatch is.
     const HOME_FRONT = {
       bucket: { x: 530, y: 506, w: 72, h: 66, back: 566 },
       bed: { x: 92, y: 396, w: 188, h: 132, back: 526 },
-      gbox: { x: 304, y: 470, w: 76, h: 56, back: 522 },
+      gbox: { x: 188, y: 356, w: 48, h: 40, back: 390 }, // out on the floor by the closet while he puts the gift in (home-morning.js)
     };
-    function homeFront() {
+    function homeFront(id0) {
       let l = n.sq,
-        img = lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"];
-      if (n.sqPose !== "stand" || !img || !img.complete || !img.naturalWidth) return;
+        img = window.SSQ && window.SSQ.nightPicture ? window.SSQ.nightPicture("home-closed", lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"]) : lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"];
+      if ((!id0 && n.sqPose !== "stand") || !img || !img.complete || !img.naturalWidth) return;
       let k = img.naturalWidth / c,
         ky = img.naturalHeight / b;
       for (let id in HOME_FRONT) {
-        let p = HOME_FRONT[id];
+        let p = HOME_FRONT[id], near = id0 ? id === id0 : l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40;
         if (id === "gbox") {
           // Not in the picture any more: drawn by code, and only once it is out of the closet.
-          gboxOut() && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && L2();
+          gboxOut() && near && (hmBeat() ? hmBeat().drawBox(e) : L2());
           continue;
         }
         // While hopping out of bed he is over the bed, not behind it.
-        !(id === "bed" && n.hopOut >= 0) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h);
+        !(id === "bed" && n.hopOut >= 0) && !(pkBeat() && pkBeat().gone(id)) && near && ((id === "bucket" && window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e, !0)) || e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h)); // Mops's mop bucket (mop-bucket.js)
       }
     }
     function g5() {
-      if (homePicture()) return homeFront();
+      if (homePicture()) return window.SSQ && window.SSQ.homeDepthItems ? void 0 : homeFront();
       let l = n.sq;
       (!(n.sqPose === "stand" && l.y < 566 && Math.abs(l.x - 610) < 80) &&
         !(n.botOn && n.bot.y >= 566 && Math.abs(n.bot.x - 610) < 90) &&
@@ -721,7 +706,8 @@
     function P2() {
       if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
-        gboxOut() && L2();
+        // Day 2: the Guardian Box (in the closet, then out on the floor) and the home morning's things on the floor; Mops's mop bucket over the painted one (mop-bucket.js)
+        (window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e), hmBeat() ? hmBeat().drawOnRoom(e) : gboxOut() && L2(), pkBeat() && pkBeat().drawOnRoom(e)); // (pickup day's things under the people: pickup.js)
         // Home alone with the closet open: the morning module draws the G box on the closet floor.
         {
           let beat = window.SSQ && window.SSQ.beat("ch1-morning");
@@ -1146,8 +1132,8 @@
       // Over a morning close-up (Brian 31a) the speaker is where the close-up draws him.
       let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning");
       if (close && close.closeUpSpeaker(l)) return close.closeUpSpeaker(l);
-      // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
-      let at = partyBeat() && partyBeat().speakerAt(l);
+      // The rebuilt beats place their own speakers (Isfred beside him, the band, Squatch's eyes in the plant or the grille).
+      let at = window.SSQ && window.SSQ.speakerAt && window.SSQ.speakerAt(l);
       if (at) return at;
       let o = IA(l);
       if (o) return o;
@@ -1162,7 +1148,6 @@
       if (l === "official") {
         if (n.ch1Office && n.room === "office") return { x: 430, y: 390 };
         if (n.ch1Office) return { x: 480, y: 490 };
-        if (n.ch1Party) return { x: CH1_PARTY_CAST.isfred[0], y: CH1_PARTY_CAST.isfred[1] - 68 }; // over Isfred's head (at the bar since the band started) (Brian, 2026-11-15: never a bubble with nobody under it)
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
@@ -1172,8 +1157,6 @@
       if (l === "ups" && n.ch1Beep) return { x: 860, y: 450 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
       if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 878, y: 430 };
-      if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
-      if (l === "tourist" && (n.ch1Party || n.ch1Cut)) return { x: 860, y: 430 };
       if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
       if (l === "tourist" && n.room === "hall" && n.scene === "Q3") return { x: 640, y: 436 };
       if (l === "tourist" && n.room === "hall") {
@@ -1289,7 +1272,7 @@
       spk && ((_ = w(spk.x0 - 26 - T, 10, c - T - 10)), ($ = w(spk.y0 - 6, 24, b - R - 12)));
       // At the party, Isfred's and the band's bubbles sit beside them, never over the banner.
       let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning"),
-        side = (partyBeat() && partyBeat().bubbleBeside(l.who)) || (close && close.closeUpBeside(l.who));
+        side = (window.SSQ && window.SSQ.bubbleBeside && window.SSQ.bubbleBeside(l.who)) || (close && close.closeUpBeside(l.who));
       side && ((_ = w(side.side === "left" ? side.x0 - 26 - T : side.x1 + 26, 10, c - T - 10)), ($ = w(side.y0 - 6, 24, b - R - 12)));
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
@@ -1318,47 +1301,21 @@
             head: head && { x: head.x, y: head.y, w: head.w, h: head.h },
             at: performance.now(),
           }));
-      head && (P = { x: head.x + head.w / 2, y: head.y });
-      let gV = w(P.x, _ + 24, _ + T - 24),
-        oe = l.style === "song" ? "#ffe3f1" : l.style === "whisper" ? "#f6f7fb" : "#ffffff";
-      l.style === "whisper" && e.setLineDash([4, 6]);
-      let ve = Math.min(P.y - 6, $ + R + 22);
-      if (
-        (l.style !== "whisper" &&
-          !spk &&
-          (e.beginPath(),
-          e.moveTo(gV - 11, $ + R - 2),
-          e.lineTo(gV + (P.x > gV ? 8 : P.x < gV ? -8 : 0), ve),
-          e.lineTo(gV + 11, $ + R - 2),
-          e.closePath(),
-          r(oe, i ? 3 : 4)),
-        m(_, $, T, R, l.style === "song" ? 26 : 18),
-        r(oe, i ? 3 : 4),
-        e.setLineDash([]),
-        l.style !== "whisper")
-      )
-        spk
-          ? (() => {
-              let sy = (spk.y0 + spk.y1) / 2,
-                ty = w(sy, $ + 18, $ + R - 18);
-              (e.beginPath(), e.moveTo(_ + T - 3, ty - 12), e.lineTo(spk.x0 - 8, sy), e.lineTo(_ + T - 3, ty + 12), e.closePath(), r(oe, 4));
-              ((e.fillStyle = oe), e.fillRect(_ + T - 8, ty - 9, 7, 18));
-            })()
-          : ((e.fillStyle = oe), e.fillRect(gV - 9, $ + R - 5, 18, 7));
-      else
-        for (let [CV, NV] of [
-          [10, 5],
-          [22, 3],
-        ])
-          (L(gV + ((P.x - gV) * CV) / 30, $ + R + CV, NV), e.setLineDash([3, 3]), r(oe, 2), e.setLineDash([]));
+      let oe = l.style === "song" ? "#ffe3f1" : l.style === "whisper" ? "#f6f7fb" : "#ffffff";
+      (l.style === "whisper" && e.setLineDash([4, 6]), m(_, $, T, R, l.style === "song" ? 26 : 18), r(oe, i ? 3 : 4), e.setLineDash([]));
+      // The tail: pointed to the speaker's head, or a thought's three circles to the thinker (src/modules/bubble-tail.js).
+      let to = spk || (partyBeat() && partyBeat().speakerBox && partyBeat().speakerBox(l.who)) || (head ? { x0: head.x, y0: head.y, x1: head.x + head.w, y1: head.y + head.h } : { x0: P.x - 12, y0: P.y - 6, x1: P.x + 12, y1: P.y + 18 });
+      let tail = window.SSQ && window.SSQ.drawBubbleTail && window.SSQ.drawBubbleTail(e, { x: _, y: $, w: T, h: R }, to, l.style === "whisper" && l.who === "sq" ? "thought" : "speech", oe, y, i ? 3 : 4);
+      window.__ss && window.__ss.lastBubble && ((window.__ss.lastBubble.tail = tail), (window.__ss.lastBubble.target = to));
       if ((l.style === "song" && (g("\u266A", _ + 4, $ + 4, 22, "#ff5fa8"), g("\u266B", _ + T - 4, $ + R - 2, 22, "#ff5fa8")), !o)) {
         let beat = l.who === "speaker" && window.SSQ && window.SSQ.beat("ch1-morning"),
-          CV = beat ? beat.speakerName() : (partyBeat() && partyBeat().speakerName(l.who)) || pa[l.who] || "";
+          CV = beat ? beat.speakerName() : (window.SSQ && window.SSQ.speakerName && window.SSQ.speakerName(l.who)) || pa[l.who] || "";
         // Tests: the name over the bubble on screen.
         window.__ss && window.__ss.lastBubble && (window.__ss.lastBubble.name = CV);
         ge(17);
         let NV = e.measureText(CV).width + 26;
-        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who] || "#2f8a3c", 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
+        // The name sits on the bubble's top edge, above its words, never over them (the review of PR #87).
+        (m(_ + 16, $ - 24, NV, 30, 12), r(Ds[l.who] || "#2f8a3c", 3), g(CV, _ + 16 + NV / 2, $ - 9, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
       }
       if (ear) {
         let CV = _ + 22,
@@ -1384,7 +1341,7 @@
         // Switch card: who you are now, their picture, and why. Waits for a tap like every card.
         let mo = cd && cd.who === "mops";
         ((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), L(c / 2, 400, 150), r(mo ? "#2bc48a" : "#b5562a", 6));
-        mo ? Fe(c / 2 - 20, 500, he * 2.6, { f: 1 }) : Re(c / 2, 520, he * 1.7, { f: 1 });
+        mo ? (Fe(c / 2 - 20, 500, he * 2.6, { f: 1, ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) }), window.SSQ && window.SSQ.mopsBeardOver && window.SSQ.mopsBeardOver(e, c / 2 - 20, 500, he * 2.6, 1)) : Re(c / 2, 520, he * 1.7, { f: 1 });
         g(o, c / 2, 110, 48, "#ffffff", "center", 800);
         zt(s || "", 820, 26).forEach((t, i) => g(t, c / 2, 170 + i * 34, 26, "#8fdcff", "center", 700));
         return;
@@ -1574,142 +1531,16 @@
         r("#ffcf33", 2),
         e.restore());
     }
-    function wf(l, o, i, s = 0) {
-      let q = "#9a4a1c",
-        d = "#5e2a0c",
-        A = Math.sin(i) * 1.5;
-      (m(l - 12, o - 6, 10, 16, 4), r(q, 2), m(l + 2, o - 6, 10, 16, 4), r(q, 2), XV(l, o - 20, 17, 22, 18, 3, 0), wV(q, 2.5));
-      for (let R = 0; R < 6; R++) C([l - 12 + R * 5, o - 30 + (R % 2) * 4, l - 13 + R * 5 + A, o - 6 + (R % 3) * 3], d, 1.1);
-      let T = s === 1;
-      (St(l - 15, o - 30, l - 20, o - 8 + Math.sin(i) * 2, 5, q, 2),
-        T ? St(l + 15, o - 30, l + 22, o - 60, 5, q, 2) : St(l + 15, o - 30, l + 20, o - 8 - Math.sin(i) * 2, 5, q, 2),
-        e.save(),
-        e.translate(l, o - 22),
-        e.rotate(-0.75),
-        m(-20, -3, 40, 6, 1.5),
-        r("#6b4429", 1.5));
-      for (let R = -16; R <= 14; R += 6) (m(R, -2.2, 3.5, 4.4, 0.5), r("#d8d8d8", 0.8));
-      (e.restore(), XV(l, o - 50, 17, 15, 16, 2.6, 0), wV(q, 2.5), XV(l, o - 40, 15, 7, 12, 2.2, 0), wV(q, 1.5));
-      for (let R = 0; R < 5; R++) C([l - 10 + R * 5, o - 62, l - 11 + R * 5, o - 55], d, 1);
-      (s === 2
-        ? (m(l - 11, o - 53, 9, 5, 2), r(y, 0), m(l + 2, o - 53, 9, 5, 2), r(y, 0), C([l - 2, o - 51, l + 2, o - 51], y, 1.5))
-        : (L(l - 5, o - 51, 2.4),
-          r("#ffffff", 1.2),
-          F(l - 5, o - 51, 1.3, y),
-          L(l + 5, o - 51, 2.4),
-          r("#ffffff", 1.2),
-          F(l + 5, o - 51, 1.3, y)),
-        X(l, o - 46, 2.5, 1.5),
-        r(y, 0),
-        X(l, o - 41, 5, 3.2),
-        r("#3a1405", 1.5),
-        C([l - 3, o - 43, l + 3, o - 43], "#ffffff", 1),
-        s === 0 &&
-          (C([l - 10, o - 38, l, o - 22, l + 10, o - 38], y, 1.2),
-          m(l - 7, o - 26, 14, 10, 2),
-          r("#b8bcc4", 1.5),
-          L(l, o - 21, 3),
-          r("#3a3f4b", 1)),
-        s === 1 &&
-          (C([l + 22, o - 58, l + 22, o - 88], y, 1.8),
-          e.beginPath(),
-          e.moveTo(l + 22, o - 88),
-          e.lineTo(l + 44, o - 81),
-          e.lineTo(l + 22, o - 74),
-          e.closePath(),
-          r("#ff6a3d", 1.5),
-          C([l + 24, o - 84, l + 32, o - 80, l + 25, o - 77], "#3478f6", 1.5)));
-    }
     function I2(l, o) {
-      let i = n.T;
-      if (
-        ((e.fillStyle = "#f1f3f6"),
+      // The old picture stories still told this way (fb1, fb2). The Wookiee story is src/modules/tv-story.js.
+      ((e.fillStyle = "#f1f3f6"),
         e.fillRect(0, 0, c, b),
         e.save(),
         e.translate(480, 300),
         e.scale(3, 3),
         l.startsWith("fb2") && (e.save(), e.scale(1 / 3, 1 / 3), e.translate(-480, -300), V6(l), e.restore()),
-        l.startsWith("fb1") && (e.save(), e.scale(1 / 3, 1 / 3), e.translate(-480, -300), f5(l), e.restore()),
-        l === "banish")
-      ) {
-        let A = Math.min(1, (i - n.banT) / 4);
-        (m(70, -30, 70, 50, 10),
-          r("#dfe4ea", 2.5),
-          e.beginPath(),
-          e.moveTo(140, -30),
-          e.lineTo(160, -5),
-          e.lineTo(140, 20),
-          e.closePath(),
-          r("#dfe4ea", 2.5),
-          m(78, -12, 18, 32, 2),
-          r("#2b3a67", 2),
-          g("TOURS", 108, -20, 6, y, "center", 900),
-          [-10, 25, 55].forEach((T, R) => {
-            let P = T + A * 60;
-            P < 85 && (e.save(), e.translate(P, 22), e.scale(0.7, 0.7), wf(0, 0, i * 4, R), e.restore());
-          }),
-          e.save(),
-          e.translate(-90, 22),
-          m(-6, -2, 5, 14, 2),
-          r("#1e2a4a", 1.5),
-          m(1, -2, 5, 14, 2),
-          r("#1e2a4a", 1.5),
-          m(-11, -30, 22, 30, 6),
-          r("#ffffff", 2),
-          C([-10, -28, 10, -4], "#e5533d", 4),
-          St(9, -26, 34, -34, 3.5, "#ffffff", 1.5),
-          L(0, -40, 9),
-          r("#f0bf93", 2),
-          m(-9, -52, 18, 6, 2),
-          r("#1e2a4a", 1.5),
-          F(3, -41, 1.3, y),
-          C([-1, -36, 5, -36], y, 1.3),
-          e.restore());
-      }
-      if ((l === "tour" && [-50, 0, 50].forEach((A, T) => wf(A, 22, i * 3, T)), l === "shed")) {
-        [-50, 0, 50].forEach((A, T) => wf(A, 22, i * 3, T));
-        for (let A = 0; A < 30; A++) {
-          let T = ((A * 37 + i * 30) % 220) - 110,
-            R = ((A * 23 + i * 18) % 120) - 80;
-          (e.beginPath(), e.arc(T, R, 4, 0, 2.2), (e.strokeStyle = "#8b5a3c"), (e.lineWidth = 1.5), e.stroke());
-        }
-      }
-      if (l === "clog") {
-        (m(-44, -64, 88, 56, 4), r("#dfe4ea", 2.5));
-        for (let A = -36; A <= 36; A += 9) C([A, -58, A, -14], y, 1.5);
-        (XV(0, -36, 22, 20, 14, 3, 0), wV("#a0703f", 2.5), g("AIR SCRUBBER", 0, -70, 6, y));
-        for (let [A, T] of [
-          [-72, "#7fd1ff"],
-          [72, "#a98bff"],
-        ])
-          (e.save(),
-            e.translate(A, 26),
-            m(-7, -2, 6, 14, 2),
-            r("#59657d", 2),
-            m(1, -2, 6, 14, 2),
-            r("#59657d", 2),
-            m(-11, -28, 22, 28, 7),
-            r(T, 2.5),
-            St(-8, -24, -3, -33, 3.5, T, 1.5),
-            St(8, -24, 3, -33, 3.5, T, 1.5),
-            L(0, -37, 9),
-            r("#f0bf93", 2.5),
-            X(0, -33, 2.2, 3),
-            r(y, 0),
-            F(-3, -39, 1.2, y),
-            F(3, -39, 1.2, y),
-            e.restore());
-      }
-      if (
-        (l === "nofur" &&
-          (XV(0, -12, 20, 20, 14, 3, 0),
-          wV("#8b5a3c", 2.5),
-          L(0, -12, 36),
-          (e.strokeStyle = "#e5533d"),
-          (e.lineWidth = 6),
-          e.stroke(),
-          C([-25, -37, 25, 13], "#e5533d", 6)),
-        e.restore(),
+        l.startsWith("fb1") && (e.save(), e.scale(1 / 3, 1 / 3), e.translate(-480, -300), f5(l), e.restore()));
+      (e.restore(),
         e.save(),
         (e.globalCompositeOperation = "saturation"),
         (e.globalAlpha = 0.6),
@@ -1721,36 +1552,7 @@
         (e.strokeStyle = "#59657d"),
         (e.lineWidth = 6),
         e.strokeRect(9, 9, c - 18, b - 18),
-        g("YEARS AGO", 40, 36, 16, "#59657d", "left", 800),
-        o === "*gasp*")
-      ) {
-        n.maxB = Math.max(n.maxB, ++qq);
-        let A = 264,
-          T = 224,
-          R = 160,
-          P = 62,
-          _ = A - R / 2,
-          $ = T - P - 26;
-        (e.beginPath(),
-          e.moveTo(A - 10, $ + P - 2),
-          e.lineTo(A, T - 4),
-          e.lineTo(A + 10, $ + P - 2),
-          e.closePath(),
-          r("#ffffff", 4),
-          m(_, $, R, P, 18),
-          r("#ffffff", 4),
-          (e.fillStyle = "#fff"),
-          e.fillRect(A - 8, $ + P - 5, 16, 7),
-          ge(15));
-        let gV = e.measureText(pa.tourist).width + 22;
-        (m(_ + 14, $ - 14, gV, 26, 12),
-          r(Ds.tourist, 3),
-          g(pa.tourist, _ + 14 + gV / 2, $ - 1, 15, "#ffffff"),
-          g(o, _ + R / 2, $ + 32, 26),
-          _ + R - 12,
-          $ + P - 9);
-        return;
-      }
+        g("YEARS AGO", 40, 36, 16, "#59657d", "left", 800));
       if (!o) return;
       let s = zt(o, 820, 28),
         q = 36 + s.length * 34,
@@ -1784,57 +1586,12 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
-      if (l === "ch1photo") {
-        ((e.fillStyle = "rgba(255,252,245,.4)"),
-          e.fillRect(0, 0, c, b),
-          m(230, 60, 500, 520, 6),
-          r("#fffdf8", 8),
-          e.save(),
-          e.beginPath(),
-          e.rect(254, 84, 452, 390),
-          e.clip(),
-          (e.fillStyle = "#1b2450"),
-          e.fillRect(254, 84, 452, 170),
-          (e.fillStyle = "#ebe4d6"),
-          e.fillRect(254, 254, 452, 220));
-        for (let i = 0; i < 18; i++) F(270 + ((i * 73) % 420), 100 + ((i * 41) % 130), 1.2, "#ffffff");
-        (drawCh1Alien(340, 430, "hair", 1.15, 1),
-          drawCh1Alien(450, 400, "hat", 1.15, -1),
-          drawCh1Alien(560, 420, "antenna", 1.15, 1),
-          drawCh1Alien(650, 390, "croc", 1.15, -1),
-          n.ch1InShot &&
-            (e.save(),
-            e.beginPath(),
-            e.rect(254, 84, 452, 390),
-            e.clip(),
-            Re(300, 470, 1.35, { f: 1, hat: !0, shades: !0, hawaiian: !0 }),
-            e.restore()),
-          e.restore(),
-          g("STORMTOP SPACE PARTY", 480, 520, 16, "#1e2430", "center", 800));
-        return;
-      }
-      if (l === "ch1tv1" || l === "ch1tv2" || l === "ch1tv3") return drawCh1Tv(l);
-      if (l === "ch1moon") return drawCh1Moon();
-      if (l === "ch1fur") {
-        ((e.fillStyle = "rgba(20,24,32,.72)"),
-          e.fillRect(0, 0, c, b),
-          m(280, 160, 400, 280, 16),
-          r("#e5533d", 8),
-          g("FUR", 480, 250, 64, "#ffffff", "center", 900),
-          g("PULL DOWN", 480, 320, 28, "#ffffff", "center", 900),
-          C([480, 348, 480, 400], "#d7dbe3", 8),
-          F(480, 404, 12, "#e5533d"),
-          C([548, 430, 500, 392], "#f0bf93", 10),
-          F(492, 386, 16, "#f0bf93"),
-          F(486, 380, 5, "#1e2430"));
-        return;
-      }
       if (l === "ch1site") {
         ((e.fillStyle = "rgba(20,24,32,.62)"),
           e.fillRect(0, 0, c, b),
           m(230, 180, 500, 280, 16),
           r("#fffdf8", 4),
-          g("MOON PIES", 480, 230, 28, "#b45309", "center", 900),
+          g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), 480, 230, 28, "#b45309", "center", 900),
           m(280, 280, 180, 70, 10),
           r("#ffffff", 3),
           g("Order new box", 370, 315, 18, y, "center", 800),
@@ -1893,7 +1650,7 @@
             e.translate(0, -70),
             rq(0, 0, 1.6),
             e.restore(),
-            g("MOON PIES \xD7500", 0, 20, 28, "#b45309", "center", 900),
+            g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS") + " \xD7500", 0, 20, 28, "#b45309", "center", 900),
             g("EVERY WEEK", 0, 62, 22, y, "center", 800));
           for (let i = 0; i < 7; i++) (m(-168 + i * 48, 110, 40, 40, 4), r(i === 4 ? "#ffe27a" : "#ffffff", 2.5));
           (L(44, 130, 26),
@@ -2184,7 +1941,7 @@
                 });
             },
           }),
-        l.sort((s, q) => s.y - q.y).forEach((s) => s.d()),
+        (homePicture() && window.SSQ && window.SSQ.homeDepthItems && l.push(...window.SSQ.homeDepthItems([...(n.sqPose === "stand" ? [{ who: "sq", x: o.x, y: o.y, half: 40 }] : []), ...(n.moPose !== "hidden" ? [{ who: "mops", x: n.mo.x, y: n.mo.y, half: 60 }] : []), ...(n.botOn ? [{ who: "bot", x: n.bot.x, y: n.bot.y, half: 40 }] : [])], (id) => homeFront(id), (id) => id === "gbox" && !gboxOut())), l).sort((s, q) => s.y - q.y).forEach((s) => s.d()),
         n.pulse.has("sign") &&
           n.door < 0.3 &&
           (e.save(),
@@ -2245,14 +2002,6 @@
           s.s === "ha ha!" ? (X(s.x, s.y, 34, 16), r("#fff6dc", 2), g(s.s, s.x, s.y, 16, "#b45309")) : g(s.s, s.x, s.y, 28, "#ff5fa8"));
       e.globalAlpha = 1;
     }
-    // Where a walk-tap is heading: a small ring on the floor while the player walks there.
-    function drawWalkTo() {
-      let t = n.walkTo;
-      if (!t || (de() && !(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn))) return;
-      let k = 0.5 + 0.5 * Math.sin(n.T * 8),
-        sx = t.x - (n.room === "hall" ? B.camX : 0);
-      (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
-    }
     // A tap was heard while the game could not take it yet: a ring spreads in the bottom right corner.
     function drawTapHeard() {
       let k = n.T - (n.tapT == null ? -9 : n.tapT);
@@ -2270,7 +2019,7 @@
     function drawRoom() {
       if (n.room === "office") return drawCh1OfficeRoom();
       // The party night's hall is the party module's drawing, on the locked picture.
-      if (n.room === "hall" && partyBeat() && partyBeat().ownsRoom() && partyBeat().drawRoom(e)) return;
+      if (hallBeat() && hallBeat().drawRoom(e)) return;
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -2278,13 +2027,11 @@
             : n.room === "passage"
             ? drawCh1Passage()
             : n.room === "hall"
-              ? n.ch1Party
-                ? drawCh1PartyRoom()
-                : n.ch1Office
-                  ? drawCh1HallwayRoom()
-                  : (n.scene || "")[0] === "Q"
-                    ? drawCh1DayHall()
-                    : s5()
+              ? n.ch1Office
+                ? drawCh1HallwayRoom()
+                : (n.scene || "")[0] === "Q"
+                  ? drawCh1DayHall()
+                  : s5()
             : n.room === "window"
               ? o5()
               : n.room === "duct"
@@ -2354,11 +2101,16 @@
         // The morning's sound lines and notes at the wall speaker, and the wet floor where Mops mops.
         beat && beat.draw(e);
         partyBeat() && partyBeat().draw(e);
+        window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
+        hmBeat() && hmBeat().draw(e);
+        luBeat() && luBeat().draw(e), bayBeat() && bayBeat().draw(e);
+        evBeat() && evBeat().draw(e);
+        esBeat() && esBeat().draw(e);
+        pkBeat() && pkBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;
         }
-        n.ch1Cut && drawCh1Cut();
         n.ch1Day2 && drawCh1Day2();
         n.ch1Zoom && drawCh1Zoom();
         ch1MarkGoal();
@@ -2370,7 +2122,6 @@
       if (!walking) ringsLeft();
       xp();
       drawSec();
-      drawWalkTo();
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,
@@ -2387,8 +2138,8 @@
             (e.globalAlpha = 1));
       (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), t5());
       let o = Bs();
-      // The green VERB pill for actions with no caption. An action with a caption gets drawCap's "VERB · thing" label instead.
-      if (o && !o.cap && !n.ch1Zoom && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
+      // The green VERB pill for actions with no caption (none in Chapter 1, #110: the dashed gold line alone shows the thing).
+      if (o && !o.cap && !n.ch1Zoom && !(window.SSQ && window.SSQ.noThingWords && window.SSQ.noThingWords(n.scene)) && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
         let i = o.x === 790 || o.x === 845,
           s = i ? 845 : o.r > 0 || o.x ? o.x : n.sq.x,
           q = i ? 250 : o.r > 0 || o.x ? o.y - 60 : 330;
@@ -2402,8 +2153,6 @@
       (n.under === "crack" && gq("crack", !1),
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
-        n.ch1Search && drawCh1Guard(),
-        n.ch1Mini && drawCh1Mini(),
         window.__ss && (window.__ss.bubbleFrame = qq));
       ((e.globalAlpha = 1), zG(), drawSeeHint(), drawTapHeard());
     }
@@ -2412,8 +2161,8 @@
       let a = n.act;
       // No caption over the crate's own LEAVE SOUP label, or over the dish while it is being scrubbed.
       if (!a || !a.cap || !n.ctrl || n.ch1Zoom || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && ch2.dishT > 0)) return;
-      // Chapter 1: no tag when the action happens right where Squatch stands (same rule as the ring).
-      if (/^(Q|O1$)/.test(n.scene || "") && actsWhereSquatchStands(a)) return;
+      // Chapter 1: no tag at all (Brian #110, 2026-11-27: the dashed gold line alone; cap-place.js THING_WORDS), else none where Squatch stands.
+      if ((window.SSQ && window.SSQ.noThingWords && window.SSQ.noThingWords(n.scene)) || (/^(Q|O1$)/.test(n.scene || "") && actsWhereSquatchStands(a))) return;
       // The label is at least 156 wide, wider for long words, and always fully on the picture.
       let t = a.verb + " \u00b7 " + a.cap;
       ge(14);
@@ -2506,8 +2255,8 @@
           N0() ? Cs() : skipStoryCards();
           return;
         }
-        if (n.ch1PadOn && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
-          ch1PadPress(l.code.replace(/\D/g, "").slice(-1));
+        if (esBeat() && esBeat().padOpen() && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
+          esBeat().key(l.code.replace(/\D/g, "").slice(-1)); // the office keypad (src/modules/escape.js)
           return;
         }
         if (l.code === "KeyM") {
@@ -2527,7 +2276,6 @@
           I0(parseInt(l.code.slice(-1), 10));
           return;
         }
-        (n.ch1Mini === "karaoke" && !l.repeat && (l.code === "Space" || l.code === "Enter") && (ch1Howl(), !0)) ||
         (l.code === "KeyR" && !l.repeat && armReset(!0),
           (qe[l.code] = !0),
           !l.repeat && (l.code === "KeyE" ? Vf() : (l.code === "Enter" || l.code === "Space") && af()));

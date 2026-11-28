@@ -29,7 +29,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { "content-type": "text/html" });
   res.end(html);
 });
-await new Promise((r) => server.listen(8772, "127.0.0.1", r));
+await new Promise((r) => server.listen(8772 + Number(process.env.SSQ_PORT_OFFSET || 0), "127.0.0.1", r));
 let browser;
 try {
   browser = await puppeteer.launch({ executablePath: chrome, headless: "new", args: ["--no-sandbox", "--disable-gpu"] });
@@ -56,7 +56,7 @@ async function open(query, consoleErrors = false) {
       if (msg.type() === "error") errors.push(msg.text());
     });
   await page.setViewport({ width: 1100, height: 800, deviceScaleFactor: 1 });
-  await page.goto(`http://127.0.0.1:8772/index.html${query}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`http://127.0.0.1:${8772 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html${query}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => window.__ss && window.__ss.op, { timeout: 15000 });
   await sleep(700);
   return { ctx, page, errors };
@@ -102,7 +102,7 @@ async function open(query, consoleErrors = false) {
   await ctx.close();
 }
 
-// Localhost: ?beat=day2 opens Day 2 at the gift. A numbered beat still does nothing here.
+// Localhost: ?beat=day2 opens Day 2 at the gift (src/modules/home-morning.js, awake beside the rocket). A numbered beat still does nothing here.
 {
   const { ctx, page, errors } = await open("?beat=day2");
   const s = await page.evaluate(() => {
@@ -112,7 +112,7 @@ async function open(query, consoleErrors = false) {
   });
   check("day2 jump opens Day 2", s.day2 === true, s);
   check("day2 jump is in the closet", s.room === "closet" && s.scene === "QB", s);
-  check("day2 jump is at the gift, the way to the box and the lunch", s.step === "gift" && s.chip === "Squatch: pick up the gift" && s.ctrl === true, s);
+  check("day2 jump is at the gift (the home morning: the rocket, then the box, the calendar and the lunch)", s.step === "hm-rocket" && s.chip === "Squatch: pick up the gift" && s.ctrl === true, s);
   check("day2 jump adds no page errors", errors.length === 0, errors.slice(0, 3));
   await ctx.close();
 }

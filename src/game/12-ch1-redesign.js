@@ -9,7 +9,7 @@
       // The crawl vent is the grille under the speaker, on the right wall. The floor vent stays in the picture.
       CH1_VENT = { x: 820, y: 470 },
       CH1_ROBOT = { x: 480, y: 400 },
-      CH1_PLANT = { x: 125, y: 400 };
+      CH1_PLANT = { x: 295, y: 400 }; // a few steps along the wall from the doorway (locked bay pictures v3, Brian 2026-11-26)
     const CH1Q_CHIPS = {
       Q1: "",
       Q2: "Squatch: hide and watch",
@@ -22,25 +22,6 @@
       Q9: "Squatch: walk through the scanner",
       QA: "",
     };
-    // R73. Brian approved a 3 to 4 minute party. This slice uses 3 minutes.
-    // When it runs out, Squatch walks home (half one of the party rebuild; half two brings closing time).
-    const COOL_HAT_SECONDS = 180;
-    // R59. The balloon takes about 6 seconds to reach the ceiling. Approved.
-    const BALLOON_GRAB_SECONDS = 6;
-    // R60. A photo that includes Squatch. Approved by Brian 2026-11-09. Not drawn on screen.
-    const PHOTO_BONUS = 25;
-    // R60. How long the guests look at the spill. Approved by Brian 2026-11-09.
-    const SNACK_LOOK_SECONDS = 4;
-    // The camera tourist's camera, in the crowd, pointing at the stage (party module): the SNAP circle round it and
-    // the shot, the floor between the lens and the stage.
-    const CH1_CAM = (partyBeat() && partyBeat().camera().cam) || { x: 0, y: 0, r: 0 };
-    const CH1_FRAME = (partyBeat() && partyBeat().camera().frame) || { x0: 0, x1: 0, y0: 0, y1: 0 };
-    const CH1_KID = { x: 150, y: 520 };
-    const CH1_PARTY_SNAG = [
-      { id: "plant", verb: "SNAG", cap: "plant", x: 400, y: 540, why: "plant" },
-      { id: "vent", verb: "SUCK", cap: "vent", x: 188, y: 500, why: "vent" },
-      { id: "guard", verb: "STAND", cap: "guard", x: 700, y: 560, why: "guard" },
-    ];
     // Rule: no yellow ring and no "VERB · thing" tag when the action happens right where Squatch stands.
     function actsWhereSquatchStands(o) {
       // A spot placed on Squatch's own feet follows him around, so a ring there would circle Squatch himself.
@@ -48,15 +29,15 @@
     }
     // The goal mark is a soft yellow outline round the real thing (src/modules/goal-targets.js), never a
     // circle or an arrow (Brian, raised at least six times). Remember the last one drawn, so tests can check
-    // it is never round Squatch himself.
+    // it is never round Squatch himself; it is returned (the lunch sneak reads it).
     function drawGoalMark(spot) {
       // Never over the people standing there: the outline is left out of their boxes.
       let people = [n.sqPose !== "hidden" ? sqBox() : null, n.moPose && n.moPose !== "hidden" && n.mo.x > -100 ? moBox() : null];
       let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T, people) : null;
-      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
+      return box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
     }
     function ch1MarkGoal() {
-      if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
+      if (!n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
       // The party night draws its own outline (src/modules/party.js).
       if (partyBeat() && partyBeat().active()) return;
       let spots =
@@ -64,12 +45,8 @@
           ? ch1Day2Spots()
           : ch1MorningSpots()
             ? ch1MorningSpots()
-            : n.ch1Search
-                ? ch1SearchSpots()
-                : n.scene === "QA" && n.ch1Party && !n.ch1PartyOver
-                  ? ch1PartySpots()
-                  : [];
-      let s = (spots || []).find((o) => o && o.verb && o.when !== !1);
+            : [];
+      let s = (spots || []).find((o) => o && (o.verb || o.walk) && o.when !== !1); // walk: a doorway walked through (evening.js)
       s && drawGoalMark(s);
     }
     // The morning module's spots (SING ALONG, TALK · Mops) while its song step has control, and home alone's
@@ -90,26 +67,14 @@
       if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // Adult head height is 85% of the door in the room he is standing in.
-    // Hall and loading-bay openings measure 101px on the 830-tall picture (77.9px on the canvas).
-    // The office door and the same door in the hallway are a 160px slab (123.4px on the canvas).
-    // Home's right-wall opening is the 129px cut. A room with no door uses the hall.
-    // Alien heads are that height / 84. Qt heads are that height / 50. Squatch is 80% of the adult, / 45.
-    const CANVAS_DOOR_PX = {
-        hall: 101 * (640 / 830),
-        hallway: 160 * (640 / 830),
-        office: 160 * (640 / 830),
-        delivery: 101 * (640 / 830),
-        home: 129 * (640 / 830),
-      },
-      HALL_ADULT_PX = CANVAS_DOOR_PX.hall * 0.85;
-    function roomDoorId(room) {
-      return room === "passage" ? "hallway" : room === "hangar" ? "delivery" : room === "closet" ? "home" : room === "office" ? "office" : room === "hall" ? "hall" : "hall";
+    // How tall people are drawn in each room: src/modules/room-sizes.js (85% of a room's door; the hall 40% bigger).
+    function doorAdultPx(room) {
+      return window.SSQ && window.SSQ.doorAdultPx ? window.SSQ.doorAdultPx(room) : 66;
     }
     function adultPxFor(room) {
-      let id = CANVAS_DOOR_PX[room] ? room : roomDoorId(room);
-      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * 0.85;
+      return window.SSQ && window.SSQ.adultPxFor ? window.SSQ.adultPxFor(room) : doorAdultPx(room);
     }
+    const HALL_ADULT_PX = adultPxFor("hall");
     function alienScale(room) {
       return adultPxFor(room) / 84;
     }
@@ -120,12 +85,20 @@
       ALIEN_ADULT = ADULT_PX / 84,
       QT_ADULT = ADULT_PX / 50,
       SQ_ADULT = (ADULT_PX * 0.8) / 45;
+    // The hall's sizes above are for people in the hall. The few figures drawn with them in other rooms (a tour
+    // group, Chapter 1's guard, Qt in the office scene) keep the size they had: only the hall grew.
+    function qtHere() {
+      return n.room === "hall" ? QT_ADULT : doorAdultPx("hall") / 50;
+    }
+    function alienHere() {
+      return n.room === "hall" ? ALIEN_ADULT : doorAdultPx("hall") / 84;
+    }
     function sqDrawScale() {
       if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
       return (adultPxFor(n.room) * 0.8) / 45;
     }
     // The box round Squatch's drawing (ears and fur included), and round Mops's, in game positions. At home the
-    // room draws Squatch at wl.
+    // room draws both at wl (home-morning.js, pickup.js; the room table's closet is wl too, room-scale.js).
     function sqBox() {
       let q = n.room === "closet" ? wl : sqDrawScale();
       return { x0: n.sq.x - 19 * q, x1: n.sq.x + 19 * q, y0: n.sq.y - 50 * q, y1: n.sq.y + 2 };
@@ -135,40 +108,19 @@
       return { x0: n.mo.x - 24 * q, x1: n.mo.x + 24 * q, y0: n.mo.y - 56 * q, y1: n.mo.y + 2 };
     }
     function moDrawScale() {
-      if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
+      if (n.room === "closet") return wl;
       return sqDrawScale() * 1.15;
     }
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
     const CH1_OFFICE_DOOR = { x: 480, y: 286 };
-    // The older free play's guests, Isfred, the bartender and the octopus's snack spot come from the party module's
-    // one table (src/modules/party-hall.js), so the hall looks the same when Squatch walks back in. The free play is
-    // only reached through that module, so without it these are empty.
-    const CH1_GUESTS = (partyBeat() && partyBeat().freeGuests()) || [];
-    const CH1_PARTY_CAST = (partyBeat() && partyBeat().freeCast()) || {};
-    // Party hall solids (Brian, 2026-11-15: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests").
-    // Boxes are where feet cannot go, in picture units, measured on hall-room-empty-v2.png and the party drawing.
-    // v2 (Brian, 2026-11-23): the bar starts just below the corner doorway and runs to the front wall, picture
-    // y 458 to 784 (game 353 to 605); CH1_BAR_DY is how far down everything drawn on the bar moved from v1.
-    // The floor starts in front of the stage (CH1_PARTY_FLOOR_Y), so nobody walks on the window or up the back wall.
-    const CH1_PARTY_FLOOR_Y = 300,
-      CH1_BAR_DY = 83;
-    function ch1PartySolids() {
-      let feet = (x, y) => ({ x0: x - 18, x1: x + 18, y0: y - 10, y1: y + 6, person: 1 }), // people block walking, not sight
-        out = (partyBeat() && partyBeat().hallSolids()) || [],
-        raid = n.ch1Raid;
-      CH1_GUESTS.forEach((guest) => (raid && raid.witness && guest[2] === "spots") || out.push(feet(guest[0], guest[1])));
-      raid && raid.witness && out.push(feet(raid.witness.x, raid.witness.y));
-      out.push(feet((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555)); // the octopus
-      return out;
-    }
     const LOCKED_ROOMS = {
       hall: "docs/locked-rooms/hall-room-empty-v2.png",
       hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
-      "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v2.png",
-      "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v2.png",
-      "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v2.png",
-      "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
+      "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v3.png",
+      "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v3.png",
+      "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v3.png",
+      "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v4.png",
       "home-closed": "docs/locked-rooms/home-room-empty-closed-v6.png",
       "home-open": "docs/locked-rooms/home-room-empty-open-v6.png",
       office: "docs/locked-rooms/office-room-empty-v2.png",
@@ -188,13 +140,13 @@
     let lockedNow = "";
     function drawLockedRoom(id) {
       lockedNow = id;
-      let img = lockedImg[id];
+      let img = window.SSQ && window.SSQ.nightPicture ? window.SSQ.nightPicture(id, lockedImg[id]) : lockedImg[id]; // at night, the room's night look (src/modules/night-look.js)
       img && img.complete && img.naturalWidth ? e.drawImage(img, 0, 0, c, b) : ((e.fillStyle = "#e2e5ed"), e.fillRect(0, 0, c, b));
     }
     // Where Squatch's eyes show when he hides in a plant (Brian, C21: "The two eyes sit LOW, in the two
     // lower-front clumps" of leaves, small). One entry per plant in the locked pictures, in game positions.
     const CH1_PLANT_EYES = {
-      hangar: [[125, 308]], // loading bay plant
+      hangar: [[295, 308]], // loading bay plant (v3: right of the bin)
       hall: [
         [441, 486], // the plant in the middle of the hall
         [101, 318], // the plant by the back wall
@@ -481,43 +433,10 @@
         return (ch1Trail(), sqOk && moOk);
       });
     }
-    function ch1AtDelivery() {
-      ((n.scene = "Q2"),
-        (n.sqPose = "stand"),
-        J([
-          ch1Step("sq", CH1_PLANT.x, CH1_PLANT.y, 180),
-          N(() => {
-            ((n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y));
-          }),
-          ch1Step("mo", 640, 500, 180),
-          v("official", "Mops, don't worry, you know how much we love you here. Even our visitors always love you."),
-          v("tourist", "Isfred Bar Neshuman! The dock needs you."),
-          v("ups", "Left one of the copies in the office. What do I do with the other two?"),
-          v("mops", "I'll take care of it."),
-          v("mops", "So futuristic and we still order on paper."),
-          N(() => {
-            ((n.ch1Prop = "delicious"), D.slurp());
-          }),
-          v("mops", "Delicious."),
-          N(() => {
-            n.ch1Prop = "gumble";
-          }),
-          v("mops", "Mmf mrrf!"),
-          v("sq", "You're gumbling! (goat mumbling)"),
-          N(() => {
-            n.ch1Prop = "bin";
-          }),
-          v("mops", "Ptoo!"),
-          v("mops", "We got to watch out for these robots."),
-          N(() => {
-            ((n.sqPose = "stand"), (n.ch1Prop = ""), ch1Go("hall", { scene: "Q3" }, ch1Snack));
-          }),
-        ]));
-    }
     function ch1Snack() {
       ((n.scene = "Q3"),
         J([
-          v("tourist", "I swear we had more Moon Pies... is that what they stole at lunch?", "say", !0),
+          v("tourist", "I swear we had more " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + "... is that what they stole at lunch?", "say", !0),
           v("mops", "Quick, hide."),
           ch1Step("sq", ne.x, ne.y, 200),
           N(() => {
@@ -547,273 +466,6 @@
             ((n.sqPose = "stand"), (n.wardrobe = "closed"), (n.scene = "Q4"), (n.ctrl = !0), ch1NightPlay());
           }),
         ]));
-    }
-    // Half one of the party rebuild ends here: Squatch walks into the older free play in the outfit he chose
-    // (src/modules/party.js draws it on him). The arrow dance and the cool-hat ending are off; half two replaces this.
-    function ch1FreePlayStart() {
-      ((n.scene = "QA"),
-        (n.room = "hall"),
-        (n.ch1Party = !0),
-        (n.ch1Disguise = !0),
-        (n.ch1Flyer = !0),
-        (n.ch1PartyT = 0),
-        (n.ch1PartyOver = !1),
-        (n.ch1Snacks = 0),
-        (n.ch1Hugs = 0),
-        (n.ch1Look = 0),
-        (n.ch1Spill = 0),
-        (n.ch1HatAskew = !1),
-        (n.ch1Photo = !1),
-        (n.ch1InShot = !1),
-        (n.ch1Balloon = ""),
-        // The octopus starts where he danced in P4 and strolls back to the snacks (nobody jumps).
-        (n.ch1Oct = { ...partyBeat().octopusStart(), t: 0, stroll: !0 }),
-        (n.ch1Chip = ""),
-        (n.sqPose = "stand"),
-        (n.ctrl = !0),
-        chipNow());
-    }
-    function ch1PartySpots() {
-      if (n.ch1PartyOver) return [];
-      if (!n.ch1Disguise) return [];
-      let out = [];
-      n.ch1Balloon === "up" &&
-        n.ch1BalloonT < BALLOON_GRAB_SECONDS &&
-        out.push(
-          spot({
-            id: "jump",
-            verb: "JUMP",
-            cap: "balloon",
-            who: "sq",
-            x: CH1_KID.x,
-            y: n.ch1BalloonY,
-            r: 220,
-            hot: !0,
-            f: ch1JumpBalloon,
-          }),
-        );
-      n.ch1Balloon === "held" &&
-        (out.push(
-          spot({
-            id: "give",
-            verb: "GIVE",
-            cap: "balloon",
-            who: "sq",
-            x: CH1_KID.x,
-            y: CH1_KID.y,
-            r: 160,
-            hot: !0,
-            f: ch1GiveBalloon,
-          }),
-        ),
-        out.push(
-          spot({
-            id: "keep",
-            verb: "KEEP",
-            cap: "balloon",
-            who: "sq",
-            x: 700,
-            y: 540,
-            r: 160,
-            f: ch1KeepBalloon,
-          }),
-        ));
-      // No TALK · guest: Squatch talks to no stranger until Chapter 4.4 (rule 7); the line was cut by the party plan.
-      !n.ch1BarDone &&
-        out.push(
-          spot({
-            id: "bar",
-            verb: "OPEN",
-            cap: "snack bar",
-            who: "sq",
-            x: 860,
-            y: 430,
-            r: 100,
-            f: ch1BarOpen,
-          }),
-        );
-      !n.ch1Photo &&
-        out.push(
-          spot({
-            id: "photo",
-            verb: "SNAP",
-            cap: "photo",
-            who: "sq",
-            x: CH1_CAM.x,
-            y: CH1_CAM.y,
-            r: CH1_CAM.r,
-            f: ch1Photo,
-          }),
-        );
-      for (let m of CH1_PARTY_SNAG)
-        out.push(
-          spot({
-            id: m.id,
-            verb: m.verb,
-            cap: m.cap,
-            who: "sq",
-            x: m.x,
-            y: m.y,
-            r: 80,
-            f: () => ch1HatOff(m.why),
-          }),
-        );
-      n.ch1Disguise &&
-        (n.ch1Hugs || 0) < 2 &&
-        out.push(
-          spot({
-            id: "hug",
-            verb: "HUG",
-            cap: "octopus",
-            who: "sq",
-            x: 760,
-            y: 540,
-            r: 80,
-            f: ch1Hug,
-          }),
-        );
-      (n.ch1Look || 0) > 0 &&
-        out.push(
-          spot({
-            id: "hide",
-            verb: "HIDE",
-            cap: "plant",
-            who: "sq",
-            x: partyBeat().spot("plantMiddle").x,
-            y: partyBeat().spot("plantMiddle").y,
-            r: 90,
-            f: () => {
-              let at = partyBeat().spot("plantMiddle");
-              ((n.sqPose = "hidden"), (n.sq.x = at.x), (n.sq.y = at.y));
-            },
-          }),
-        );
-      ch1ExtraPartySpots().forEach((s) => out.push(s));
-      return out;
-    }
-    function ch1Hug() {
-      ((n.ch1Hugs = (n.ch1Hugs || 0) + 1), (n.ctrl = !1), (n.act = null));
-      n.ch1Hugs === 1
-        ? ((n.ch1HatAskew = !0), J([v("tourist", "*hic* Fellow tourist!"), N(() => (n.ctrl = !0))]))
-        : J([N(() => ch1HatOff("hug"))]);
-    }
-    function ch1InFrame(x, y) {
-      return x > CH1_FRAME.x0 && x < CH1_FRAME.x1 && y > CH1_FRAME.y0 && y < CH1_FRAME.y1;
-    }
-    function ch1Photo() {
-      let inFrame = ch1InFrame(n.sq.x, n.sq.y);
-      ((n.ch1Photo = !0), (n.ch1InShot = inFrame), inFrame && (n.stars = (n.stars || 0) + PHOTO_BONUS), (n.ctrl = !1), (n.act = null));
-      J([{ k: "panel", id: "ch1photo" }, N(() => (n.ctrl = !0))]);
-    }
-    function ch1JumpBalloon() {
-      n.ch1Balloon === "up" &&
-        ((n.ch1Balloon = "held"), (n.ch1JumpT = 0.55), (n.ch1Kid = "wide"), (n.act = null));
-    }
-    function ch1GiveBalloon() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        J([
-          ch1Step("sq", CH1_KID.x, CH1_KID.y, 200),
-          N(() => {
-            ((n.ch1Balloon = "back"), (n.ch1Kid = "wide"));
-          }),
-          uV(0.4),
-          N(() => {
-            n.ch1Kid = "smile";
-          }),
-          uV(0.4),
-          N(() => {
-            n.ch1Kid = "shh";
-          }),
-          uV(0.4),
-          N(() => {
-            ((n.ch1Kid = "up"), (n.ctrl = !0));
-          }),
-        ]));
-    }
-    function ch1KeepBalloon() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        J([
-          ch1Step("sq", 720, 540, 200),
-          v("kid", "Scary Wookiee!"),
-          N(() => ch1HatOff("scare")),
-        ]));
-    }
-    function ch1StampBalloon() {
-      ((n.ch1Save = { balloonRest: n.ch1BalloonRest || "", balloonPopped: !!n.ch1BalloonPopped }),
-        ch2.check && ((ch2.check.balloonRest = n.ch1Save.balloonRest), (ch2.check.balloonPopped = n.ch1Save.balloonPopped)));
-    }
-    function ch1LoadBalloon() {
-      let saved = ch2.check && ch2.check.balloonRest != null ? ch2.check : n.ch1Save;
-      saved && saved.balloonRest != null && ((n.ch1BalloonRest = saved.balloonRest || ""), (n.ch1BalloonPopped = !!saved.balloonPopped));
-    }
-    // The balloon stays in the hall. Back or held means he left it behind, tied up. Anything else is a miss.
-    function ch1LockBalloon() {
-      n.ch1BalloonRest ||
-        !n.ch1Balloon ||
-        ((n.ch1BalloonRest = n.ch1Balloon === "back" || n.ch1Balloon === "held" ? "tied" : "ceiling"), ch1StampBalloon());
-    }
-    function ch1BalloonPopNow() {
-      if (n.ch1BalloonPopped || !n.ch1BalloonRest) return;
-      ((n.ch1BalloonPopped = !0), (n.ch1BalloonPops = (n.ch1BalloonPops || 0) + 1), (n.ch1BalloonPop = 0.85), D.pop(), ch1StampBalloon());
-    }
-    function ch1HatOff(why) {
-      if (n.ch1PartyOver || !n.ch1Disguise) return;
-      ch1LockBalloon();
-      ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
-      let lines = [];
-      why === "bar" && lines.push(v("tourist", "Wait a second... fur!"));
-      lines.push(
-        v("tourist", "FUR! Security!"),
-        v("pa", "FUR! Security!", "pa"),
-        { k: "panel", id: "ch1fur" },
-        N(() => ch1RaidBegin()),
-      );
-      J(lines);
-    }
-    // The older free play's time is up (COOL_HAT_SECONDS): Squatch walks home, and the evening ends there.
-    // (The cool-hat line is off in half one of the party rebuild; half two brings closing time.)
-    function ch1PartyTimeUp() {
-      if (n.ch1PartyOver) return;
-      ((n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Party = !1));
-      ch1Go("closet", { who: "sq", scene: "Q3" }, () => J(ch1Homecoming()));
-    }
-    function ch1PartyHome() {
-      // Day 1 ends here for now. Beats 19-21 can take over this function and call ch1Day2Begin after bedtime.
-      ((n.moPose = "stand"),
-        (n.mo.x = 455),
-        (n.mo.y = 560),
-        (n.ch1Party = !1),
-        J([
-          v("mops", "A flyer. And fur on the floor."),
-          N(() => ch1Day2Begin()),
-        ]));
-    }
-    function ch1PartyTick(dt) {
-      if (n.scene !== "QA" || n.ch1PartyOver) return;
-      n.ch1JumpT > 0 && (n.ch1JumpT -= dt || 0);
-      (n.ch1Look || 0) > 0 && (n.ch1Look = Math.max(0, n.ch1Look - (dt || 0)));
-      n.ch1Oct && n.ch1Oct.stroll && !n.ch1OctChase && mV(n.ch1Oct, CH1_PARTY_CAST.octopus[0], CH1_PARTY_CAST.octopus[1], 40, dt || 0) && (n.ch1Oct.stroll = !1);
-      (n.ch1Spill || 0) > 0 && (n.ch1Spill = Math.max(0, n.ch1Spill - (dt || 0) / 1.8));
-      n.ctrl &&
-        n.ch1Disguise &&
-        n.ch1Flyer &&
-        n.ch1Balloon === "up" &&
-        !n.ch1Cut &&
-        ((n.ch1BalloonT = (n.ch1BalloonT || 0) + (dt || 0)),
-        (n.ch1BalloonY = 460 - (460 - 80) * Math.min(1, n.ch1BalloonT / BALLOON_GRAB_SECONDS)),
-        n.ch1BalloonT >= BALLOON_GRAB_SECONDS && ((n.ch1Balloon = "ceiling"), (n.ch1Kid = "sad")));
-      n.ctrl &&
-        n.ch1Disguise &&
-        n.ch1Flyer &&
-        !n.ch1Cut &&
-        !n.ch1Mini &&
-        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1PartyTimeUp());
-    }
-    function ch1BalloonTick(dt) {
-      n.room === "hall" && n.ch1Office && ch1BalloonPopNow();
-      n.ch1BalloonPop > 0 && (n.ch1BalloonPop = Math.max(0, n.ch1BalloonPop - (dt || 0)));
     }
     function ch1NightPlay() {
       ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), (n.ch1LookT = 0), chipNow());
@@ -854,7 +506,7 @@
           ch1Step("mo", 620, 500, 180),
           v("ups", "We could wipe the floor with that beard."),
           v("ups", "HQ sent us a message. You're going to be replaced this week anyway."),
-          v("mops", "The new robots come on the ship tomorrow. Let's go find the pancake stand."),
+          v("mops", "The new robots come on the ship tomorrow. Let's go find the " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand."),
           v("sq", "Oh, it was on the form I sent, I mean, never mind."),
           v("sq", "A copy got sucked into the vent.", "whisper"),
           N(() => {
@@ -917,7 +569,7 @@
         ]));
     }
     function ch1Site() {
-      // The Moon Pie page is on the manager's computer in the hall (R46), never on the home TV.
+      // The snack's order page is on the manager's computer in the hall (R46), never on the home TV.
       ((n.scene = "Q7"),
         (n.room = "hall"),
         (n.ch1D = !1),
@@ -931,102 +583,11 @@
         ]));
     }
     function ch1ReturnCrate() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.ch1Mail = "full"),
-        J([N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "pickup", mail: "full", scene: "Q2" }, ch1Pickup))]));
-    }
-    function ch1Pickup() {
-      // R38: crates leave storage for the belt. Squatch is inside one. Mops comes in, he climbs out, they walk home.
-      ((n.ch1Prop = "load"),
-        (n.ch1InCrate = !0),
-        (n.ch1Peeked = !0),
-        (n.ch1Load = 0),
-        (n.sqPose = "hidden"),
-        (n.sq.x = 780),
-        (n.sq.y = 520),
-        (n.moPose = "stand"),
-        (n.mo.x = -40),
-        (n.mo.y = 520),
-        (n.ctrl = !1),
-        J([
-          cV((dt) => {
-            n.ch1Load = Math.min(1, (n.ch1Load || 0) + dt * 0.55);
-            let arrived = mV(n.mo, 690, 520, 160, dt);
-            return (ch1Trail(), n.ch1Load >= 1 && arrived);
-          }),
-          v("mops", "Get out. They're checking a crate."),
-          N(() => {
-            ((n.ch1InCrate = !1), (n.sqPose = "stand"), (n.ch1Climbed = !0));
-          }),
-          ch1Step("sq", 760, 520, 120),
-          cV((dt) => (ch1Trail(), mV(n.sq, 680, 530, 140, dt))),
-          N(() => ch1Go("closet", { scene: "Q8", night: !1, ship: !1 }, ch1Costume)),
-        ]));
-    }
-    function ch1Costume() {
-      ((n.scene = "Q8"),
-        (n.wardrobe = "open"),
-        (n.room = "closet"),
-        J([
-          ch1Step("sq", 460, 510, 160),
-          v("mops", "The spare jacket. The beard. And the horns."),
-          N(() => {
-            n.ctrl = !0;
-          }),
-        ]));
-    }
-    function ch1Trim() {
-      ((n.costumeOn = !0),
-        (n.ctrl = !1),
-        (n.act = null),
-        J([
-          v("mops", "More bleat. Less roar."),
-          N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "day", mail: "full", scene: "Q9", stand: [400, 500] }, ch1AtScanner)),
-        ]));
-    }
-    function ch1AtScanner() {
-      ((n.scene = "Q9"), (n.ctrl = !0), (n.costumeOn = !0));
-    }
-    function ch1Board() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.costumeOn = !0),
-        J([
-          v("scanner", "HAIR... PROBABLY. PROCEED."),
-          cV((dt) => (ch1Trail(), (n.costumeOn = !0), mV(n.sq, 480, 220, 160, dt) && mV(n.mo, 540, 240, 160, dt))),
-          { k: "card", id: "later", text: "Later that evening..." },
-          N(() => {
-            ((n.room = "hall"),
-              (n.ch1D = !1),
-              (n.ch1Duct = !1),
-              (n.ch1Office = !0),
-              (n.scene = "Q9"),
-              (n.sqPose = "hidden"),
-              (n.moPose = "hidden"),
-              (n.sq.x = -400),
-              (n.mo.x = -400),
-              (B.camX = 0));
-          }),
-          v("official", "Send in Mops for his Employee of the Month photo."),
-          v("robot", "Mops isn't here."),
-          v("official", "Not here? He can't live off the station!"),
-          v("robot", "He was replaced by the new robot shipment."),
-          v("official", "I never ordered a replacement! Get me the security tapes."),
-          v("pa", "The base called the ship. It has to stop.", "pa"),
-          N(() => {
-            (aV.caught + x.caught === 0 && !n.found.has("ghost1") && (n.found.add("ghost1"), (n.stars += 250)), (B.nextBeat = "Ch2"));
-          }),
-          { k: "panel", id: "tally" },
-          N(Ws),
-        ]));
+      ((n.ctrl = !1), (n.act = null), pkBeat() ? pkBeat().start() : ch1ChapterEnd()); // pickup day: src/modules/pickup.js
     }
     function ch1QSpots() {
       if (partyBeat() && partyBeat().active()) return [...partyBeat().spots(), ...ch1CalendarSpots()];
       if (ch1MorningSpots()) return ch1MorningSpots();
-      if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
-      if (n.ch1Cut) return ch1CutSpots();
-      if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (n.ch1Day2) return ch1Day2Spots();
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
@@ -1074,8 +635,6 @@
           ),
         s === "Q7" &&
           out.push(spot({ id: "crate", verb: "RETURN", cap: "empty crate", who: "sq", x: lt.x, y: 420, r: 160, at: [lt.x, lt.y - 40], hot: !0, f: ch1ReturnCrate })),
-        s === "Q8" && out.push(spot({ id: "jacket", verb: "PUT ON", cap: "jacket", who: "sq", x: 460, y: 510, r: 200, at: [460, 430], hot: !0, f: ch1Trim })),
-        s === "Q9" && out.push(spot({ id: "scan", verb: "BOARD", cap: "scanner", who: "sq", x: 480, y: 500, r: 160, hot: !0, f: ch1Board })),
         s === "Q4" &&
           out.push(
             spot({
@@ -1122,12 +681,8 @@
     function ch1QTick(dt) {
       (n.scene || "")[0] === "Q" && ch1GoalClock(dt);
       (n.scene || "")[0] === "Q" &&
-        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())),
+        (n.ctrl && (n.act = pick(ch1QSpots())),
         ch1Watch(dt),
-        ch1PartyTick(dt),
-        ch1BalloonTick(dt),
-        ch1SliceTick(dt),
-        ch1Day1Tick(dt),
         ch1Day2Tick(dt),
         n.scene !== "QA" && qSec(dt || 0));
     }
@@ -1147,9 +702,7 @@
         (n.sq.x = 140),
         (n.sq.y = 540),
         (n.ctrl = !0),
-        (n.ch1LookT = 0),
-        ch1LoadBalloon(),
-        n.ch1Day2 && ch1NightReset());
+        (n.ch1LookT = 0));
     }
     function drawGameBin(px, py) {
       (e.beginPath(),
@@ -1165,26 +718,12 @@
     function drawPinkSlip(px, py) {
       (m(px, py, 18, 14, 2), r("#ff8fb8", 2), C([px + 3, py + 4, px + 15, py + 4], "#9aa3b2", 1));
     }
-    function drawCh1PartyRoom() {
-      drawLockedRoom("hall");
-      if (n.roomOnly) return;
-      drawCh1Party();
-      n.sqPose !== "hidden" &&
-        n.sqPose !== "ball" &&
-        Re(n.sq.x, n.sq.y, sqDrawScale(), {
-          f: n.sq.f || 1,
-          walk: n.sq.moving ? n.sq.walk : 0,
-          leap: (n.ch1JumpT || 0) > 0,
-        }),
-        n.sqPose !== "hidden" && n.sqPose !== "ball" && n.ch1Disguise && partyBeat() && partyBeat().drawOutfitOn(e, n.sq.x, n.sq.y, sqDrawScale(), n.sq.f || 1, !!n.ch1HatAskew);
-      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
-    }
     function drawCh1DayHall() {
       drawLockedRoom("hall");
       if (n.roomOnly) return;
-      drawCh1BalloonLeft();
+      luBeat() && luBeat().drawProps(e); // the crates and the plate of snack cakes stay after the lunch sneak
       n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
-      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
+      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1, ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);
       n.sqPose === "hidden" && ch1HideEyes();
       n.sqPose !== "hidden" &&
@@ -1202,7 +741,6 @@
       if (n.roomOnly) return;
       (Qt(480, 530, "#c9b6f2", qtScale("hallway"), 0.3),
         dq(640, 530, !1),
-        drawCh1BalloonLeft(),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&
           n.sq.x > -40 &&
@@ -1226,53 +764,6 @@
           r("#7a1210", 3),
           g("REC", 190, 140, 17, "#ffffff", "center", 900),
           Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
-    }
-    // The older free play's hall (until half two of the party rebuild replaces it). The banner, the bartender,
-    // the guards, the camera and Squatch's outfit are the party module's drawings (src/modules/party.js); the
-    // guests are Brian's approved pictures. The poster, the cake table, the guest in the cape, the extra counter
-    // snacks, the stick octopus and the balloon kid are gone (party plan, "Removed").
-    function drawCh1Party() {
-      let pb = partyBeat(),
-        look = (n.ch1Look || 0) > 0,
-        face = look ? 1 : 0,
-        eye = 72 * ALIEN_ADULT,
-        glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
-      pb && (pb.drawLightsOn(e), pb.drawBannerOn(e), pb.drawBandOn(e));
-      (drawCh1Alien(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1], "horns", ALIEN_ADULT, face || 1),
-        glance(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1]),
-        n.sqPose === "hidden" && ch1HideEyes(),
-        drawCh1PartyCones(),
-        (n.ch1GuestArt = 0),
-        CH1_GUESTS.forEach((guest) => {
-          if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
-          // The octopus is the one who chases Squatch for a hug: drawn where the chase has him.
-          if (guest[2] === "blob") return;
-          pb && pb.drawFreeGuest(e, guest[2], guest[0], guest[1]) && n.ch1GuestArt++;
-        }),
-        window.SSQ && window.SSQ.drawGuest(e, "blob", (n.ch1Oct && n.ch1Oct.x) || CH1_PARTY_CAST.octopus[0], (n.ch1Oct && n.ch1Oct.y) || CH1_PARTY_CAST.octopus[1], ADULT_PX, n.T) && n.ch1GuestArt++,
-        n.ch1Raid && n.ch1Raid.witness && window.SSQ && window.SSQ.drawGuest(e, "spots", n.ch1Raid.witness.x, n.ch1Raid.witness.y, ADULT_PX, n.T),
-        ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
-          g.face != null &&
-            seenCone(g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)");
-          pb && pb.drawPersonOn(e, "guard", g.x, g.y, Math.cos(g.face || 0) < 0 ? -1 : 1);
-        }),
-        pb && pb.drawPersonOn(e, "bartender", CH1_PARTY_CAST.bartender[0], CH1_PARTY_CAST.bartender[1], -1),
-        drawCh1Fest(),
-        pb && pb.drawTripodOn(e),
-        (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
-        drawCh1PartyMarks());
-    }
-    function drawCh1Chain(p) {
-      let tip = Math.min(1, p / 0.25),
-        roll = p < 0.25 ? 0 : Math.min(1, (p - 0.25) / 0.25),
-        tray = p < 0.5 ? 0 : Math.min(1, (p - 0.5) / 0.25),
-        cake = p < 0.75 ? 0 : Math.min(1, (p - 0.75) / 0.25);
-      (e.save(), e.translate(760, 470 + CH1_BAR_DY), e.rotate(tip * 0.7));
-      ["pie", "cup", "cake"].forEach((k, i) => drawBarSnack(k, (i - 1) * 36, -28 - (1 - tip) * 16, 1));
-      e.restore();
-      roll > 0 && (e.save(), e.translate(800 + roll * 120, Math.min(580, 520 + CH1_BAR_DY)), e.rotate(roll * 6), drawBarSnack("cup", 0, 0, 1.15), e.restore());
-      tray > 0 && (e.save(), e.translate(900, 500 + CH1_BAR_DY), e.rotate(-tray * 0.9), m(-46, -8, 92, 16, 3), r("#cdbb98", 3), drawBarSnack("pie", 0, -22, 0.7), e.restore());
-      cake > 0 && (e.save(), e.translate(860 + cake * 30, 480 + CH1_BAR_DY + cake * 20), drawBarSnack("cake", 0, 0, 1.2), e.restore());
     }
     function drawCh1Alien(ax, ay, kind, sc, face) {
       let f = face < 0 ? -1 : 1,
@@ -1322,67 +813,8 @@
       else (m(-18, -46, 8, 18, 3), r("#e5533d", 2));
       e.restore();
     }
-    function drawPartyBalloon(x, y, rad) {
-      (e.save(),
-        e.translate(x, y),
-        L(0, 0, rad),
-        r("#e5533d", 3),
-        e.beginPath(),
-        e.ellipse(-rad * 0.28, -rad * 0.32, rad * 0.28, rad * 0.18, -0.6, 0, 7),
-        (e.fillStyle = "rgba(255,255,255,.75)"),
-        e.fill(),
-        e.beginPath(),
-        e.moveTo(-4, rad - 1),
-        e.lineTo(0, rad + 8),
-        e.lineTo(4, rad - 1),
-        e.closePath(),
-        r("#b91c1c", 2),
-        e.restore());
-    }
-    // R61. After the party the balloon stays in this hall. A miss is on the ceiling. A return or a keep is tied
-    // to the plant by the kid, because Squatch does not take it home. The office visit pops it once.
-    function drawCh1BalloonLeft() {
-      let rest = n.ch1BalloonRest,
-        pop = (n.ch1BalloonPop || 0) > 0;
-      if (!rest || n.ch1Party || (n.ch1BalloonPopped && !pop)) return;
-      let tied = rest === "tied",
-        x = tied ? 168 : 420,
-        y = tied ? 520 : 140;
-      if (pop) {
-        for (let i = 0; i < 8; i++) {
-          let a = (i / 8) * Math.PI * 2;
-          C([x + Math.cos(a) * 6, y + Math.sin(a) * 6, x + Math.cos(a) * 20, y + Math.sin(a) * 20], "#1e2430", 2);
-        }
-        g("POP!", x, y - 28, 22, "#e5533d", "center", 900);
-        return;
-      }
-      tied ? (Xp(130, 580), C([148, 552, x, y + 18], "#e5533d", 1.4)) : C([x, 160, x, y + 18], "#e5533d", 1.4);
-      drawPartyBalloon(x, y, 14);
-    }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));
-    }
-    function drawPickupLoad() {
-      let t = n.ch1Load || 0,
-        slide = (x0, y0, x1, y1) => [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t];
-      // Other crates leave the mail room for the ramp. Squatch's crate stays inside the mail room.
-      [
-        [800, 500, 520, 330],
-        [860, 460, 580, 300],
-      ].forEach((s) => {
-        let p = slide(s[0], s[1], s[2], s[3]);
-        Xn(p[0], p[1], 58, 36, "");
-      });
-      (Xn(430, 250, 70, 34, ""),
-        e.save(),
-        e.translate(438, 242),
-        e.rotate(-0.8),
-        m(0, -6, 64, 12, 2),
-        r("#d9a35b", 3),
-        e.restore(),
-        dq(500, 270, !1),
-        Xn(748, 470, 78, 48, ""),
-        n.ch1InCrate && ga(787, 482));
     }
     function drawCh1Delivery() {
       let night = !!n.ch1Night;
@@ -1395,12 +827,6 @@
       n.sqPose === "hidden" && !n.ch1InCrate && ch1HideEyes();
       n.ch1InCrate && ga(830, 510);
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", qtScale("hangar"), -1),
-      (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
-        [
-          ["Dot", 250, 580],
-          ["Bob", 330, 565],
-          ["Lou", 410, 580],
-        ].forEach((w) => u5({ x: w[1] - (n.ch1Crew === "leave" ? (n.ch1Leave || 0) * 520 : 0), y: w[2], name: w[0] }));
       !night && n.ch1Ship && n.scene !== "Q9" && n.ch1BossX !== -1 && Qt(n.ch1BossX == null ? 560 : n.ch1BossX, 500, "#c9b6f2", qtScale("hangar"), 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
@@ -1413,7 +839,7 @@
           e.stroke()),
         dq(CH1_ROBOT.x, CH1_ROBOT.y, !1),
         n.ch1Alert && g("!", CH1_ROBOT.x, CH1_ROBOT.y - 78, 28, "#e5533d", "center", 900));
-      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
+      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1, ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) }),
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&

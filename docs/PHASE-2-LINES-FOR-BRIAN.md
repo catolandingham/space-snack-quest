@@ -1,5 +1,7 @@
 # Phase 2 lines for Brian
 
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 Every new or changed thing the player reads or sees in Phase 2 (branch `phase-2-structure`), listed so you can say yes or change it before the merge. Same format as `docs/PHASE-1-LINES-FOR-BRIAN.md`: each row gives where it shows, the words in the game now, and one other way to say it.
 
 To change a line: edit the "In the game now" words in this file and say so in the pull request. An agent will copy your words into `src/game/` and the tests (the tests read this file).
@@ -47,7 +49,7 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.10 | Chapter 1, `O9`: The note and the rocket (Brian's wording, 2026-11-07) | Squatch: put the note and the rock in the box | Squatch: put them in your Guardian Box (the earlier wording) |
 | 18.11 | Chapter 1, `S1`: S1 and S1L: Mops forgot his lunch (was "Bring Mops his lunch") | Squatch: bring Mops his lunch | Squatch: take Mops his lunch |
 | 18.12 | Chapter 1, `S2`: S2: Mops is in the hall | Squatch: give Mops his lunch | Squatch: hand Mops his lunch |
-| 18.13 | Chapter 1, `S4`: S4: the Moon Pie crate (Brian's wording, 2026-11-07) | Squatch: hide from the bot in the crate | Squatch: get a Moon Pie (the earlier wording) |
+| 18.13 | Chapter 1, `S4`: S4: the Stars Cakes crate (Brian's wording, 2026-11-07) | Squatch: hide from the bot in the crate | Squatch: get a Moon Pie (the earlier wording) |
 | 18.14 | Chapter 1, `S4:in`: S4: Squatch is in the crate | Squatch: stay hidden in the crate | Squatch: keep still in the crate |
 | 18.15 | Chapter 1, `S5`: S5: the window, before the visitors talk (goal only) | Squatch: listen to the visitors | Squatch: hear what the visitors say |
 | 18.16 | Chapter 1, `S5:bro`: S5: the brochure is in the bin | Squatch: grab the brochure | Squatch: take the brochure |
@@ -125,9 +127,9 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.80 | Chapter 1, S2: the badge on the gallery wall | FLIP · badge | FLIP · frame |
 | 18.81 | Chapter 1, S2: Mops | GIVE · lunch | GIVE · Mops his lunch |
 | 18.82 | Chapter 1, S2 and S6: the gallery wall | LOOK · photos | LOOK · wall |
-| 18.83 | Chapter 1, S4: the Moon Pie crate | HIDE · crate | HIDE · in crate |
+| 18.83 | Chapter 1, S4: the Stars Cakes crate | HIDE · crate | HIDE · in crate |
 | 18.84 | Chapter 1, S4: inside the crate | LEAVE · crate | LEAVE · hiding spot |
-| 18.85 | Chapter 1, S4: inside the crate | GRAB · Moon Pie | GRAB · pie |
+| 18.85 | Chapter 1, S4: inside the crate | GRAB · Stars Cake | GRAB · pie |
 | 18.86 | Chapter 1, S5: the brochure in the bin | GRAB · brochure | GRAB · paper |
 | 18.87 | Chapter 1, S5: the brochure on the table | LOOK · brochure | LOOK · paper |
 | 18.88 | Chapter 1, S6: the plaque | PULL · plaque | PULL · frame |

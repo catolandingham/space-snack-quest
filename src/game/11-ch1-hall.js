@@ -459,7 +459,7 @@
         spot({
           id: "crate",
           verb: "GRAB",
-          cap: "Moon Pie",
+          cap: (window.SSQ && window.SSQ.snack ? window.SSQ.snack("one") : "snack"),
           who: "sq",
           at: [Ct.x, Ct.y - 40],
           when: !!le.inCrate && !n.found.has("pie500"),
@@ -486,7 +486,7 @@
         J([
           v("sq", "I came in a crate like this.", "whisper"),
           { k: "card", id: "fb", text: "Years ago, on Stormtop..." },
-          { k: "fb", pic: "fb1crate", cap: "A delivery crate of Moon Pies came to Stormtop." },
+          { k: "fb", pic: "fb1crate", cap: "A delivery crate of " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + " came to Stormtop." },
           { k: "fb", pic: "fb1lid", cap: "Mops opened it. Inside: a sleeping baby Sasquatch, covered in crumbs." },
           { k: "fb", pic: "fb1beard", cap: "The baby woke up, grabbed Mops's beard, and giggled." },
           v("mops", "...Baaa?"),
@@ -585,7 +585,7 @@
         (n.sq.y = rt.y + 6),
         J([
           uV(0.4),
-          v("gary", "Did you hear? Big furry folks run a pancake stand on Mars!", "say", !0),
+          v("gary", "Did you hear? Big furry folks run a cake stand on Mars!", "say", !0),
           v("linda", "Big furry folks? Like... a whole family?", "say", !0),
           v("sq", "Big. Furry. Folks. Like ME?", "whisper"),
           rn((l) => {
@@ -1218,7 +1218,7 @@
       let m = who === "mops";
       if (x.mops === m) return;
       let before = !!x.mops,
-        line = why && SWITCH_WHY[why];
+        line = why && (SWITCH_WHY[why] || (/ /.test(why) ? why : "")); // (a whole sentence is its own reason: src/modules/escape.js)
       // Test record: who the player was at the moment this switch (and its card) was queued.
       window.__ss && (window.__ss.switchLog = window.__ss.switchLog || []).push({ to: who, before, why: why || "", card: !!line });
       ((x.mops = m), (n.sq.moving = !1), (n.mo.moving = !1));
@@ -1788,6 +1788,8 @@
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
         "Times caught " + s,
         ...(s === 0 ? [NEVER_CAUGHT, NEVER_CAUGHT_WHY] : [NEVER_CAUGHT_TODO]),
+        // The party's honor for taking every snack (src/modules/party-snacks.js): one line, no points.
+        ...(partyBeat() && partyBeat().snackHonor && partyBeat().snackHonor() ? [partyBeat().snackHonor()] : []),
         "Chapter score \u2605 " + n.stars,
       ];
     }
