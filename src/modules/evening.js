@@ -71,7 +71,7 @@ import { LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js
 import { drawCrates, sqPawAt } from "./lunch-sneak-art.js";
 import { OUTLINE } from "./outline.js";
 import { coneFrom, coneSees, coneSeesPoint, drawCones, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
-import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET } from "./party-alarm.js";
+import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET, HALL_FROM_LUNCH } from "./party-alarm.js";
 import { drawHall, drawOrder } from "./party-draw.js";
 import { drawPerson, LOOKS, drawMark, drawAlarmFlash, drawVentSwirl, drawTuft } from "./party-art.js";
 import { partyLine } from "./party-lines.js";
@@ -1326,7 +1326,7 @@ export function createEvening(bridge) {
     if (!w) return;
     const bay = room() === "hangar",
       hallway = room() === "passage";
-    startAlarm(s, w, whereId || (bay ? "where-bay" : hallway ? "where-hallway" : "where-bar"), id === "fur-alarm" ? "who-guard" : bay || hallway ? "who-robot" : "who-tourist", bay ? "bay" : hallway ? "hallway" : "");
+    startAlarm(s, w, whereId || (bay ? "where-bay" : hallway ? "where-hallway" : "where-bar"), id === "fur-alarm" ? "who-guard" : bay || hallway ? "who-robot" : "who-tourist", bay ? "bay" : hallway ? "hallway" : HALL_FROM_LUNCH);
     e.sfx("bleep");
     psound.sting();
     s.seenBy = "";

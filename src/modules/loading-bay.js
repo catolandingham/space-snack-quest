@@ -62,7 +62,7 @@ import { firstSightHeartsUp } from "./mops-hearts.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
 import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES, AISLE } from "./lunch-sneak-place.js";
 import { coneFrom, drawCones, distToCone, SQUATCH_OUTLINE, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
-import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET } from "./party-alarm.js";
+import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET, HALL_FROM_LUNCH } from "./party-alarm.js";
 import { drawHall } from "./party-draw.js";
 import { drawMark, drawPerson, LOOKS } from "./party-art.js";
 import { drawHeart, drawCrates } from "./lunch-sneak-art.js";
@@ -1079,7 +1079,7 @@ export function createLoadingBay(bridge) {
     return showing;
   }
   function placeId() {
-    return room() === "hall" ? "" : room() === "passage" ? "bay-hallway" : "bay-day";
+    return room() === "hall" ? HALL_FROM_LUNCH : room() === "passage" ? "bay-hallway" : "bay-day";
   }
   function raise(b, c) {
     const e = E(),

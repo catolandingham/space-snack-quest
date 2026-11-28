@@ -5,7 +5,7 @@
  * cone; leaving a hiding place while its watcher looks away, before his "?" shows, gets him to the next place
  * unseen; going while he looks is seen). Nothing else types these numbers.
  */
-import { HALL, SPOTS } from "./party-hall.js";
+import { HALL, SPOTS, HALL_COUNTER } from "./party-hall.js";
 
 // The middle plant (locked picture): where he steps into it, and where his eyes show in its leaves.
 const PLANT = HALL.plants.find((p) => p.id === "middle");
@@ -176,14 +176,12 @@ export const HALLWAY_SPOTS = Object.freeze({
 /** Feet cannot go here in the hall during the lunch (the party's list, with the strip to the hallway doorway open). */
 export const LUNCH_SOLIDS = Object.freeze([
   Object.freeze({ x0: 240, x1: 490, y0: 0, y1: 304 }), // the stage
-  Object.freeze({ x0: 806, x1: 862, y0: 350, y1: 606 }), // the counter
-  Object.freeze({ x0: 806, x1: 960, y0: 548, y1: 606 }), // the counter's end
-  Object.freeze({ x0: 924, x1: 960, y0: 350, y1: 606 }), // the wall past the aisle
+  ...HALL_COUNTER.map(({ x0, x1, y0, y1 }) => Object.freeze({ x0, x1, y0, y1 })), // the counter, its end, the wall past the aisle
   Object.freeze({ x0: 772, x1: 800, y0: 380, y1: 400 }), // the stools
   Object.freeze({ x0: 772, x1: 800, y0: 438, y1: 458 }),
   Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552 }), // the middle plant's pot
   Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372 }), // the back plant's pot
-  Object.freeze({ x0: 616, x1: 700, y0: 446, y1: 474 }), // the crates' bottom
+  Object.freeze({ x0: 616, x1: 700, y0: 446, y1: 474, id: "crates" }), // the crates' bottom
 ]);
 export const LUNCH_BOUNDS = Object.freeze({ x0: 60, x1: 944, y0: HALL.floorTop, y1: 590 });
 

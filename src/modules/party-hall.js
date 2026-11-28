@@ -133,6 +133,17 @@ export const HALL_SOLIDS = Object.freeze([
   Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372, plant: true }),
   Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552, plant: true }),
 ]);
+/**
+ * The snack bar's counter itself (hall v2: its top 1085 to 1145 picture pixels wide, the service aisle behind it 1145
+ * to 1235, closed at the bottom by the counter's end), without the strip of floor above it to the hallway doorway:
+ * the counter, its end, and the wall past the aisle. HALL_SOLIDS' bar box covers all of it and the strip; the walkers
+ * that do use the strip (the guards and the alarm's witness, the lunch) keep out of these.
+ */
+export const HALL_COUNTER = Object.freeze([
+  Object.freeze({ x0: 806, x1: 862, y0: 350, y1: 606, id: "counter" }),
+  Object.freeze({ x0: 806, x1: 960, y0: 548, y1: 606, id: "counter-end" }),
+  Object.freeze({ x0: 924, x1: 960, y0: 350, y1: 606, id: "aisle-wall" }),
+]);
 // Where the camera points: the middle of the stage; once the band plays (Isfred has left the stage), the Croc Boys.
 export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });
 export const BAND_AIM = Object.freeze({ x: 308, y: 228 });

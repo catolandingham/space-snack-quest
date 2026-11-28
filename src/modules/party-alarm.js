@@ -19,9 +19,10 @@
  * The state lives in the party's game-state field (P.alarm), so a restart clears it. Numbers marked "pinned" are
  * Brian's approved values (docs/TUNING-PINS.json: guard-speed, guard-catch, home-search-delay, cone-feet).
  */
-import { SPOTS, HALL, HOME_ROOM, HALL_SOLIDS, stepTo } from "./party-hall.js";
+import { SPOTS, HALL, HOME_ROOM, HALL_SOLIDS, HALL_COUNTER, stepTo } from "./party-hall.js";
 import { findPath } from "./tap-path.js";
 import { stepRound } from "./room-model.js";
+import { LUNCH_SOLIDS } from "./lunch-sneak-place.js";
 import { coneFrom, coneSees, coneSeesPoint, lookAt } from "./party-watch.js";
 
 export const ALARM = Object.freeze({
@@ -50,7 +51,10 @@ const step = stepTo;
  * they're on top of plant"; they walked straight from point to point, through the middle plant's pot). `GUARD_AROUND`
  * is the floor a guard's feet may not touch: the stage, the bar's two stools and the two plant pots, each grown by a
  * person's feet box (party.js solids: 25 either side, 14 behind, 8 in front). The bar's strip is left out: the
- * guards come in past it, from the hallway doorway, and leave that way.
+ * guards come in past it, from the hallway doorway, and leave that way. The counter itself is in (party-hall.js
+ * HALL_COUNTER, Brian 2026-11-28: "security ... keep walking over the bar"; before that the whole bar box was left out
+ * with the strip, so a guard after Squatch behind the counter, or on his way out, walked straight over it). It grows
+ * only on the hall's side and the top: the aisle behind it stays as wide as it is, so a guard can still follow him in.
  */
 export const GUARD_FEET = Object.freeze({ side: 25, up: 14, down: 8 });
 // (behind a plant pot its leaves stand this much taller on the floor: a guard does not brush through them either)
@@ -67,9 +71,11 @@ export function catchReach(sq) {
   return ALARM.reach + (inLeaves ? PLANT_LEAVES + GUARD_FEET.down + 6 : 0);
 }
 const GUARD_PLANT = HALL_SOLIDS.filter((b) => !b.bar).map((b) => !!b.plant);
-export const GUARD_AROUND = Object.freeze(
-  HALL_SOLIDS.filter((b) => !b.bar).map((b) => Object.freeze({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down - (b.plant ? PLANT_LEAVES : 0), y1: b.y1 + GUARD_FEET.up })),
-);
+export const GUARD_AROUND = Object.freeze([
+  ...HALL_SOLIDS.filter((b) => !b.bar).map((b) => Object.freeze({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down - (b.plant ? PLANT_LEAVES : 0), y1: b.y1 + GUARD_FEET.up })),
+  // (the counter's left face and the end grow by the feet box; the aisle's two sides do not)
+  ...HALL_COUNTER.map((b) => Object.freeze({ id: b.id, x0: b.x0 - (b.x0 < 900 ? GUARD_FEET.side : 0), x1: b.x1, y0: b.y0 - GUARD_FEET.down, y1: b.y1 + GUARD_FEET.up })),
+]);
 const GUARD_FLOOR = Object.freeze({ x0: 40, x1: 960, y0: 290, y1: 600 });
 const GUARD_REPATH = 20;
 // True when the straight walk from (ax, ay) to (bx, by) touches none of GUARD_AROUND (checked every 4 pixels).
@@ -127,6 +133,22 @@ export function addAlarmPlace(id, place) {
   ALARM_PLACES.set(id, Object.freeze({ ...place }));
 }
 const HALL_PLACE = Object.freeze({ room: "hall", run: SPOTS.alarmRun, guardIn: SPOTS.guardIn, search: null, around: null, floor: null, feet: null, register: 0 });
+/** Tests: every room the rule runs in, [id, { room, run, guardIn, search, around, floor }], the hall ("") first. */
+export function alarmPlaceList() {
+  return [["", { ...HALL_PLACE, search: SEARCH, around: GUARD_AROUND, floor: GUARD_FLOOR }], ...ALARM_PLACES.entries()];
+}
+/**
+ * The hall from the Day 2 lunch on: the stack of crates the lunch put there stays (lunch-sneak-place.js LUNCH_PLACES,
+ * its floor in LUNCH_SOLIDS), so guards and the witness go round it too. Used by the lunch, the evening's snack bar
+ * and the loading bay day's walk through the hall.
+ */
+export const HALL_FROM_LUNCH = "hall-lunch";
+addAlarmPlace(HALL_FROM_LUNCH, {
+  ...HALL_PLACE,
+  around: [...GUARD_AROUND, ...LUNCH_SOLIDS.filter((b) => b.id === "crates").map((b) => ({ id: "crates", x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down, y1: b.y1 + GUARD_FEET.up }))],
+  floor: GUARD_FLOOR,
+  search: null,
+});
 const placeOf = (a) => (a && a.place && ALARM_PLACES.get(a.place)) || HALL_PLACE;
 
 /**

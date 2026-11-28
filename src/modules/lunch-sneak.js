@@ -40,7 +40,7 @@ import { drawHeartCone } from "./party-free-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
 import { HALL, HALL_PICTURE, SPOTS } from "./party-hall.js";
 import { coneFrom, coneSees, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
-import { startAlarm, tickAlarm, guardCones, ALARM } from "./party-alarm.js";
+import { startAlarm, tickAlarm, guardCones, ALARM, HALL_FROM_LUNCH } from "./party-alarm.js";
 import { drawHall } from "./party-draw.js";
 import { withSnackLayers } from "./crate-stamp.js";
 import { drawAlarmCloseUp } from "./party-art.js";
@@ -498,7 +498,7 @@ export function createLunchSneak(bridge) {
     const e = E(),
       l = L(),
       at = personNow(l, w);
-    startAlarm(l, { id: w.id, x: at.x, y: at.y }, WHERE, WHO);
+    startAlarm(l, { id: w.id, x: at.x, y: at.y }, WHERE, WHO, HALL_FROM_LUNCH);
     e.sfx("bleep");
     // the FUR! moment's sting, once, as at the party (music-picks.js "caught"); the music stops (alarmOn)
     psound.sting();
