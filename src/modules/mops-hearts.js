@@ -41,7 +41,7 @@ export const STORY_HEARTS = Object.freeze({
   "pk-not-mad": false, // 53, the note: "They're not mad."
   "pk-two-goats": false, // 56, the mirror: "I'm not one of a kind today."
   "pk-plate": false, // 57, the empty plate: "They ate it all."
-  "es-brochure": false, // 45a, the brochure on the wall: "Let's go find that Mars Cakes stand."
+  "es-brochure": false, // 45a, the brochure on the wall: "Let's go find that stand."
   "es-favorite": false, // 52, at the snack bar after his favorite snack
   "es-label": false, // 51, the printed label: "We're really going."
 });

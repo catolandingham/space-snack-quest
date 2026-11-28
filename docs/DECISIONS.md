@@ -3,46 +3,48 @@
 
 | Lines | Heading |
 | --- | --- |
-| 47–60 | ## Brian's answers of 2026-11-27 (round 7 video notes, questions 116 to 133) |
-| 61–64 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
-| 65–67 | ## The office code, 2026-11-26 (Brian, chat) |
-| 68–76 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
-| 77–82 | # Space Snack Quest: every decision, in one place |
-| 83–91 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
-| 92–99 | ## How to use this file |
-| 100–103 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
-| 104–111 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 112–115 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 116–122 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
-| 123–130 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
-| 131–139 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 140–150 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 151–160 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 161–171 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 172–195 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 196–200 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 201–209 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 210–213 | ## Sound, 2026-11-23 |
-| 214–238 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 239–250 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 251–275 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 276–284 | ## Which repo is the base, 2026-11-22 |
-| 285–295 | ## Sight cones, 2026-11-22 |
-| 296–300 | ## Latest calendar direction, 2026-11-16 |
-| 301–303 | ## Vent walk, 2026-11-16 |
-| 304–306 | ## Locked home room v5, 2026-11-16 |
-| 307–316 | ## Fidelity system (pictures are locked, not just words) |
-| 317–354 | ## 1. Working rules |
-| 355–421 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 422–446 | ## 3. Characters and look |
-| 447–523 | ## 4. Look, rooms and layout |
-| 524–545 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 546–589 | ## 6. Later chapters (2–4 and travel) |
-| 590–599 | ## 7. Audio |
-| 600–634 | ## 8. Code, controls and process |
-| 635–681 | ## 9. Open / waiting on Brian |
-| 682–776 | ## 10. Earlier entries, kept word for word |
-| 777–874 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 49–102 | ## Brian's answers of 2026-11-27 (round 7 video notes, questions 116 to 133) |
+| 103–155 | ## Round 7, the evening: Brian's answers of 2026-11-27 (questions 119 to 129) |
+| 156–166 | ## Pickup day, round 7: Brian's answers of 2026-11-27 (questions #116 to #133, relayed by Snack Quest Chat) |
+| 167–170 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
+| 171–173 | ## The office code, 2026-11-26 (Brian, chat) |
+| 174–182 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
+| 183–188 | # Space Snack Quest: every decision, in one place |
+| 189–197 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
+| 198–205 | ## How to use this file |
+| 206–209 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 210–217 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 218–221 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 222–228 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
+| 229–236 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 237–245 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 246–256 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 257–266 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 267–277 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 278–301 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 302–306 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 307–315 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 316–319 | ## Sound, 2026-11-23 |
+| 320–344 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 345–356 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 357–381 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 382–390 | ## Which repo is the base, 2026-11-22 |
+| 391–401 | ## Sight cones, 2026-11-22 |
+| 402–406 | ## Latest calendar direction, 2026-11-16 |
+| 407–409 | ## Vent walk, 2026-11-16 |
+| 410–412 | ## Locked home room v5, 2026-11-16 |
+| 413–422 | ## Fidelity system (pictures are locked, not just words) |
+| 423–460 | ## 1. Working rules |
+| 461–527 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 528–552 | ## 3. Characters and look |
+| 553–629 | ## 4. Look, rooms and layout |
+| 630–651 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 652–695 | ## 6. Later chapters (2–4 and travel) |
+| 696–705 | ## 7. Audio |
+| 706–740 | ## 8. Code, controls and process |
+| 741–787 | ## 9. Open / waiting on Brian |
+| 788–882 | ## 10. Earlier entries, kept word for word |
+| 883–980 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 ## Brian's answers of 2026-11-27 (round 7 video notes, questions 116 to 133)
 Brian answered on 2026-11-27 (relayed by Snack Quest Chat). These are final choices; the new lines they bring stay pending until he sees them.
