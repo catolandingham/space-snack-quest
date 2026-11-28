@@ -189,7 +189,7 @@ export const PK_HOLD = Object.freeze({
   stairs: Object.freeze({ x0: 40, y0: 120, x1: 200, y1: 560 }),
   // 61: the crew member comes down the stairs (r6 9:15), stops in front of Mops, then goes to the crate
   crewTop: Object.freeze({ x: 90, y: 300 }),
-  crewK: 2.3, // his height in grown-up heights of the bay: the hold is close up, as Mops and Squatch are drawn here
+  crewK: 2.2, // his height in grown-up heights of the bay: the hold is close up, 2.2 times, as Mops and Squatch are drawn here
   crewFoot: Object.freeze({ x: 190, y: 566 }),
   crewStop: Object.freeze({ x: 250, y: 578 }), // where Mops stops him
   mopsBlock: Object.freeze({ x: 360, y: 578 }), // Mops steps between him and the crate

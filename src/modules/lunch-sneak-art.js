@@ -6,6 +6,7 @@
  * (party-snacks-art.js).
  */
 import { firstSightHearts } from "./mops-hearts.js";
+import { drawMopsHeart } from "./heart-art.js";
 import { drawSnack } from "./party-snacks-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
 import { armEnds } from "./squatch-art.js";
@@ -91,21 +92,9 @@ export function drawLunchGoalLine(ctx, box, time, pad = 6) {
   return { x0: box.x0 - pad, y0: box.y0 - pad, x1: box.x1 + pad, y1: box.y1 + pad };
 }
 
-/** One red heart (a drawn shape, not a letter), its middle at (x, y). */
+/** Mops's heart (a drawn shape, not a letter), its middle at (x, y), about 1.9 r wide: the one heart drawing (heart-art.js). */
 export function drawHeart(ctx, x, y, r) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.beginPath();
-  ctx.moveTo(0, r * 0.9);
-  ctx.bezierCurveTo(-r * 1.4, -r * 0.1, -r * 0.7, -r * 1.2, 0, -r * 0.45);
-  ctx.bezierCurveTo(r * 0.7, -r * 1.2, r * 1.4, -r * 0.1, 0, r * 0.9);
-  ctx.closePath();
-  ctx.fillStyle = "#e5533d";
-  ctx.fill();
-  ctx.strokeStyle = LU_INK;
-  ctx.lineWidth = 3;
-  ctx.stroke();
-  ctx.restore();
+  drawMopsHeart(ctx, x, y, r * 1.9);
 }
 
 /** Where Squatch's near paw is (arms at rest) for feet (x, y), facing `f`, at `scale` (game pixels to his unit). */

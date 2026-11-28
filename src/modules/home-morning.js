@@ -56,6 +56,7 @@ import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound.js";
 import { drawNightTint, isNightNow } from "./night-look.js";
+import { drawMopsHeart } from "./heart-art.js";
 
 export const HOME_MORNING_ID = "ch1-home-morning";
 
@@ -449,22 +450,8 @@ export function createHomeMorning(bridge) {
   };
 
   // ---------- drawing ----------
-  // One red heart (a drawn shape, not a letter), its middle at (x, y).
-  function heart(ctx, x, y, r) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.beginPath();
-    ctx.moveTo(0, r * 0.9);
-    ctx.bezierCurveTo(-r * 1.4, -r * 0.1, -r * 0.7, -r * 1.2, 0, -r * 0.45);
-    ctx.bezierCurveTo(r * 0.7, -r * 1.2, r * 1.4, -r * 0.1, 0, r * 0.9);
-    ctx.closePath();
-    ctx.fillStyle = "#e5533d";
-    ctx.fill();
-    ctx.strokeStyle = "#1e2430";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.restore();
-  }
+  // Mops's heart, its middle at (x, y): the one heart drawing (heart-art.js).
+  const heart = (ctx, x, y, r) => drawMopsHeart(ctx, x, y, r * 1.9);
   // Where his near paw is while the room draws him standing (his arms at rest), for what he carries.
   const pawNow = () => {
     const p = E().pos("sq"),

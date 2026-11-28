@@ -65,9 +65,10 @@ import { pickupWords } from "./pickup-lines.js";
 import { PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, PK_BAY_PICKUP, PK_BAY_GONE, PK_SIGHT, PK_PACE, PK_CRATE, ROUTE_PUSH, ROUTE_SNEAK, ROUTE_LAST, COSTUME, PK_OFFICE, PK_HOLD } from "./pickup-place.js";
 import { withCameraLayer, BAY_CAMERA } from "./bay-camera.js";
 import { storyHeart } from "./mops-hearts.js";
-import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawPuddle, drawSnackBag, drawNewRobotBits, drawScanLine, drawArchLight, drawKidDrawing, drawPaleSquare, drawWallPatch, drawFoldedNote, drawBoxCloseup, drawSnipCloseup, drawDressCloseup, drawMirror, drawCostumePiece, drawBrochureCorner, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
+import { drawPkTuft, drawFloorPatch, drawPkCrate, drawBucket, drawPuddle, drawSnackBag, drawNewRobotBits, drawScanLine, drawArchLight, drawKidDrawing, drawPaleSquare, drawWallPatch, drawFoldedNote, drawBoxCloseup, drawSnipCloseup, drawDressCloseup, drawMirror, drawCostumePiece, drawBrochureCorner, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
 import { OFFICE_PANELS } from "./escape-office-art.js";
-import { drawPerson, LOOKS } from "./party-art.js";
+import { drawHairPile, drawPassengerCase, drawMailboxEyes, drawSnippedBeard, drawGoatBeard, drawCrew } from "./pickup-people-art.js";
+import { setMopsBeardLook } from "./mops-beard.js";
 import { drawGulpSweat } from "./escape-home-art.js";
 import { ES_HOME, ES_DOORS, FOLLOW } from "./escape-place.js";
 import { doorAt, doorTo, markDoor, freshTrail, followStep } from "./escape-doors.js";
@@ -164,6 +165,11 @@ export function createPickup(bridge) {
   });
   addMovers(() => (pushing() ? [{ who: "crate", room: E().room(), ...pushedCrate(), box: crateFoot(pushedCrate()) }] : []));
   const guests = createGuestArt();
+  // once snipped, the older program draws Mops without his beard and the short one is drawn over him (snipMark)
+  setMopsBeardLook(() => {
+    const l = live();
+    return l && l.snipped ? { noBeard: true } : null;
+  });
   let drew = null,
     record = { steps: [], sounds: [] },
     lastMops = null,
@@ -1522,7 +1528,7 @@ export function createPickup(bridge) {
       s = e.pos("sq"),
       m = e.pos("mops"),
       list = [];
-    if (e.get("moPose") !== "hidden") list.push({ y: m.y, f: () => (e.drawMopsOn(ctx, m.x, m.y, moScale("hangar"), { f: m.f || 1, walk: moMoving ? t * 8 : 0 }), l.snipped && snipMark(ctx, m, moScale("hangar"))) });
+    if (e.get("moPose") !== "hidden") list.push({ y: m.y, f: () => (e.drawMopsOn(ctx, m.x, m.y, moScale("hangar"), { f: m.f || 1, walk: moMoving ? t * 8 : 0, noBeard: !!l.snipped }), l.snipped && snipMark(ctx, m, moScale("hangar"))) });
     if (e.get("sqPose") === "ball" || l.pose === "ball") list.push({ y: s.y, f: () => e.ball.drawOn(ctx, s.x, s.y - 16, 1) });
     else if (e.get("sqPose") === "stand" && s.x > -100) {
       const c = !!e.get("costumeOn");
@@ -1533,7 +1539,7 @@ export function createPickup(bridge) {
       });
     }
     for (const b of l.bots || []) list.push({ y: b.y, f: () => drawBot(ctx, b, t) });
-    for (const p of l.passengers || []) p.gone || p.wait > 0 || list.push({ y: p.y, f: () => guests.drawId(ctx, p.id, p.x, p.y, adultPxFor("hangar"), t) });
+    for (const p of l.passengers || []) p.gone || p.wait > 0 || list.push({ y: p.y, f: () => (drawPassengerCase(ctx, p.x, p.y, adultPxFor("hangar"), p.f || 1, p.id === "camera" ? "#3478f6" : "#e5533d", t), guests.drawId(ctx, p.id, p.x, p.y, adultPxFor("hangar"), t)) });
     // 55: the bucket in Mops's paw, from the knock to the spill
     if (l.bucketOff && !l.spill && e.get("moPose") !== "hidden") list.push({ y: m.y + 1, f: () => drawBucket(ctx, m.x + 22 * (m.f || 1), m.y - 6, 0.55) });
     for (const [kind, th] of Object.entries(l.things || {})) if (th.where !== "ship") list.push({ y: th.y + (th.where === "carry" ? 2 : 0), f: () => drawThing(ctx, kind, th, l) });
@@ -1578,7 +1584,7 @@ export function createPickup(bridge) {
       out.scan = +l.scan.k.toFixed(2);
     }
     // 55: he hides in the mailbox: his eyes in its slot
-    if (e.get("sqPose") === "hidden" && l.step === "held") (e.drawEyes(ctx, PK_BAY.slotEyes.x, PK_BAY.slotEyes.y), (out.eyes = "mailbox"));
+    if (e.get("sqPose") === "hidden" && l.step === "held") (drawMailboxEyes(ctx, PK_BAY.slotEyes.x, PK_BAY.slotEyes.y, 1, t), (out.eyes = "mailbox"));
     if (l.guard) out.guard = drawGuard(ctx, l.guard, e.pos("sq"), sqScale("hangar"), e.get("sqPose") !== "stand", t).inside;
     // the goal's outline
     if (e.get("ctrl") && !e.current() && !l.cu) {
@@ -1611,41 +1617,17 @@ export function createPickup(bridge) {
     if (l.slipAt >= 0 && l.slipAt != null) out.slip = l.beardOff ? "paws" : "falling";
     return out;
   }
-  // His snipped beard (56 on): a jagged cut across the beard near its end (his beard runs from his chin, about 25 units
-  // up, to the floor in front of him, 14 to 23 units out the way he faces: 60-frame-draw.js). A PLACEHOLDER mark.
+  // His snipped beard (56 on; a Chapter 2 plant): the engine leaves its own beard out (noBeard here; mops-beard.js where
+  // the older program draws him) and this draws the short one with its ragged cut (pickup-people-art.js).
   function snipMark(ctx, m, k) {
-    const f = m.f || 1,
-      X = (u) => m.x + f * u * k,
-      Y = (v) => m.y + v * k;
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(X(13.5), Y(-7));
-    [15.5, 17.5, 19.5, 21.5, 23.5].forEach((u, i) => ctx.lineTo(X(u), Y(i % 2 ? -7 : -9.5)));
-    ctx.strokeStyle = "#8a8f9c";
-    ctx.lineWidth = Math.max(1.2, 0.9 * k);
-    ctx.stroke();
-    ctx.restore();
-    return true;
+    return drawSnippedBeard(ctx, m.x, m.y, k, m.f || 1);
   }
-  // 58: the goat beard slipping off his chin and falling into his paws (0 to 1), drawn in the room (a PLACEHOLDER)
+  // 58: the goat beard slipping off his chin and falling into his paws (0 to 1), in the room: the costume beard on its
+  // elastic (pickup-people-art.js), turning as it drops from under his chin to his paws
   function fallingBeard(ctx, s, k) {
     const q = sqScale("hangar"),
-      x = s.x + 2 * q * (s.f || 1),
-      y = s.y - 52 * q + k * 26 * q;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(k * 0.9 * (s.f || 1));
-    ctx.beginPath();
-    ctx.moveTo(-6 * q, 0);
-    ctx.lineTo(6 * q, 0);
-    ctx.lineTo(0, 18 * q);
-    ctx.closePath();
-    ctx.fillStyle = "#ffffff";
-    ctx.strokeStyle = "#1e2430";
-    ctx.lineWidth = 2;
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
+      f = s.f || 1;
+    drawGoatBeard(ctx, s.x + 2 * q * f + k * 6 * q * f, s.y - 44 * q + k * 22 * q, q, k * 1.4 * f);
   }
   // 61: the cargo hold (a drawing of its own, a PLACEHOLDER), their crate, the two of them, the crew once found
   function drawHoldNow(ctx, l) {
@@ -1661,29 +1643,16 @@ export function createPickup(bridge) {
     // (the hold is close up: the two of them drawn bigger than in the bay)
     const sk = sqScale("hangar") * 2.2,
       mk = moScale("hangar") * 2.2;
-    e.get("moPose") !== "hidden" && (e.drawMopsOn(ctx, m.x, m.y, mk, { f: m.f || -1, walk: moMoving ? t * 8 : 0 }), l.snipped && snipMark(ctx, { ...m, f: m.f || -1 }, mk));
+    e.get("moPose") !== "hidden" && (e.drawMopsOn(ctx, m.x, m.y, mk, { f: m.f || -1, walk: moMoving ? t * 8 : 0, noBeard: !!l.snipped }), l.snipped && snipMark(ctx, { ...m, f: m.f || -1 }, mk));
     if (e.get("sqPose") === "stand") {
       e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, jacket: true, horns: !l.stripped, goatBeard: false });
       // the brochure in the jacket's pocket (a Chapter 2 plant: it rides with him, not in the Box)
-      drawBrochureCorner(ctx, s.x + 10 * sk * (s.f || 1), s.y - 22 * sk, sk * 0.5);
-      // the beard, off, in his lap (until the crew takes it)
-      if (!l.stripped) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(s.x + 6, s.y - 26 * sk);
-        ctx.lineTo(s.x + 30, s.y - 26 * sk);
-        ctx.lineTo(s.x + 18, s.y - 10 * sk);
-        ctx.closePath();
-        ctx.fillStyle = "#ffffff";
-        ctx.strokeStyle = "#1e2430";
-        ctx.lineWidth = 2.5;
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-      }
+      drawBrochureCorner(ctx, s.x - 8 * sk * (s.f || 1), s.y - 13 * sk, sk * 0.6);
+      // the beard, off, in his lap (until the crew takes it): the costume beard on its elastic (pickup-people-art.js)
+      if (!l.stripped) drawGoatBeard(ctx, s.x + 4 * sk * (s.f || 1), s.y - 22 * sk, sk, -1.3 * (s.f || 1));
     }
-    // the crew (a PLACEHOLDER: the party's guard look until the ship's crew has a look)
-    if (l.crewAt) (drawPerson(ctx, l.crewAt.x, l.crewAt.y, adultPxFor("hangar") * PK_HOLD.crewK, LOOKS.guard, l.crewAt.f || 1, t), (out.crew = { x: Math.round(l.crewAt.x), y: Math.round(l.crewAt.y) }));
+    // the crew member: the ship's flight crew (pickup-people-art.js), a grown-up drawn 2.2 times the bay's size like the two of them
+    if (l.crewAt) (drawCrew(ctx, l.crewAt.x, l.crewAt.y, adultPxFor("hangar") * PK_HOLD.crewK, l.crewAt.f || 1, t), (out.crew = { x: Math.round(l.crewAt.x), y: Math.round(l.crewAt.y) }));
     // the crew holds up the beard and the horns he took (one drawn second, a Chapter 2 plant)
     if (l.takeAt >= 0 && l.takeAt != null && l.crewAt) (drawCostumePiece(ctx, "beard", l.crewAt.x + 60, l.crewAt.y - adultPxFor("hangar") * 1.3, 0.45), drawCostumePiece(ctx, "horns", l.crewAt.x + 60, l.crewAt.y - adultPxFor("hangar") * 1.8, 0.4), (out.taken = true));
     if (l.heartsAt >= 0) drawHearts(ctx, m.x, m.y - 50 * mk, t - l.heartsAt);
@@ -1745,7 +1714,7 @@ export function createPickup(bridge) {
       drew.next = sp ? sp.id : "";
     }
     // 56: the mirror inside the open wardrobe door (a layer, for Brian's yes); his roar's lines
-    if (room === "closet" && e.get("wardrobe") === "open" && ["snip", "snipped", "dresstalk", "dress", "dressed", "practice", "practiced", "mirror"].includes(l.step)) drawMirror(ctx, e, PK_HOME.mirror, t, !!l.mirrorOn), (drew.mirror = !!l.mirrorOn);
+    if (room === "closet" && e.get("wardrobe") === "open" && ["snip", "snipped", "dresstalk", "dress", "dressed", "practice", "practiced", "mirror"].includes(l.step)) drawMirror(ctx, e, PK_HOME.mirror, t, !!l.mirrorOn, !!l.snipped), (drew.mirror = !!l.mirrorOn);
     if (l.roarAt >= 0 && t - l.roarAt < PK_PACE.shake && room === "closet") drew.roar = roarLines(ctx, headBox("sq"), t - l.roarAt);
     // 57: the hall's guests and their cones (the costume's rule); the plate; the slipped beard
     if (room === "hall" && l.step !== "push" && l.watch) drew.guests = drawHallGuests(ctx, l, t);
@@ -1756,12 +1725,12 @@ export function createPickup(bridge) {
     if (room === "passage" && l.step !== "push") drew.sign = drawPhotoSign(ctx, PK_HALLWAY.sign, PK_HALLWAY.under, t);
     if (l.gulpAt >= 0 && t - l.gulpAt < 1.2) drew.sweat = drawGulpSweat(ctx, headBox("sq"), t - l.gulpAt);
     // 56 on (a Chapter 2 plant): the ragged end of his beard where it was snipped, to the chapter's end
-    l.snipped && e.get("moPose") !== "hidden" && !l.cu && ["closet", "hall", "passage"].includes(room) && (drew.snipMark = snipMark(ctx, m, moScale(room)));
+    l.snipped && e.get("moPose") !== "hidden" && room !== "hangar" && (drew.snipMark = snipMark(ctx, m, moScale(room)));
     if (l.heartsAt >= 0) drawHearts(ctx, m.x, m.y - 46 * moScale(room), t - l.heartsAt);
     // 59, 60: the office on photo day: the camera on its tripod and the stool; the robot is one of the new ones
     if (room === "office") {
       drawPhotoCorner(ctx);
-      drawNewRobotBits(ctx, 280, 500, adultPxFor("office") / 47, 1, t);
+      drawNewRobotBits(ctx, PK_OFFICE.robot.x, PK_OFFICE.robot.y, adultPxFor("office") / 47, 1, t);
       if (l.cu === "frame") (OFFICE_PANELS.esframe[0](ctx), (drew.frame = true));
       if (l.cu === "tape") drew.tape = (drawTapeScreen(ctx, e, l.tape, t), { ...l.tape });
     }
@@ -1792,7 +1761,7 @@ export function createPickup(bridge) {
       PK_HOME.tufts.forEach((q, i) => l.tufts[i] || drawPkTuft(ctx, q.x, q.y, 1.4));
       l.packed.box && markPacked(ctx, l);
       // his beard hair laid over Squatch in the crate (on purpose, for the scanner)
-      l.pile && PK_HOME.pile.forEach((q) => (ctx.save(), ctx.translate(q.x, q.y), ctx.rotate(q.a), drawHair(ctx, 0, 0, 52, 3), ctx.restore()));
+      l.pile && drawHairPile(ctx, PK_HOME.crate);
     }
     d.tufts = l.tufts.filter((v) => !v).length;
     // the STAY IN HERE poster, eaten: a pale square where it hung
@@ -1820,27 +1789,16 @@ export function createPickup(bridge) {
       return { id: g.id, mark: w.mark, on, filled: on && l.fur };
     });
   }
-  // the beard slipped: it hangs off one side, his fur showing (a PLACEHOLDER drawing over him)
+  // the beard slipped: it hangs off one side by its elastic, his brown chin fur showing where it was
   function slippedBeard(ctx, t) {
     const h = headBox("sq");
     ctx.save();
     ctx.beginPath();
-    ctx.ellipse(h.x + h.w / 2, h.y + h.h * 1.05, h.w * 0.35, h.h * 0.3, 0, 0, Math.PI * 2);
+    ctx.ellipse(h.x + h.w / 2, h.y + h.h * 1.05, h.w * 0.3, h.h * 0.26, 0, 0, Math.PI * 2);
     ctx.fillStyle = "#6b4428";
     ctx.fill();
-    ctx.translate(h.x + h.w * 0.95, h.y + h.h * 1.1);
-    ctx.rotate(0.9 + Math.sin(t * 5) * 0.1);
-    ctx.beginPath();
-    ctx.moveTo(-8, 0);
-    ctx.lineTo(8, 0);
-    ctx.lineTo(0, 22);
-    ctx.closePath();
-    ctx.fillStyle = "#ffffff";
-    ctx.strokeStyle = "#1e2430";
-    ctx.lineWidth = 2;
-    ctx.fill();
-    ctx.stroke();
     ctx.restore();
+    drawGoatBeard(ctx, h.x + h.w * 0.9, h.y + h.h * 0.95, h.w / 40, -0.9 + Math.sin(t * 5) * 0.1);
     return true;
   }
   // his first bleat comes out a roar: lines round his mouth

@@ -27,6 +27,7 @@ import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { showRoomScaleTable } from "./room-scale.js";
+import { mopsBeardLook } from "./mops-beard.js";
 import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG, CRAYON_ON_WALL } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
@@ -155,6 +156,10 @@ export function createBridge() {
      * Mops's GANITOR name tag (ganitor.js), drawn by his drawing (60-frame-draw.js Fe) in his own units on `ctx`, at his
      * scale `scale` (game pixels to one of his units).
      */
+    /** How the older program draws Mops's beard now (mops-beard.js: once snipped on pickup day, { noBeard: true }), or null. */
+    mopsBeardLook() {
+      return mopsBeardLook();
+    },
     drawGanitorTag(ctx, scale) {
       const drew = drawGanitorTag(ctx, scale);
       // the gold star he won in the Mop-Off stays on his tag for the rest of the chapter (escape-mopoff.js)
