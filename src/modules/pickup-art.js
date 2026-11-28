@@ -212,7 +212,7 @@ export function drawBucket(ctx, cx, bottom, k) {
 /**
  * His snack bag from the snack bar (beat 52; final art, pending Brian's yes; round 8, placeholder 22): a brown paper
  * bag inside `b`, its top rolled down twice and crimped, a little wider at the bottom, its shaded side, and the snack
- * bar's round blue sticker with a yellow star (the Stars Cakes tin's colours, crate-stamp.js drawTinLid) holding it shut.
+ * bar's round blue sticker with a yellow star (the snack tin's colours, crate-stamp.js drawTinLid) holding it shut.
  */
 export function drawSnackBag(ctx, b) {
   const w = b.x1 - b.x0,
@@ -232,7 +232,7 @@ export function drawSnackBag(ctx, b) {
   ctx.lineTo(b.x1, b.y1);
   ctx.lineTo(b.x0, b.y1);
   ctx.closePath();
-  esPaint(ctx, "#d6a96b", lw);
+  esPaint(ctx, "#d4a874", lw); // (a brown with enough blue in it that the goal test never reads it as a yellow arrow)
   // the shaded side panel and the bottom fold
   ctx.beginPath();
   ctx.moveTo(b.x0 + w * 0.7, top + 1);

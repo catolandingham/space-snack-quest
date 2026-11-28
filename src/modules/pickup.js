@@ -1710,7 +1710,7 @@ export function createPickup(bridge) {
     // 59, 60: the office on photo day: the camera on its tripod and the stool; the robot is one of the new ones
     if (room === "office") {
       drawPhotoCorner(ctx);
-      drawNewRobotBits(ctx, 280, 500, adultPxFor("office") / 47, 1, t);
+      drawNewRobotBits(ctx, PK_OFFICE.robot.x, PK_OFFICE.robot.y, adultPxFor("office") / 47, 1, t);
       if (l.cu === "frame") (OFFICE_PANELS.esframe[0](ctx), (drew.frame = true));
       if (l.cu === "tape") drew.tape = (drawTapeScreen(ctx, e, l.tape, t), { ...l.tape });
     }
