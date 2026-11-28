@@ -694,6 +694,7 @@ export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label =
   ctx.stroke();
   esRect(ctx, sc.x0 + 57, sc.y0 + 60, 9, 10, 2);
   esPaint(ctx, "#e5533d", 2);
+  ctx.lineCap = "butt";
   // where he is: four dots along the bottom, one for each page, the ones done filled in (no words)
   const pageNow = booked >= 0 ? 4 : page;
   for (let i = 0; i < 4; i++) {

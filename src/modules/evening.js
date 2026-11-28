@@ -1836,6 +1836,7 @@ export function createEvening(bridge) {
       ctx.lineWidth = 3;
       ctx.lineCap = "round";
       for (let i = 1; i < 4; i++) (ctx.beginPath(), ctx.moveTo(C.x + 6, C.y + (C.h * i) / 4), ctx.lineTo(C.x + C.w - 6, C.y + (C.h * i) / 4), ctx.stroke());
+      ctx.lineCap = "butt";
       for (const [nx, ny] of [[C.x + 14, C.y + 14], [C.x + C.w - 14, C.y + 14], [C.x + 14, C.y + C.h - 14], [C.x + C.w - 14, C.y + C.h - 14]]) {
         ctx.beginPath();
         ctx.arc(nx, ny, 5, 0, Math.PI * 2);
