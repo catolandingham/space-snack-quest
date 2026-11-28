@@ -347,6 +347,9 @@ while (now() < MAX_S) {
     if (r) rects[k].has(r.join("x")) || rects[k].set(r.join("x"), `${now().toFixed(1)}s ${s.scene} "${s.btn}"`);
   if (s.ctrl && !s.mops && !s.zoom && s.pose === "stand" && inSolid(s, s.x, s.y, -6)) seen.inSolid.push(`${now().toFixed(1)}s ${s.scene} at ${s.x},${s.y}`);
   for (const q of s.others || []) {
+    // (more than 6 px in, as for Squatch below: feet brushing an edge are not standing in it)
+    const b = q.solid;
+    if (Math.min(q.x - b.x0, b.x1 - q.x, q.y - b.y0, b.y1 - q.y) <= 6) continue;
     const k = `${s.scene}/${q.room}: ${q.who} in ${q.solid.id || [q.solid.x0, q.solid.y0, q.solid.x1, q.solid.y1].join(",")}`;
     seen.others.has(k) || seen.others.set(k, `${now().toFixed(1)}s ${k} at ${q.x},${q.y} (${s.step || s.chip})`);
   }
