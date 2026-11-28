@@ -301,7 +301,7 @@ function soapBubble(ctx, x, y, r, lw = 1.4) {
 /**
  * Scrubbing, made plain (round 7, r5 10:24: "a clear scrubbing motion"): while his beard moves on the floor, a patch of
  * suds under it (white bubbles, the rooms' ink round each, on a wet blue sheen), two curved swish marks either side that
- * swap as the beard goes back and forth, and a few bubbles floating up. Final art, pending Brian's yes (round 8).
+ * swap as the beard goes back and forth, and a few bubbles floating up. Final art, Brian's yes 2026-11-27 (round 8).
  */
 export function drawScrub(ctx, x, y, t) {
   const sw = Math.sin(t * 16),
@@ -338,7 +338,7 @@ export function drawScrub(ctx, x, y, t) {
 /**
  * Suds in his bucket (the Mop-Off): white bubbles heaped on the water and one over the rim, so the bucket at his side
  * reads as the soapy water he mops with. `b`: the bucket (escape-place.js MOPOFF.bucket: its middle, floor, size).
- * The bucket itself is Brian's approved one (mop-bucket.js). Final art, pending Brian's yes (round 8).
+ * The bucket itself is Brian's approved one (mop-bucket.js). Final art, Brian's yes 2026-11-27 (round 8).
  */
 export function drawBucketSuds(ctx, b, t) {
   const k = b.k / 0.28,

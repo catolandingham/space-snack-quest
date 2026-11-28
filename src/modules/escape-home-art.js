@@ -128,7 +128,7 @@ export function drawStampTouch(ctx, touched) {
  * with him and Mops peeking out, an arrow up to Mars. Under each, its crayon words (escape-lines.js plan-1 to plan-3, in
  * his crayon hand). `st.has` = { door, computer, crate, ship } says which are drawn (added 3, its arrow to Mars, 2, 1),
  * `st.ticks` which have a green tick. At (x, y), `w` wide; `words` { door, computer, crate }. Returns where each picture
- * is. Final art, pending Brian's yes (round 8; the words were already his pending lines).
+ * is. Final art, Brian's yes 2026-11-27 (round 8; the words were already his pending lines).
  */
 export function drawPlan(ctx, x, y, w, st, words = null) {
   const h = w * 0.62,

@@ -73,7 +73,7 @@ export function drawFloorPatch(ctx, b, at) {
 // The family stamp's width for its height (crate-stamp.js draws it from its left edge; measured once, off screen).
 let pkStampRatio = 0;
 /**
- * His crate on its pallet (final art, pending Brian's yes; round 8, placeholder 23): drawn like the crate bed in the
+ * His crate on its pallet (final art, Brian's yes 2026-11-27; round 8, placeholder 23): drawn like the crate bed in the
  * locked home picture, a wooden crate of wide boards in the crate bed's two woods (home_room.py CRATE and CRATED), a
  * darker board framing each edge, the board seams across, nail heads at the corners, a soft shadow under the pallet;
  * the worn family stamp (crate-stamp.js, the one stamp layer), its label once it is on, the bucket on top, the lid.
@@ -200,7 +200,7 @@ export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false,
   return { x0, y0, x1: x0 + w, y1: bottom };
 }
 /**
- * Mops's mop bucket standing on something at `bottom` (final art, pending Brian's yes): the one approved mop bucket
+ * Mops's mop bucket standing on something at `bottom` (final art, Brian's yes 2026-11-27): the one approved mop bucket
  * (mop-bucket.js, Brian 2026-11-26 "Let's go with it moving forward"), about 40 k wide, its water showing.
  */
 export const PK_BUCKET_K = 0.23;
@@ -210,7 +210,7 @@ export function drawBucket(ctx, cx, bottom, k) {
   drawMopBucketFront(ctx, cx, bottom, q, { water: true });
 }
 /**
- * His snack bag from the snack bar (beat 52; final art, pending Brian's yes; round 8, placeholder 22): a brown paper
+ * His snack bag from the snack bar (beat 52; final art, Brian's yes 2026-11-27; round 8, placeholder 22): a brown paper
  * bag inside `b`, its top rolled down twice and crimped, a little wider at the bottom, its shaded side, and the snack
  * bar's round blue sticker with a yellow star (the snack tin's colours, crate-stamp.js drawTinLid) holding it shut.
  */
@@ -282,7 +282,7 @@ export function drawSnackBag(ctx, b) {
   return b;
 }
 /**
- * The stand's brochure sticking out of his jacket pocket (a Chapter 2 plant; final art, pending Brian's yes; round 8,
+ * The stand's brochure sticking out of his jacket pocket (a Chapter 2 plant; final art, Brian's yes 2026-11-27; round 8,
  * placeholder 28): the top of the very brochure from beat 38 (evening-art.js drawBrochure, so it always matches it: the
  * night sky and Mars big over the stand), tipped a little, its lower part down inside a jacket pocket drawn over it.
  * (x, y) is the pocket's top middle; `k` the size (1: a pocket 18 game pixels wide).
@@ -315,7 +315,7 @@ export function drawBrochureCorner(ctx, x, y, k = 1) {
   ctx.restore();
 }
 /**
- * 55: Mops's spill by the floor vent (round 7, #118; final art, pending Brian's yes; round 8, placeholder 26): his
+ * 55: Mops's spill by the floor vent (round 7, #118; final art, Brian's yes 2026-11-27; round 8, placeholder 26): his
  * own mop bucket (mop-bucket.js) tipped on its side on the floor right of the puddle, its open top toward it, soapy
  * water running out of it into a wide, uneven puddle: pale blue with a darker edge, white shine streaks, soap bubbles
  * and one slow ring where the last drips land. A layer over the pickup-day bay.
@@ -420,7 +420,7 @@ export function drawTagBox(ctx, x, y, k = 1, glow = false) {
   return { x0: x - 24 * k, y0: y - 28 * k, x1: x + 34 * k, y1: y + 2 };
 }
 /**
- * The upgraded robot's new parts (final art, pending Brian's yes; round 8, placeholder 24), drawn over the older
+ * The upgraded robot's new parts (final art, Brian's yes 2026-11-27; round 8, placeholder 24), drawn over the older
  * program's robot picture (feet at (x, y), `k` its size, the same units): Mops's complaint got them "upgraded" to
  * "check every corner", so it wears what checks corners. A bolted-on chrome band round its middle with rivets and a
  * green light that blinks; a periscope up from its dome with a round corner mirror on top; and on its other side a
@@ -514,7 +514,7 @@ export function drawScanLine(ctx, box, k, color = "rgba(80,170,255,.9)") {
 }
 import { drawArchGlow } from "./arch-glow.js";
 // The arch's light on pickup day ("red", "yellow" or "green", or nothing): its lamp, scan lines and floor strip in that
-// colour, a scan bar sweeping down (arch-glow.js; round 8 final art, pending Brian's yes, ART-A). `arch` is the whole
+// colour, a scan bar sweeping down (arch-glow.js; round 8 final art, Brian's yes 2026-11-27, ART-A). `arch` is the whole
 // arch (bar and posts); its field is between the posts, under the bar.
 export function drawArchLight(ctx, arch, light, t) {
   if (!light) return;
@@ -559,7 +559,7 @@ export function drawKidDrawing(ctx, b, kind = 0) {
   ctx.restore();
 }
 /**
- * Where a thing hung (final art, pending Brian's yes; round 8, placeholder 20): the wall behind it kept its first
+ * Where a thing hung (final art, Brian's yes 2026-11-27; round 8, placeholder 20): the wall behind it kept its first
  * colour, so a square a little whiter than the wall round it, a faint grey line of dust along its top and left edges,
  * and a little bit of tape left at its top corners. `eaten` (the STAY IN HERE poster Mops ate, 53): the paper's
  * corners are still under the tape, their inner edges bitten off in a row of small bites.
@@ -1018,7 +1018,7 @@ export function drawPhotoCorner(ctx) {
 }
 /**
  * The tape screen, filling the picture, with the REC badge and its two big buttons (PLAY · tape, ZOOM · in; the one to
- * press now bright). One clip (round 7, #123 pick A; final art, pending Brian's yes; round 8, placeholder 31): the
+ * press now bright). One clip (round 7, #123 pick A; final art, Brian's yes 2026-11-27; round 8, placeholder 31): the
  * security camera's own picture of the pickup-day bay (the locked picture itself, greyed and a little green, with the
  * tape's scan lines and a rolling band), seen from its corner: a goat (Mops) walks up the ramp to the ship, then a very
  * tall goat, and halfway up his beard falls off and he catches it. `k` how far it has played (0 to 1); `zoom` "tall":

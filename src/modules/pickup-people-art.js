@@ -1,6 +1,6 @@
 /**
  * Pickup day's drawings of people and what they wear or shed (Chapter 1, beats 53 to 61; round 8, final art, each
- * pending Brian's yes): Mops's beard hair laid over Squatch in the crate (21), the passengers' luggage (25), Squatch's
+ * Brian's yes 2026-11-27): Mops's beard hair laid over Squatch in the crate (21), the passengers' luggage (25), Squatch's
  * eyes in the robot mailbox's slot (27), the ragged end of Mops's snipped beard (29), the goat beard falling off (30),
  * the ship's crew member (32). Drawn in the locked rooms' look: flat colours, the dark ink outline, one shade.
  * Motion stays where it is (pickup.js); these only draw a thing where they are told.

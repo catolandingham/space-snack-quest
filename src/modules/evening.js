@@ -1834,7 +1834,7 @@ export function createEvening(bridge) {
         T = CRATEV.stamp,
         Cd = CRATEV.card;
       // the crate's side, big: wood slats, and its family stamp, faded, its first letter scraped off (crate-stamp.js,
-      // the same look as on the crate bed in the room; no crayon). Round 8 final art, pending Brian's yes: the crate in
+      // the same look as on the crate bed in the room; no crayon). Round 8 final art, Brian's yes 2026-11-27: the crate in
       // the locked rooms' crate colours (delivery_room.py _crate: the wood, darker plank lines, a nail at each corner).
       ctx.beginPath();
       ctx.roundRect(C.x, C.y, C.w, C.h, 8);
@@ -2193,7 +2193,7 @@ export function createEvening(bridge) {
       paper(ctx, 0, 0, "#ffe27a", 14);
       ctx.restore();
     }
-    // the crate by the floor vent (a hiding place; final art, pending Brian's yes)
+    // the crate by the floor vent (a hiding place; final art, Brian's yes 2026-11-27)
     drawVentCrate(ctx);
     const people = [];
     const robotAt = (id, x, y) => (a && a.w.id === id ? { x: a.w.x, y: a.w.y } : { x, y });

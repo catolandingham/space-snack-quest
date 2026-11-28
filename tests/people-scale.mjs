@@ -1,7 +1,8 @@
 /**
- * Adult heads are about 85% of the door of the room they stand in, and Squatch is about 80% of an adult.
- * The party hall is the one exception (Brian 2026-11-24: everyone in the hall 40% bigger): there an adult is about
- * 119% of the hall's doorway (0.85 x 1.4). Every other room, and a room with no door, is as before.
+ * One scale per room (src/modules/room-scale.js ROOM_SCALE, Brian 2026-11-27 on PR #103: "Yes, turn it on"): a
+ * grown-up in a listed room is the table's Squatch scale / 0.8 x 45, and Squatch is about 80% of a grown-up. It
+ * retired the pins adult-door-share (85% of the room's door) and hall-bigger (1.4); a room the table does not list
+ * still measures 85% of the hall's doorway.
  *   node tests/people-scale.mjs
  */
 import { readFileSync } from "node:fs";
@@ -10,6 +11,8 @@ import { startGame, root } from "./game-page.mjs";
 
 // The party's cast and where Squatch stands at the party (src/modules/party-hall.js), in game positions.
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
+const { ROOM_SCALE } = await import(join(root, "src", "modules", "room-scale.js"));
+const tableAdult = (room) => (ROOM_SCALE[room] * 45) / 0.8;
 
 const src = ["12-ch1-redesign.js", "14-ch1-day1.js", "10-ch1.js", "50-story-frame.js"]
   .map((f) => readFileSync(new URL("../src/game/" + f, import.meta.url), "utf8"))
@@ -72,8 +75,8 @@ const measured = await page.evaluate(async () => {
 const headOfDoor = measured.adult / measured.door;
 const sqOfGuest = (measured.sq * 45) / measured.adult;
 g.check(
-  "in the hall, guest heads are about 119% of the locked hall door (85% made 40% bigger, Brian 2026-11-24)",
-  measured.doorSrc > 90 && measured.doorSrc < 120 && Math.abs(headOfDoor - 0.85 * 1.4) < 0.03,
+  "in the hall, a grown-up is the room table's 1.30 (about 73 px, 94% of the locked hall door; Brian 2026-11-27)",
+  measured.doorSrc > 90 && measured.doorSrc < 120 && Math.abs(measured.adult - tableAdult("hall")) < 0.1 && headOfDoor > 0.9 && headOfDoor < 0.98,
   { ...measured, headOfDoor },
 );
 g.check(
@@ -156,9 +159,10 @@ const rooms = await page.evaluate(async () => {
     } else run = 0;
   }
   const rows = {};
+  const gameRoom = { hall: "hall", office: "office", hallway: "passage", delivery: "hangar", home: "closet" };
   for (const id of Object.keys(doorPx)) {
-    const adult = ss.adultPxFor(id);
-    rows[id] = { door: doorPx[id], adult, share: adult / doorPx[id] };
+    const adult = ss.adultPxFor(gameRoom[id]);
+    rows[id] = { room: gameRoom[id], door: doorPx[id], adult, share: adult / doorPx[id] };
   }
   return {
     rows,
@@ -169,19 +173,22 @@ const rooms = await page.evaluate(async () => {
     officeQt: ss.qtScale("office") * 50,
     duct: ss.adultPxFor("duct"),
     hall: ss.adultPxFor("hall"),
+    unlisted: ss.adultPxFor("no-such-room"),
   };
 });
-for (const [name, row] of Object.entries(rooms.rows)) {
-  if (name === "hall") g.check("hall adult head is 116-122% of the hall's door (40% bigger)", row.share > 1.16 && row.share < 1.22, row);
-  else g.check(name + " adult head is 82-88% of that room's door", row.share > 0.82 && row.share < 0.88, row);
-}
+for (const [name, row] of Object.entries(rooms.rows))
+  g.check(name + " grown-up is the room table's size (" + ROOM_SCALE[row.room] + " for Squatch)", Math.abs(row.adult - tableAdult(row.room)) < 0.1, row);
 g.check("the office picture's door is about the 160px slab", rooms.officeSrc > 140 && rooms.officeSrc < 175, rooms);
 g.check(
   "office Isfred and Qt scales use the office door",
   Math.abs(rooms.officeAlien - rooms.officeAdult) < 0.05 && Math.abs(rooms.officeQt - rooms.officeAdult) < 0.05,
   rooms,
 );
-g.check("a room with no door still measures 85% of the hall's doorway (only the hall itself grew)", Math.abs(rooms.duct - rooms.rows.hall.door * 0.85) < 0.05 && rooms.hall > rooms.duct * 1.35, rooms);
+g.check(
+  "the vent room is the table's 3.65, and a room the table does not list still measures 85% of the hall's doorway",
+  Math.abs(rooms.duct - tableAdult("duct")) < 0.1 && Math.abs(rooms.unlisted - rooms.rows.hall.door * 0.85) < 0.05,
+  rooms,
+);
 
 // The FUR alarm at the party (P7, src/modules/party.js and party-alarm.js): he runs home through his doorway, and a
 // guard follows him in half a second later (pinned: home-search-delay); a guard who reaches him in the hall shows

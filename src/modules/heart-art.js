@@ -1,5 +1,5 @@
 /**
- * Mops's heart: the one heart drawing the whole game uses (final art, pending Brian's yes; round 8, placeholder 18).
+ * Mops's heart: the one heart drawing the whole game uses (final art, Brian's yes 2026-11-27; round 8, placeholder 18).
  * Every heart that floats up over Mops (the first sight in a scene, the three story hearts, the pats and hugs at the
  * party) is this shape, so it reads as the same feeling everywhere: a round, full heart in warm pink, the game's dark
  * outline, and a small white shine on its upper left lobe, like the shine on the locked rooms' plastic and glass.

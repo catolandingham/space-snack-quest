@@ -80,7 +80,7 @@ export function drawSpinStars(ctx, head, age, t) {
 /**
  * Dust off the filing cabinet as the office robot wipes it (round 7, r6 0:37: a robot comes in and dusts one thing):
  * little cartoon dust clouds (three bumps each, pale grey, the rooms' ink round them) rising and fading, and a few specks.
- * Final art, pending Brian's yes (round 8).
+ * Final art, Brian's yes 2026-11-27 (round 8).
  */
 export function drawDustPuff(ctx, x, y, t) {
   ctx.save();
@@ -140,7 +140,7 @@ function biteShape(ctx, ox, oy, r) {
  * round chocolate snack cake (a darker side, a white icing squiggle on top), the bite cut out of it with tooth bumps, its
  * inside showing (sponge and a white cream layer). Its outline is drawn round what is left of the cake, so no ink line
  * crosses the bite (round 8: the faint ink edge across the bite is gone). The drawer is the office's filing cabinet's
- * grey (office_room_v2.py DESK, DESK_TOP, BEZEL). Final art, pending Brian's yes (round 8).
+ * grey (office_room_v2.py DESK, DESK_TOP, BEZEL). Final art, Brian's yes 2026-11-27 (round 8).
  */
 function drawerPanel(ctx) {
   const INKD = "rgb(34,36,44)";

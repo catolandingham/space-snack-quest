@@ -155,7 +155,7 @@ export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0, small = fal
     ctx.restore();
   }
   // the cut-open cake, seen from the side: a round chocolate cake with a slice cut out at the front, its two cut faces
-  // showing chocolate on top, sponge, and the red middle; `fizz` its little star sparks. Final art, pending Brian's yes
+  // showing chocolate on top, sponge, and the red middle; `fizz` its little star sparks. Final art, Brian's yes 2026-11-27
   // (round 8).
   const C = BROCHURE_PARTS.cake,
     cx = x + w * C.fx,
@@ -467,7 +467,7 @@ export const BAY_CRATE = Object.freeze({ x0: 268, x1: 332, y0: 500, y1: 552 });
  * The crate beside the floor vent, drawn the way the locked bay draws its crates (delivery_room.py _crate: the crate's
  * wood with two plank lines and a middle seam in the darker wood, a nail at each corner, the rooms' ink round it), with
  * a little shadow under it, then the night picture's own blue-grey dimming laid over it (apply_night, 20,24,60 at 120 of
- * 255), so it sits in the dark room like everything painted there. Final art, pending Brian's yes (round 8).
+ * 255), so it sits in the dark room like everything painted there. Final art, Brian's yes 2026-11-27 (round 8).
  */
 export function drawVentCrate(ctx, night = true) {
   const B = BAY_CRATE,

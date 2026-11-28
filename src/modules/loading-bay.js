@@ -416,7 +416,7 @@ export function createLoadingBay(bridge) {
   // seen standing at the counter: "Squatch: hide", and the place to hide is back down behind the counter (its aisle).
   // The one dashed line runs round the whole aisle as the hall picture draws it, from the counter's side to the right
   // wall and from the counter's top down to its end piece (drawDashedOutline sits 4 outside the box). Round 8 final
-  // art, pending Brian's yes (was a box over the aisle's top only).
+  // art, Brian's yes 2026-11-27 (was a box over the aisle's top only).
   const COUNTER_HIDE = { x0: AISLE.x0 + 4, x1: AISLE.x1 - 4, y0: AISLE.y0 + 4, y1: AISLE.y1 - 4 };
   const counterHide = () => {
     const lu = lunchNow();

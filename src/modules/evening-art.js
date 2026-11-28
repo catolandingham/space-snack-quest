@@ -259,7 +259,7 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
  * round both their hands, TIED TOGETHER FOREVER over them, ME and MOPS THE GANITOR under them, and a dotted look from
  * Mops's eye to him with small hearts along it (R63). Drawn in crayon, the way his other crayon pictures are
  * (guardians-drawing.js): every line twice, a little off, the second fainter; shapes coloured in with slanted strokes
- * that leave the paper showing; his crayon writing pressed hard. Final art, pending Brian's yes (round 8; the words and
+ * that leave the paper showing; his crayon writing pressed hard. Final art, Brian's yes 2026-11-27 (round 8; the words and
  * what is in it are as approved, 2026-11-13).
  */
 export function drawCrayonDrawing(ctx, x, y, w, h) {
@@ -395,7 +395,7 @@ export function drawMars(ctx, x, y, r) {
  * open, red inside (`fizz` 0 to 1: its sparks). No cooks, no paw print, no other words (DECISIONS: its only words are
  * the family name on the box). Drawn in the locked rooms' way (flat fills, one dark ink line, white shine): the folded paper
  * (a crease near its right edge), space flat navy with four-point sparkles, Mars with craters and a lit edge, the red
- * ground, the awning's scallops, the counter's planks. Final art, pending Brian's yes (round 8).
+ * ground, the awning's scallops, the counter's planks. Final art, Brian's yes 2026-11-27 (round 8).
  * `small` leaves out the fine parts (the brochure in a paw or held up in the room).
  */
 export function drawBrochure(ctx, x, y, w, h, small = false, fizz = 0, t = 0) {

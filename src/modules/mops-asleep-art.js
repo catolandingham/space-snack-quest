@@ -80,7 +80,7 @@ export function drawMopsTurned(ctx, engine, { x, floor, scale, f = -1, turn = 0,
   const T = mopsTurnedBox(x, floor, scale, f, turn, headDrop),
     lying = turn >= MOPS_SLEEP.side - 0.01;
   // his shadow on the floor: under his feet while he stands, the length of his body once he lies on his side (round 8
-  // final art, pending Brian's yes: the rooms' flat shadow, the ink at a low alpha)
+  // final art, Brian's yes 2026-11-27: the rooms' flat shadow, the ink at a low alpha)
   ctx.save();
   ctx.beginPath();
   lying

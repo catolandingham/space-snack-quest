@@ -28,6 +28,7 @@ import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedt
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { showRoomScaleTable } from "./room-scale.js";
 import { mopsBeardLook } from "./mops-beard.js";
+import { mopsBeardOver, syncMopsFace, mopsFaceSnipped } from "./mops-face.js";
 import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG, CRAYON_ON_WALL } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
@@ -158,8 +159,14 @@ export function createBridge() {
      */
     /** How the older program draws Mops's beard now (mops-beard.js: once snipped on pickup day, { noBeard: true }), or null. */
     mopsBeardLook() {
+      // (the HUD's Mops face follows the snip: mops-face.js)
+      syncMopsFace(engine && engine.drawMopsOn);
       return mopsBeardLook();
     },
+    /** The switch card's Mops (60-frame-draw.js): the snipped beard drawn over him once snipped (mops-face.js). */
+    mopsBeardOver,
+    /** Tests: whether the HUD's Mops face shows the snipped beard. */
+    mopsFaceSnipped,
     drawGanitorTag(ctx, scale) {
       const drew = drawGanitorTag(ctx, scale);
       // the gold star he won in the Mop-Off stays on his tag for the rest of the chapter (escape-mopoff.js)

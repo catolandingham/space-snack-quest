@@ -553,7 +553,7 @@ export function drawScannerStop(ctx, field, k, t) {
 }
 /**
  * The scanner arch letting hair through (round 7, r5 1:59, q: 116): the arch lights green, its lamp, its scan lines and
- * its floor strip, with a scan bar sweeping down (`k` 0 to 1). Final art, pending Brian's yes (arch-glow.js).
+ * its floor strip, with a scan bar sweeping down (`k` 0 to 1). Final art, Brian's yes 2026-11-27 (arch-glow.js).
  */
 export function drawScannerPass(ctx, field, k, t) {
   drawArchGlow(ctx, field, "green", k, t);
@@ -561,7 +561,7 @@ export function drawScannerPass(ctx, field, k, t) {
 /**
  * The mail that came down the ramp with the little box (round 7, r5 3:02 and 3:21, q: 133): two envelopes on the floor
  * beside it, so the box reads as "the mail": a white one with the red and blue airmail border and a cream one with a
- * red stamp, the rooms' ink round each. Final art, pending Brian's yes (round 8).
+ * red stamp, the rooms' ink round each. Final art, Brian's yes 2026-11-27 (round 8).
  */
 export function drawMailBeside(ctx, x, y) {
   const L = LOCKED_LOOK,

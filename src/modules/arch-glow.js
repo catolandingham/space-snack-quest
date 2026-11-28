@@ -1,5 +1,5 @@
 /**
- * The fur scanner arch lit up (round 8 final art, pending Brian's yes), drawn on the locked bay pictures' own arch
+ * The fur scanner arch lit up (round 8 final art, Brian's yes 2026-11-27), drawn on the locked bay pictures' own arch
  * (delivery_room.py: the grey bar with its round blue lamp in the middle, the field between the posts with two pale
  * blue scan lines, the blue strip on the floor). Lit, the same parts change colour: the lamp, the two scan lines and
  * the floor strip take the light's colour, a scan bar sweeps down the field, and the field takes a light flat tint.

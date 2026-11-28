@@ -1341,7 +1341,7 @@
         // Switch card: who you are now, their picture, and why. Waits for a tap like every card.
         let mo = cd && cd.who === "mops";
         ((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), L(c / 2, 400, 150), r(mo ? "#2bc48a" : "#b5562a", 6));
-        mo ? Fe(c / 2 - 20, 500, he * 2.6, { f: 1 }) : Re(c / 2, 520, he * 1.7, { f: 1 });
+        mo ? (Fe(c / 2 - 20, 500, he * 2.6, { f: 1, ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) }), window.SSQ && window.SSQ.mopsBeardOver && window.SSQ.mopsBeardOver(e, c / 2 - 20, 500, he * 2.6, 1)) : Re(c / 2, 520, he * 1.7, { f: 1 });
         g(o, c / 2, 110, 48, "#ffffff", "center", 800);
         zt(s || "", 820, 26).forEach((t, i) => g(t, c / 2, 170 + i * 34, 26, "#8fdcff", "center", 700));
         return;

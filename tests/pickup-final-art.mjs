@@ -1,10 +1,10 @@
 /**
- * Pickup day's final art, round 8 (placeholders 20 to 32; each pending Brian's yes; src/modules/pickup-art.js and
+ * Pickup day's final art, round 8 (placeholders 20 to 32; final art, Brian's yes 2026-11-27; src/modules/pickup-art.js and
  * pickup-people-art.js). Checks that each drawing is wired where it shows, at phone size, with no page errors: the
  * poster's pale square and the snack bag (53), the hair over the crate bed (53), the crate in the row and the upgraded
  * robot (54), the spill (55), his eyes in the mailbox (55), Mops's snipped beard everywhere (56 on: the engine leaves
  * its own beard out, mops-beard.js), the beard slipping in the hall (57), the tape (60), the hold's pocket and the crew
- * member's look and size (61). The mirror's Mops is snipped too.
+ * member's look and size (61). The mirror's Mops, the switch card's and the HUD face's are snipped too.
  *   node tests/pickup-final-art.mjs
  */
 import { readFileSync } from "node:fs";
@@ -38,7 +38,7 @@ async function at(step, setup) {
     run();
     ss.drawFrame();
     const mb = window.SSQ.beat("ch1-morning");
-    return { drew: B.debug().drew, room: e.room(), step: L().step, look: mb && mb.mopsLook ? mb.mopsLook() : "none", ssLook: window.SSQ.mopsBeardLook ? window.SSQ.mopsBeardLook() : "none" };
+    return { drew: B.debug().drew, room: e.room(), step: L().step, look: mb && mb.mopsLook ? mb.mopsLook() : "none", ssLook: window.SSQ.mopsBeardLook ? window.SSQ.mopsBeardLook() : "none", face: window.SSQ.mopsFaceSnipped ? window.SSQ.mopsFaceSnipped() : "none" };
   }, setup);
   await page.close();
   return { ...r, errors };
@@ -53,6 +53,11 @@ const climb = await at("climb", "");
 g.check("55: the spill by the floor vent", climb.drew.spill === true, climb.drew);
 const last = await at("lastwalk", "");
 g.check("56 on: once snipped, the engine leaves its own beard out (mopsLook noBeard) and the short beard is drawn", last.look && last.look.noBeard === true && last.drew.snipMark === true, { look: last.look, snip: last.drew.snipMark });
+g.check("56 on: the HUD's Mops face shows the snipped beard too (Brian's yes to sheet 2, 2026-11-27; mops-face.js), and not before the snip", last.face === true && pack.face === false, { last: last.face, pack: pack.face });
+g.check(
+  "56 on: the switch card's Mops reads the same beard look and draws the snipped beard over him (60-frame-draw.js, mops-face.js)",
+  /mopsBeardLook\(\)\) \}\), window\.SSQ && window\.SSQ\.mopsBeardOver/.test(readFileSync(join(root, "src", "game", "60-frame-draw.js"), "utf8")),
+);
 const hall = await at("lastwalk", "e.enterRoom('hall','QB'); e.place('sq',480,520); e.set('costumeOn',true); L().fur = true");
 g.check("57: the beard slipped in the hall", hall.drew.fur === true, hall.room);
 g.check("56 on, in the hall too (the older program's hall, hallway and office draws read window.SSQ.mopsBeardLook): no long beard under the short one", hall.room === "hall" && hall.ssLook && hall.ssLook.noBeard === true && hall.drew.snipMark === true && ["12-ch1-redesign.js", "14-ch1-day2.js", "50-story-frame.js"].every((f) => readFileSync(join(root, "src", "game", f), "utf8").includes("window.SSQ.mopsBeardLook()")), { look: hall.ssLook, snip: hall.drew.snipMark });

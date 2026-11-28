@@ -168,7 +168,7 @@ export function createPickup(bridge) {
   // once snipped, the older program draws Mops without his beard and the short one is drawn over him (snipMark)
   setMopsBeardLook(() => {
     const l = live();
-    return l && l.snipped ? { noBeard: true } : null;
+    return l && l.snipped ? { noBeard: true, snipped: true } : null;
   });
   let drew = null,
     record = { steps: [], sounds: [] },

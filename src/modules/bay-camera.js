@@ -7,7 +7,7 @@
  *     made the way crate-stamp.js layers the crate bed: the picture files never change).
  *   - The office's wall of security screens shows the bay on its bottom-right screen (the one that was dark), so the
  *     tapes on pickup day have a cause the player has seen (topic K, LOOK · screens in the escape's office).
- * Final art, pending Brian's yes (round 8, drawn in the locked rooms' look: locked-look.js): the camera, its red light,
+ * Final art, Brian's yes 2026-11-27 (round 8, drawn in the locked rooms' look: locked-look.js): the camera, its red light,
  * the little bay on the screen. Layers on locked pictures, waiting for Brian's yes to the layer (question 123 asks it). Option B of q 123 ("camera just there, no words") is
  * CAMERA_INSTALL_SCENE = false: the camera then hangs from the start of Day 2 and nobody puts it up.
  */
@@ -99,7 +99,7 @@ export function drawBayCamera(ctx, x, y, k = 1, light = true, a = 1) {
  * Robot 3 putting the camera up (Day 2, beat 30), `u` 0 to 1 of the install: its arm telescopes up out of its gripper at
  * `hand` (three grey tubes, each thinner, the rooms' ink round each), carrying the camera in its claw to the wall; the
  * plate meets the wall at u 0.6, two little click marks show it fixed, and the red light comes on at the end.
- * Game positions (960 x 640). Final art, pending Brian's yes.
+ * Game positions (960 x 640). Final art, Brian's yes 2026-11-27.
  */
 export function drawCameraInstall(ctx, hand, u) {
   const L = LOCKED_LOOK,

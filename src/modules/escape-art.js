@@ -652,7 +652,7 @@ export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label =
   const S = SITE,
     sc = S.screen;
   // the office computer's own monitor (office_room_v2.py _computer: the bezel's grey-blue, the green power light), close
-  // up; the page in the postal service's blue and white. Final art, pending Brian's yes (round 8).
+  // up; the page in the postal service's blue and white. Final art, Brian's yes 2026-11-27 (round 8).
   esRect(ctx, sc.x0 - 20, sc.y0 - 20, sc.x1 - sc.x0 + 40, sc.y1 - sc.y0 + 40, 18);
   esPaint(ctx, "rgb(89,101,125)", 6, "rgb(34,36,44)");
   ctx.beginPath();
