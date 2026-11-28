@@ -39,7 +39,7 @@
  * one he did (RESTART_TO). Words: escape-lines.js; places and times: escape-place.js; the snack's names:
  * snack-name.js. Every drawing and number is a PLACEHOLDER for Brian.
  */
-import { personBox, robotStep, addRobots, thingsInFrontOf, VENT_BASELINES, followGap, followSpot } from "./room-model.js";
+import { personBox, robotStep, addRobots, thingsInFrontOf, VENT_BASELINES, followGap, followSpot, freeFollow } from "./room-model.js";
 // the night robot's straight roll toward (x, y): true there (escape.js roll and its patrol go round things with it)
 function esRollStraight(r, x, y, speed, dt) {
   const d = Math.hypot(x - r.x, y - r.y);
@@ -420,7 +420,7 @@ export function createEscape(bridge) {
       route = routeOf(l);
     // Mops behind Squatch, along his trail
     if (who === "sq" && e.get("moPose") !== "hidden" && l.trail) {
-      const to = followStep(l.trail, p, e.pos("mops"), followGap(room));
+      const to = freeFollow(followStep(l.trail, p, e.pos("mops"), followGap(room)));
       // (a follower is never solid: standing a step behind him, he would box Squatch in and a tap's walk would find
       // no way round; found recording the walk out of the bay, 2026-11-26)
       e.moWalking(true);

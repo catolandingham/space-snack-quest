@@ -230,6 +230,14 @@ export function freeSpot(who, x, y) {
 }
 
 /**
+ * A follower's next trail point (escape-doors.js followStep), moved onto free floor for Mops: the leader's feet can pass
+ * closer to a thing than Mops's wider body can (the hall's snack bar end by the hallway doorway, 2026-11-27).
+ */
+export function freeFollow(to) {
+  return to ? freeSpot("mops", to.x, to.y) : to;
+}
+
+/**
  * One step of a thing a module moves itself (a robot, a guard, the alarm's runner) toward (x, y) at `speed`, round
  * `solids` inside `bounds`: `step(obj, x, y, speed, dt)` is the module's own straight step (returns true when there).
  * True once at (x, y).

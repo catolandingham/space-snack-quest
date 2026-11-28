@@ -48,7 +48,7 @@
  * (PK_RESTART_TO). Words: pickup-lines.js; places and times: pickup-place.js; drawings: pickup-art.js. Every drawing and
  * number is a PLACEHOLDER for Brian.
  */
-import { personBox, boxHit, addMovers, setCarry, addKeeper, robotStep, addRobots, followGap, followSpot } from "./room-model.js";
+import { personBox, boxHit, addMovers, setCarry, addKeeper, robotStep, addRobots, followGap, followSpot, freeFollow } from "./room-model.js";
 // a pickup-day robot's straight roll toward (x, y): true there (pickup.js roll goes round things with it)
 function pkRollStraight(b, x, y, speed, dt) {
   const d = Math.hypot(x - b.x, y - b.y);
@@ -59,6 +59,8 @@ function pkRollStraight(b, x, y, speed, dt) {
   return false;
 }
 const pkRobotKeeps = (box) => box.id !== "walkway";
+// the steps from GO · ship to the top of the ramp: Squatch and Mops are on the walkway, under the scanner
+const PK_ON_RAMP = Object.freeze(["goship", "claw", "board", "scanning", "peel", "proceed", "ramp", "climbing"]);
 import { pickupWords } from "./pickup-lines.js";
 import { PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, PK_BAY_PICKUP, PK_BAY_GONE, PK_SIGHT, PK_PACE, PK_CRATE, ROUTE_PUSH, ROUTE_SNEAK, ROUTE_LAST, COSTUME, PK_OFFICE, PK_HOLD } from "./pickup-place.js";
 import { withCameraLayer, BAY_CAMERA } from "./bay-camera.js";
@@ -487,7 +489,7 @@ export function createPickup(bridge) {
       p = e.pos(who),
       room = e.room();
     if (who === "sq" && e.get("moPose") !== "hidden" && l.trail) {
-      const to = followStep(l.trail, p, e.pos("mops"), followGap(room));
+      const to = freeFollow(followStep(l.trail, p, e.pos("mops"), followGap(room)));
       e.moWalking(true);
       to ? e.step("mops", to.x, to.y, FOLLOW.speed, dt) : e.still("mops");
     }
@@ -1339,7 +1341,7 @@ export function createPickup(bridge) {
     if (l.step === "toscan" && free && at(e.pos("sq"), PK_BAY.archFront, 50)) heldAtRamp();
     // 58: Mops stays a step behind him in the bay until the scanner (he carries the mail)
     if (free && (l.step === "pickbox" || l.step === "toscan") && l.trail && e.get("moPose") !== "hidden") {
-      const to = followStep(l.trail, e.pos("sq"), e.pos("mops"), followGap(e.room()));
+      const to = freeFollow(followStep(l.trail, e.pos("sq"), e.pos("mops"), followGap(e.room())));
       e.moWalking(true);
       to ? e.step("mops", to.x, to.y, FOLLOW.speed, dt) : e.still("mops");
     }
@@ -2109,11 +2111,15 @@ export function createPickup(bridge) {
         r = l && E().room();
       // (the guests stand in the hall on the push and the last walk; on the walk home in 55 the hall is empty)
       if (r === "hall" && walking(l)) return [...LUNCH_SOLIDS.map((b) => ({ ...b })), ...(l.step === "home" ? [] : PK_HALL.guests.map((g) => ({ x0: g.x - 25, x1: g.x + 25, y0: g.y - 14, y1: g.y + 8, person: 1 })))];
+      // (the ship's hold is drawn in the bay's room: none of the bay's things are there; and while he boards, up
+      // through the scanner onto the ramp, the walkway is the way he goes, not a thing to keep off)
+      if (r === "hangar" && l.place === "hold") return [];
       if (r === "hangar") {
-        const row = Object.entries(l.things || {})
+        const ramp = PK_ON_RAMP.includes(l.step),
+          row = Object.entries(l.things || {})
           .filter(([, th]) => th.where === "row")
           .map(([, th]) => ({ id: "row", x0: th.x - 60, x1: th.x + 60, y0: th.y - 20, y1: th.y + 8 }));
-        return [...BAY_SOLIDS.map((b) => ({ ...b })), { id: "open crate", x0: 232, x1: 370, y0: 470, y1: 509 }, ...row];
+        return [...BAY_SOLIDS.filter((b) => !(ramp && b.id === "walkway")).map((b) => ({ ...b })), { id: "open crate", x0: 232, x1: 370, y0: 470, y1: 509 }, ...row];
       }
       return [];
     },
